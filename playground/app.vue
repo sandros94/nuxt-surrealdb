@@ -1,6 +1,6 @@
 <template>
-  <pre v-if="test && !error">
-    {{ test }}
+  <pre v-if="data && !error">
+    {{ data }}
   </pre>
   <div v-else-if="error">
     {{ error }}
@@ -10,9 +10,8 @@
   </div>
 </template>
 
-<script setup>
-const { data: test, error } = await useSurrealFetch('sql', {
-  method: 'POST',
-  body: 'SELECT * FROM products',
-})
+<script setup lang="ts">
+const { sql } = useSurrealDB()
+
+const { data, error } = await sql('SELECT * FROM products;')
 </script>
