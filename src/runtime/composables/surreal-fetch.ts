@@ -1,25 +1,38 @@
 import type { UseFetchOptions } from 'nuxt/app'
+import { ref } from 'vue'
 
-import type { Overrides } from '../types'
-import { useFetch, useNuxtApp } from '#app'
+import type { DatabasePreset, Overrides, Response } from '../types'
+import { useFetch, useNuxtApp, useRuntimeConfig } from '#app'
 
 export function useSurrealFetch<T>(
   url: string | (() => string),
-  options: UseFetchOptions<T> & Overrides = {},
+  options: UseFetchOptions<Response<T>> & Overrides = {},
 ) {
   const {
-    NS,
-    DB,
+    database,
     token,
     ...opts
   } = options
 
   const headers: Record<string, string> = {}
-  if (NS) {
-    headers.NS = NS
-  }
-  if (DB) {
-    headers.DB = DB
+  if (database !== undefined) {
+    const db = ref<DatabasePreset>()
+    if (typeof database !== 'string' && typeof database !== 'number' && typeof database !== 'symbol') {
+      db.value = database
+    }
+    else {
+      const { databases } = useRuntimeConfig().public.surrealdb
+      db.value = databases[database]
+    }
+    if (db.value.url && !opts.baseURL) {
+      opts.baseURL = db.value.url
+    }
+    if (db.value.NS) {
+      headers.NS = db.value.NS
+    }
+    if (db.value.DB) {
+      headers.DB = db.value.DB
+    }
   }
   if (token) {
     headers.Authorization = `Bearer ${token}`

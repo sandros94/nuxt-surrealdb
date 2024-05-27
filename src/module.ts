@@ -1,17 +1,17 @@
 import { defineNuxtModule, addPlugin, addImportsDir, createResolver } from '@nuxt/kit'
 import { defu } from 'defu'
 
-interface Database {
+export interface DatabasePreset {
+  url?: string
   NS?: string
   DB?: string
 }
 
 // Module options TypeScript interface definition
 export interface ModuleOptions {
-  url: string
   databases: {
-    default: Database
-    [key: string]: Database | undefined
+    default: DatabasePreset
+    [key: string]: DatabasePreset | undefined
   }
   tokenCookieName: string
 }
@@ -23,9 +23,9 @@ export default defineNuxtModule<ModuleOptions>({
   },
   // Default configuration options of the Nuxt module
   defaults: {
-    url: '',
     databases: {
       default: {
+        url: '',
         NS: '',
         DB: '',
       },

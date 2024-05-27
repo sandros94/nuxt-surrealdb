@@ -3,10 +3,7 @@ import { defineNuxtPlugin, useCookie, useRuntimeConfig } from '#app'
 export default defineNuxtPlugin(() => {
   const {
     surrealdb: {
-      url: baseURL,
-      databases: {
-        default: { ns, db },
-      },
+      databases: { default: { url: baseURL, NS, DB } },
       tokenCookieName,
     },
   } = useRuntimeConfig().public
@@ -17,15 +14,18 @@ export default defineNuxtPlugin(() => {
     onRequest({ options }) {
       options.headers = options.headers || {}
 
-      if (ns) {
+      // @ts-expect-error NS header type missing
+      if (NS && !options.headers.NS) {
         // @ts-expect-error NS header type missing
-        options.headers.NS = ns
+        options.headers.NS = NS
       }
-      if (db) {
+      // @ts-expect-error DB header type missing
+      if (DB && !options.headers.DB) {
         // @ts-expect-error DB header type missing
-        options.headers.DB = db
+        options.headers.DB = DB
       }
-      if (userAuth.value) {
+      // @ts-expect-error Authorization header type missing
+      if (userAuth.value && !options.headers.Authorization) {
         // @ts-expect-error Authorization header type missing
         options.headers.Authorization = `Bearer ${userAuth.value}`
       }
