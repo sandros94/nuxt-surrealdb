@@ -2,8 +2,8 @@ import { defineNuxtModule, addPlugin, addImportsDir, createResolver } from '@nux
 import { defu } from 'defu'
 
 interface Database {
-  ns?: string
-  db?: string
+  NS?: string
+  DB?: string
 }
 
 // Module options TypeScript interface definition
@@ -26,8 +26,8 @@ export default defineNuxtModule<ModuleOptions>({
     url: '',
     databases: {
       default: {
-        ns: '',
-        db: '',
+        NS: '',
+        DB: '',
       },
     },
     tokenCookieName: 'surrealdb_token',
