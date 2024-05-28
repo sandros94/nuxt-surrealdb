@@ -11,7 +11,7 @@ export interface Overrides {
   token?: string
 }
 
-type OKResponse<T = unknown[]> = {
+type OKResponse<T> = {
   result: T
   status: 'OK'
   time: string
@@ -23,4 +23,5 @@ type ErrorResponse = {
   time: string
 }
 
-export type Response<T> = OKResponse<T> | ErrorResponse
+export type Response<T> = Array<(OKResponse<T> | ErrorResponse)>
+export type Res<T> = Response<T>
