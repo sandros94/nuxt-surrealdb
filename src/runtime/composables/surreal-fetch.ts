@@ -37,15 +37,14 @@ export function useSurrealFetch<T>(
   if (token) {
     headers.Authorization = token
   }
-  opts.headers = Object.keys(headers).length
-    ? {
-        ...opts.headers,
-        ...headers,
-      }
-    : undefined
 
   return useFetch(endpoint, {
     ...opts,
+    headers: {
+      Accept: 'application/json',
+      ...opts.headers,
+      ...headers,
+    },
     $fetch: useNuxtApp().$surrealFetch,
   })
 }
