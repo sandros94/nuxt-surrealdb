@@ -10,7 +10,7 @@ export interface DatabasePreset {
 // Module options TypeScript interface definition
 export interface ModuleOptions {
   databases: {
-    default: DatabasePreset
+    default?: DatabasePreset
     [key: string]: DatabasePreset | undefined
   }
   tokenCookieName: string
