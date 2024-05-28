@@ -1,12 +1,12 @@
 import type { UseFetchOptions } from 'nuxt/app'
 import { type MaybeRefOrGetter, ref } from 'vue'
 
-import type { DatabasePreset, Overrides, Response } from '../types'
+import type { DatabasePreset, Overrides } from '../types'
 import { useFetch, useNuxtApp, useRuntimeConfig } from '#app'
 
-export function useSurrealFetch<T>(
+export function useSurrealFetch<T = any>(
   endpoint: MaybeRefOrGetter<string>,
-  options: UseFetchOptions<Response<T>> & Overrides = {},
+  options: UseFetchOptions<T> & Overrides = {},
 ) {
   const {
     database,

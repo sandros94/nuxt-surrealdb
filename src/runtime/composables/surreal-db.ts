@@ -4,7 +4,7 @@ import { useNuxtApp, useSurrealFetch } from '#imports'
 export function useSurrealDB(overrides?: Overrides) {
   const { $surrealFetch, $surrealFetchOptionsOverride } = useNuxtApp()
 
-  async function sql<T>(sql: string, ovr?: Overrides) {
+  async function sql<T = any>(sql: string, ovr?: Overrides) {
     return useSurrealFetch<T>('sql', {
       ...(ovr || overrides),
       method: 'POST',
@@ -12,8 +12,8 @@ export function useSurrealDB(overrides?: Overrides) {
     })
   }
 
-  async function $sql<T = unknown[]>(sql: string, ovr?: Overrides) {
-    return $surrealFetch<Response<T>>('sql', {
+  async function $sql<T = any>(sql: string, ovr?: Overrides) {
+    return $surrealFetch<T>('sql', {
       ...$surrealFetchOptionsOverride(ovr || overrides),
       method: 'POST',
       body: sql,
