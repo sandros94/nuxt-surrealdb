@@ -2,9 +2,18 @@
   "name": "nuxt-surrealdb",
   "version": "0.0.0",
   "description": "A Nuxt module aimed to simplify the use of SurrealDB",
-  "repository": "sandros94/nuxt-surrealdb",
+  "keywords": [
+    "nuxt",
+    "nuxt-module",
+    "surrealdb"
+  ],
+  "repository": "https://github.com/sandros94/nuxt-surrealdb",
   "license": "MIT",
   "type": "module",
+  "author": {
+    "name": "Sandro Circi",
+    "email": "sandro.circi@digitoolmedia.com"
+  },
   "exports": {
     ".": {
       "types": "./dist/types.d.ts",
