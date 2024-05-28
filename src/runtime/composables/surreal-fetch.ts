@@ -35,7 +35,7 @@ export function useSurrealFetch<T>(
     }
   }
   if (token) {
-    headers.Authorization = `Bearer ${token}`
+    headers.Authorization = token
   }
   opts.headers = Object.keys(headers).length
     ? {
