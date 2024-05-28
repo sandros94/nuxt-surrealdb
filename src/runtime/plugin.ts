@@ -69,6 +69,7 @@ export default defineNuxtPlugin(() => {
 
     return {
       headers: {
+        Accept: 'application/json',
         ..._headers,
         ...headers,
       },
