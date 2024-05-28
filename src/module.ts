@@ -1,11 +1,7 @@
 import { defineNuxtModule, addPlugin, addImportsDir, createResolver } from '@nuxt/kit'
 import { defu } from 'defu'
 
-export interface DatabasePreset {
-  host?: string
-  NS?: string
-  DB?: string
-}
+import type { DatabasePreset } from './runtime/types'
 
 // Module options TypeScript interface definition
 export interface ModuleOptions {

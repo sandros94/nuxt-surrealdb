@@ -1,8 +1,10 @@
 import type { PublicRuntimeConfig } from '@nuxt/schema'
 
-import type { DatabasePreset } from '../../module'
-
-export { DatabasePreset } from '../../module'
+export interface DatabasePreset {
+  host?: string
+  NS?: string | null
+  DB?: string | null
+}
 
 export interface Overrides {
   database?: keyof PublicRuntimeConfig['surrealdb']['databases'] | DatabasePreset
