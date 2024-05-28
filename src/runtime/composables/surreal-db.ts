@@ -9,6 +9,9 @@ import { computed, createError, toValue, useAsyncData, useNuxtApp, useSurrealFet
 export function useSurrealDB(overrides?: Overrides) {
   const { $surrealFetch, $surrealFetchOptionsOverride } = useNuxtApp()
 
+  // TODO: GET /export Exports all data for a specific Namespace and Database
+  // TODO: POST /import Imports data into a specific Namespace and Database
+
   async function items<T = any>(
     record: MaybeRefOrGetter<string> | {
       table: MaybeRefOrGetter<string>
@@ -67,6 +70,12 @@ export function useSurrealDB(overrides?: Overrides) {
       })
     }, opts)
   }
+
+  // TODO: POST /ml/import Import a SurrealML model into a specific Namespace and Database
+  // TODO: GET /ml/export/:name/:version
+
+  // TODO: POST /signup Signs-up as a scope user to a specific scope
+  // TODO: POST /signin Signs-in as a root, namespace, database, or scope user
 
   async function sql<T = any>(sql: string, ovr?: Overrides) {
     return useSurrealFetch<T>('sql', {
