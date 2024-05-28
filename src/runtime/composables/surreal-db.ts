@@ -20,8 +20,15 @@ export function useSurrealDB(overrides?: Overrides) {
     })
   }
 
+  async function version(ovr?: Overrides) {
+    return useSurrealFetch('version', {
+      ...$surrealFetchOptionsOverride(ovr || overrides),
+    })
+  }
+
   return {
     sql,
     $sql,
+    version,
   }
 }
