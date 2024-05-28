@@ -1,4 +1,5 @@
 import type { PublicRuntimeConfig } from '@nuxt/schema'
+
 import type { DatabasePreset } from '../../module'
 
 export { DatabasePreset } from '../../module'

@@ -2,7 +2,7 @@ import { defineNuxtModule, addPlugin, addImportsDir, createResolver } from '@nux
 import { defu } from 'defu'
 
 export interface DatabasePreset {
-  url?: string
+  host?: string
   NS?: string
   DB?: string
 }
@@ -25,7 +25,7 @@ export default defineNuxtModule<ModuleOptions>({
   defaults: {
     databases: {
       default: {
-        url: '',
+        host: '',
         NS: '',
         DB: '',
       },

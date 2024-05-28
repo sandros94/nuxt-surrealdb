@@ -3,7 +3,7 @@ import { defineNuxtPlugin, useCookie, useRuntimeConfig } from '#app'
 export default defineNuxtPlugin(() => {
   const {
     surrealdb: {
-      databases: { default: { url: baseURL, NS, DB } },
+      databases: { default: { host: baseURL, NS, DB } },
       tokenCookieName,
     },
   } = useRuntimeConfig().public

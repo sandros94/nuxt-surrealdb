@@ -24,8 +24,8 @@ export function useSurrealFetch<T>(
       const { databases } = useRuntimeConfig().public.surrealdb
       db.value = databases[database]
     }
-    if (db.value.url && !opts.baseURL) {
-      opts.baseURL = db.value.url
+    if (db.value.host && !opts.baseURL) {
+      opts.baseURL = db.value.host
     }
     if (db.value.NS) {
       headers.NS = db.value.NS
