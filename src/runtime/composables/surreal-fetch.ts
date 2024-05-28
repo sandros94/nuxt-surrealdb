@@ -5,7 +5,7 @@ import type { DatabasePreset, Overrides, Response } from '../types'
 import { useFetch, useLazyFetch, useNuxtApp, useRuntimeConfig } from '#app'
 
 export function useSurrealFetch<T>(
-  url: MaybeRefOrGetter<string>,
+  endpoint: MaybeRefOrGetter<string>,
   options: UseFetchOptions<Response<T>> & Overrides = {},
 ) {
   const {
@@ -44,14 +44,14 @@ export function useSurrealFetch<T>(
       }
     : undefined
 
-  return useFetch(url, {
+  return useFetch(endpoint, {
     ...opts,
     $fetch: useNuxtApp().$surrealFetch,
   })
 }
 
 export function useSurrealLazyFetch<T>(
-  url: MaybeRefOrGetter<string>,
+  endpoint: MaybeRefOrGetter<string>,
   options: UseFetchOptions<Response<T>> & Overrides = {},
 ) {
   const {
@@ -90,7 +90,7 @@ export function useSurrealLazyFetch<T>(
       }
     : undefined
 
-  return useLazyFetch(url, {
+  return useLazyFetch(endpoint, {
     ...opts,
     $fetch: useNuxtApp().$surrealFetch,
   })
