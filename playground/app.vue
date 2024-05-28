@@ -18,14 +18,14 @@
         {{ test ?? 'No Data' }}
       </pre>
       <pre>
-        {{ _version }}
+        {{ _items ?? _itemsError }}
       </pre>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import type { Response } from '../src/runtime/types'
+import type { Res } from '../src/runtime/types'
 
 interface Product {
   id: string
@@ -34,17 +34,22 @@ interface Product {
   price: number
   currency: string
 }
+const { items, sql, $sql, version } = useSurrealDB()
+const { data: _items, error: _itemsError } = await items<Res<Product[]>>('products', {
+  transform: (data: any) => {
+    return data[0].status === 'OK' ? data[0].result : []
+  },
+})
 
-const { sql, $sql, version } = useSurrealDB()
-const test = ref<Response<Product[]> | undefined>()
+const test = ref<Res<Product[]> | undefined>()
 
 async function fetchSql() {
-  test.value = await $sql<Product[]>('SELECT * FROM products;', {
+  test.value = await $sql<Res<Product[]>>('SELECT * FROM products;', {
     database: 'staging',
   })
 }
 
-const { data, error } = await sql('SELECT * FROM products;')
+const { data, error } = await sql<Res<Product[]>>('SELECT * FROM products;')
 const { data: _version } = await version({
   database: 'staging',
 })
