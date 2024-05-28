@@ -1,11 +1,11 @@
 import type { UseFetchOptions } from 'nuxt/app'
-import { ref } from 'vue'
+import { type MaybeRefOrGetter, ref } from 'vue'
 
 import type { DatabasePreset, Overrides, Response } from '../types'
 import { useFetch, useLazyFetch, useNuxtApp, useRuntimeConfig } from '#app'
 
 export function useSurrealFetch<T>(
-  url: string | (() => string),
+  url: MaybeRefOrGetter<string>,
   options: UseFetchOptions<Response<T>> & Overrides = {},
 ) {
   const {
@@ -51,7 +51,7 @@ export function useSurrealFetch<T>(
 }
 
 export function useSurrealLazyFetch<T>(
-  url: string | (() => string),
+  url: MaybeRefOrGetter<string>,
   options: UseFetchOptions<Response<T>> & Overrides = {},
 ) {
   const {
