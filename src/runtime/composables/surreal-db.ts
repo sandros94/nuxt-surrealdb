@@ -1,8 +1,9 @@
+import type { AsyncDataOptions, AsyncData, NuxtError } from 'nuxt/app'
+import type { FetchError } from 'ofetch'
 import { joinURL } from 'ufo'
 import { hash } from 'ohash'
 
-import type { Overrides } from '../types'
-import type { AsyncDataOptions } from '#app'
+import type { Overrides, PickFrom, KeysOf } from '../types'
 import type { MaybeRefOrGetter } from '#imports'
 import { computed, createError, toValue, useAsyncData, useNuxtApp, useSurrealFetch } from '#imports'
 
@@ -26,7 +27,7 @@ export function useSurrealDB(overrides?: Overrides) {
       method: 'GET',
       key: undefined,
     },
-  ) {
+  ): Promise<AsyncData<PickFrom<T, KeysOf<T>> | null, NuxtError<unknown> | null>> {
     const _record = toValue(record)
     const {
       key,
@@ -77,7 +78,7 @@ export function useSurrealDB(overrides?: Overrides) {
   // TODO: POST /signup Signs-up as a scope user to a specific scope
   // TODO: POST /signin Signs-in as a root, namespace, database, or scope user
 
-  async function sql<T = any>(sql: string, ovr?: Overrides) {
+  async function sql<T = any>(sql: string, ovr?: Overrides): Promise<AsyncData<PickFrom<T, KeysOf<T>> | null, FetchError<any> | null>> {
     return useSurrealFetch<T>('sql', {
       ...(ovr || overrides),
       method: 'POST',
@@ -93,7 +94,7 @@ export function useSurrealDB(overrides?: Overrides) {
     })
   }
 
-  async function version(ovr?: Overrides) {
+  async function version(ovr?: Overrides): Promise<AsyncData<any, FetchError<any> | null>> {
     return useSurrealFetch('version', {
       ...$surrealFetchOptionsOverride(ovr || overrides),
     })

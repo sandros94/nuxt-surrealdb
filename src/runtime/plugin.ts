@@ -1,3 +1,5 @@
+// The following nitropack import is from https://github.com/nuxt/module-builder/issues/141#issuecomment-2078248248
+import type {} from 'nitropack'
 import type { FetchOptions, ResponseType } from 'ofetch'
 
 import type { DatabasePreset, Overrides } from './types'

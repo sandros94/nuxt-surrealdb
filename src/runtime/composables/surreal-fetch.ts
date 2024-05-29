@@ -1,13 +1,14 @@
-import type { UseFetchOptions } from 'nuxt/app'
+import { useFetch, useNuxtApp, useRuntimeConfig } from 'nuxt/app'
+import type { AsyncData, UseFetchOptions } from 'nuxt/app'
 import { type MaybeRefOrGetter, ref } from 'vue'
+import type { FetchError } from 'ofetch'
 
-import type { DatabasePreset, Overrides } from '../types'
-import { useFetch, useNuxtApp, useRuntimeConfig } from '#app'
+import type { DatabasePreset, Overrides, PickFrom, KeysOf } from '../types'
 
 export function useSurrealFetch<T = any>(
   endpoint: MaybeRefOrGetter<string>,
   options: UseFetchOptions<T> & Overrides = {},
-) {
+): AsyncData<PickFrom<T, KeysOf<T>> | null, FetchError<any> | null> {
   const {
     database,
     token,

@@ -14,6 +14,12 @@
     "name": "Sandro Circi",
     "email": "sandro.circi@digitoolmedia.com"
   },
+  "build": {
+    "externals": [
+      "defu",
+      "ufo"
+    ]
+  },
   "exports": {
     ".": {
       "types": "./dist/types.d.ts",
