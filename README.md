@@ -5,7 +5,7 @@
 [![License][license-src]][license-href]
 [![Nuxt][nuxt-src]][nuxt-href]
 
-A Nuxt module aimed to simplify the use of SurrealDB.
+A Nuxt module aimed to simplify the use of [SurrealDB](https://surrealdb.com).
 
 - [✨ &nbsp;Release Notes](/CHANGELOG.md)
 <!-- - [🏀 Online playground](https://stackblitz.com/github/sandros94/nuxt-surrealdb?file=playground%2Fapp.vue) -->
@@ -13,8 +13,8 @@ A Nuxt module aimed to simplify the use of SurrealDB.
 
 ## WIP
 
-This is still under development and not suitable for production use. Expect breaking changes.
-There are no docs atm, refer to the [playground](/playground/app.vue) or the [source code](/src/).
+This module is still under development and not suitable for production use, proceed at your own risk. Expect breaking changes!
+There are no docs atm, so please refer to the [playground](/playground/app.vue) or the [source code](/src/).
 
 ## Features
 
@@ -24,10 +24,10 @@ There are no docs atm, refer to the [playground](/playground/app.vue) or the [so
 ## Roadmap
 
 - [x] custom fetch plugin and composable.
-- [ ] on PAR with official [SurrealDB Rest integration](https://surrealdb.com/docs/surrealdb/integration/http).
+- [ ] on PAR with the official [SurrealDB Rest integration](https://surrealdb.com/docs/surrealdb/integration/http).
 - [ ] auth support.
 - [ ] custom websocket composable.
-- [ ] on PAR with official [SurrealDB RPC integration](https://surrealdb.com/docs/surrealdb/integration/rpc) via Websockets.
+- [ ] on PAR with the official [SurrealDB RPC integration](https://surrealdb.com/docs/surrealdb/integration/rpc) via Websockets.
 
 ## Quick Setup
 
