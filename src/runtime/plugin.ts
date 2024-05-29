@@ -1,10 +1,10 @@
 import type { FetchOptions, ResponseType } from 'ofetch'
 
 import type { DatabasePreset, Overrides } from './types'
-import { defineNuxtPlugin, useCookie, useRuntimeConfig } from '#app'
+import { defineNuxtPlugin, useCookie } from '#app'
 
-export default defineNuxtPlugin(() => {
-  const { databases, tokenCookieName } = useRuntimeConfig().public.surrealdb
+export default defineNuxtPlugin(({ $config }) => {
+  const { databases, tokenCookieName } = $config.public.surrealdb
   const userAuth = useCookie(tokenCookieName)
 
   const surrealFetch = $fetch.create({
