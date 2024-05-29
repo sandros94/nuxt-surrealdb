@@ -3,7 +3,14 @@ import type { AsyncData, UseFetchOptions } from 'nuxt/app'
 import { type MaybeRefOrGetter, ref } from 'vue'
 import type { FetchError } from 'ofetch'
 
-import type { DatabasePreset, Overrides, PickFrom, KeysOf } from '../types'
+import type {
+  DatabasePreset,
+  KeysOf,
+  Overrides,
+  PickFrom,
+  RpcRequest,
+  RpcResponse,
+} from '../types'
 
 export function useSurrealFetch<T = any>(
   endpoint: MaybeRefOrGetter<string>,
@@ -47,5 +54,19 @@ export function useSurrealFetch<T = any>(
       ...headers,
     },
     $fetch: useNuxtApp().$surrealFetch,
+  })
+}
+
+export function useSurrealRPC<T = any>(req: RpcRequest<T>, ovr?: Overrides) {
+  const { $surrealFetch, $surrealFetchOptionsOverride } = useNuxtApp()
+  const id = ref<number>(0)
+
+  return $surrealFetch<RpcResponse<T>>('rpc', {
+    ...$surrealFetchOptionsOverride(ovr),
+    method: 'POST',
+    body: {
+      id: id.value++,
+      ...req,
+    },
   })
 }

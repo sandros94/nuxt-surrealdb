@@ -17,15 +17,12 @@
       <pre>
         {{ test ?? 'No Data' }}
       </pre>
-      <pre>
-        {{ _items ?? _itemsError }}
-      </pre>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import type { Res } from '../src/runtime/types'
+import type { HttpRes } from '../src/runtime/types'
 
 interface Product {
   id: string
@@ -34,23 +31,15 @@ interface Product {
   price: number
   currency: string
 }
-const { items, sql, $sql, version } = useSurrealDB()
-const { data: _items, error: _itemsError } = await items<Res<Product[]>>('products', {
-  transform: (data: any) => {
-    return data[0].status === 'OK' ? data[0].result : []
-  },
-})
+const { sql } = useSurrealDB()
+const { data, error } = await sql<HttpRes<Product[]>>('SELECT * FROM products;')
 
-const test = ref<Res<Product[]> | undefined>()
+const test = ref<any>([])
 
 async function fetchSql() {
-  test.value = await $sql<Res<Product[]>>('SELECT * FROM products;', {
-    database: 'staging',
+  test.value = await useSurrealRPC({
+    method: 'select',
+    params: ['products'],
   })
 }
-
-const { data, error } = await sql<Res<Product[]>>('SELECT * FROM products;')
-const { data: _version } = await version({
-  database: 'staging',
-})
 </script>
