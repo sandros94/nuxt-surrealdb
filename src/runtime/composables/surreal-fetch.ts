@@ -1,15 +1,13 @@
-import { useAsyncData, useFetch, useNuxtApp, useRuntimeConfig } from 'nuxt/app'
-import { type MaybeRefOrGetter, computed, ref } from 'vue'
-import type { AsyncData, NuxtError } from 'nuxt/app'
+import { useFetch, useNuxtApp, useRuntimeConfig } from 'nuxt/app'
+import { type MaybeRefOrGetter, ref } from 'vue'
+import type { AsyncData } from 'nuxt/app'
 import type { FetchError } from 'ofetch'
 import { textToBase64 } from 'undio'
-import { hash } from 'ohash'
 
 import type {
   DatabasePreset,
   KeysOf,
   PickFrom,
-  SurrealAsyncDataOptions,
   SurrealFetchOptions,
   RpcRequest,
   RpcResponse,
@@ -88,18 +86,16 @@ export function useSurrealFetch<T = any>(
 
 export function useSurrealRPC<T = any>(
   req: RpcRequest<T>,
-  options: SurrealAsyncDataOptions<RpcResponse<T>> = {},
-): AsyncData<RpcResponse<T> | null, NuxtError<unknown> | null> {
-  const { $surrealRPC } = useNuxtApp()
-  const {
-    database,
-    token,
-    key,
-    ...opts
-  } = options
-  const _key = computed(() => {
-    return key ?? 'Sur_' + hash(['useSurrealRPC', req.method, req.params?.toString() ?? ''])
-  })
+  options: SurrealFetchOptions<RpcResponse<T>> = {},
+) {
+  const id = ref(0)
 
-  return useAsyncData(_key.value, () => $surrealRPC<T>(req, { database, token }), opts)
+  return useSurrealFetch<RpcResponse<T>>('rpc', {
+    ...options,
+    method: 'POST',
+    body: {
+      id: id.value++,
+      ...req,
+    },
+  })
 }
