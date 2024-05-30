@@ -70,7 +70,11 @@ export default defineNuxtConfig({
           pass: 'root'
         }
       },
-      production: {},
+      production: {
+        host: '', // initialize any property that will be set via `.env`
+        NS: '',
+        DB: ''
+      },
     },
   },
   // ...

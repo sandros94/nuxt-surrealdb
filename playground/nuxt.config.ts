@@ -5,7 +5,12 @@ export default defineNuxtConfig({
   modules: ['nuxt-surrealdb'],
   surrealdb: {
     databases: {
-      staging: {},
+      staging: {
+        host: '',
+        NS: '',
+        DB: '',
+        auth: '',
+      },
     },
   },
   devtools: { enabled: true },

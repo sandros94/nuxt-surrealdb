@@ -17,14 +17,13 @@ export default defineNuxtModule<ModuleOptions>({
     name: 'nuxt-surrealdb',
     configKey: 'surrealdb',
   },
-  // Default configuration options of the Nuxt module
   defaults: {
     databases: {
       default: {
         host: '',
         NS: '',
         DB: '',
-        auth: undefined,
+        auth: '',
       },
     },
     tokenCookieName: 'surrealdb_token',
