@@ -99,7 +99,7 @@ export function useSurrealRPC<T = any>(
     ...opts
   } = options
   const _key = computed(() => {
-    return key ?? 'D_' + hash(['surrealItems', req.method, req.params?.toString() ?? ''])
+    return key ?? 'Sur_' + hash(['useSurrealRPC', req.method, req.params?.toString() ?? ''])
   })
 
   return useAsyncData(_key.value, () => $surrealRPC<T>(req, { database, token }), opts)

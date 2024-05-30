@@ -42,7 +42,7 @@ export function useSurrealDB(overrides?: Overrides) {
       : _record
     const _table = toValue(table)
     const _key = computed(() => {
-      return key ?? 'D_' + hash(['surrealItems', toValue(_table), toValue(id || '')])
+      return key ?? 'Sur_' + hash(['surrealItems', toValue(_table), toValue(id || '')])
     })
 
     return useAsyncData<T>(_key.value, () => {
