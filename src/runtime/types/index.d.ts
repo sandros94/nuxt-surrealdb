@@ -68,9 +68,9 @@ type PatchParams<T> = [
   diff?: boolean,
 ]
 
-type QueryParams<T> = [
+type QueryParams = [
   sql: string,
-  vars?: T,
+  vars?: Record<string, any>,
 ]
 
 type SignInParams<T = { [key: string]: string | undefined }> = [{
@@ -106,7 +106,7 @@ export interface RpcMethods<T> {
   invalidate: never
   merge: MergeParams<T>
   patch: PatchParams<T>
-  query: QueryParams<T>
+  query: QueryParams
   select: [string]
   signin: SignInParams<T>
   signup: SignUpParams<T>
@@ -138,7 +138,7 @@ export interface RpcRequest<
   P extends RpcParams<M, T> = RpcParams<M, T>,
 > {
   method: M
-  params?: P
+  params: P
 }
 
 export interface RpcRequestWS<
@@ -147,7 +147,7 @@ export interface RpcRequestWS<
   P extends RpcParamsWS<M, T> = RpcParamsWS<M, T>,
 > {
   method: M
-  params?: P
+  params: P
 }
 
 type Test = RpcRequest<any, 'create'>
