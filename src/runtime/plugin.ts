@@ -1,6 +1,7 @@
 // The following nitropack import is from https://github.com/nuxt/module-builder/issues/141#issuecomment-2078248248
 import type {} from 'nitropack'
 import type { FetchOptions, ResponseType } from 'ofetch'
+import { textToBase64 } from 'undio'
 
 import type { DatabasePreset, Overrides } from './types'
 import { defineNuxtPlugin, useCookie } from '#app'
@@ -8,6 +9,25 @@ import { defineNuxtPlugin, useCookie } from '#app'
 export default defineNuxtPlugin(({ $config }) => {
   const { databases, tokenCookieName } = $config.public.surrealdb
   const userAuth = useCookie(tokenCookieName)
+
+  let authToken: string | undefined = undefined
+
+  if (databases.default.auth) {
+    if (typeof databases.default.auth === 'string') {
+      if (databases.default.auth.startsWith('Bearer ')) {
+        authToken = databases.default.auth
+      }
+      else {
+        const [user, pass] = databases.default.auth.split(':')
+        if (user && pass) {
+          authToken = `Basic ${textToBase64(`${user}:${pass}`, { dataURL: false })}`
+        }
+      }
+    }
+    else if (databases.default.auth.user && databases.default.auth.pass) {
+      authToken = `Basic ${textToBase64(`${databases.default.auth.user}:${databases.default.auth.pass}`, { dataURL: false })}`
+    }
+  }
 
   const surrealFetch = $fetch.create({
     baseURL: databases.default.host,
@@ -25,7 +45,12 @@ export default defineNuxtPlugin(({ $config }) => {
         options.headers.DB = databases.default.DB
       }
       // @ts-expect-error Authorization header type missing
-      if (userAuth.value && !options.headers.Authorization) {
+      if (authToken && !userAuth.value && !options.headers.Authorization) {
+        // @ts-expect-error Authorization header type missing
+        options.headers.Authorization = authToken
+      }
+      // @ts-expect-error Authorization header type missing
+      else if (userAuth.value && !options.headers.Authorization) {
         // @ts-expect-error Authorization header type missing
         options.headers.Authorization = `Bearer ${userAuth.value}`
       }

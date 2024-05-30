@@ -24,6 +24,7 @@ export default defineNuxtModule<ModuleOptions>({
         host: '',
         NS: '',
         DB: '',
+        auth: undefined,
       },
     },
     tokenCookieName: 'surrealdb_token',

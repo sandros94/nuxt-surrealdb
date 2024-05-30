@@ -11,6 +11,10 @@ export interface DatabasePreset {
   host?: string
   NS?: string | null
   DB?: string | null
+  auth?: string | {
+    user: string
+    pass: string
+  }
 }
 
 /* Module build utils */
