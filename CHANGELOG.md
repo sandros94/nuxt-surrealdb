@@ -1,6 +1,32 @@
 # Changelog
 
 
+## v0.0.2
+
+[compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.0.1...v0.0.2)
+
+### 🚀 Enhancements
+
+- **useSurrealRPC:** New composable ([d48709f](https://github.com/sandros94/nuxt-surrealdb/commit/d48709f))
+- Support auth per db preset ([c55c1c5](https://github.com/sandros94/nuxt-surrealdb/commit/c55c1c5))
+- Wrap rpc fetch in asyncData ([3473932](https://github.com/sandros94/nuxt-surrealdb/commit/3473932))
+
+### 🩹 Fixes
+
+- Add content-type header ([34b33d6](https://github.com/sandros94/nuxt-surrealdb/commit/34b33d6))
+
+### 📖 Documentation
+
+- Update readme ([7285c13](https://github.com/sandros94/nuxt-surrealdb/commit/7285c13))
+
+### 🏡 Chore
+
+- **release:** V0.0.1 ([42b6bbe](https://github.com/sandros94/nuxt-surrealdb/commit/42b6bbe))
+
+### ❤️ Contributors
+
+- Sandros94 ([@Sandros94](http://github.com/Sandros94))
+
 ## v0.0.1
 
 
