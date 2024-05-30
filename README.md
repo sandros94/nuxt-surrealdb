@@ -63,8 +63,8 @@ export default defineNuxtConfig({
         DB: 'demo',
 
         // Auth examples
-        auth: 'root:root'
-        auth: 'Bearer mySuperLongBearerToken'
+        auth: 'root:root',
+        auth: 'Bearer mySuperLongBearerToken',
         auth: {
           user: 'root',
           pass: 'root'
