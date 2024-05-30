@@ -1,6 +1,6 @@
-import type { AsyncData, AsyncDataOptions, UseFetchOptions, NuxtError } from 'nuxt/app'
 import { useAsyncData, useFetch, useNuxtApp, useRuntimeConfig } from 'nuxt/app'
 import { type MaybeRefOrGetter, computed, ref } from 'vue'
+import type { AsyncData, NuxtError } from 'nuxt/app'
 import type { FetchError } from 'ofetch'
 import { textToBase64 } from 'undio'
 import { hash } from 'ohash'
@@ -8,15 +8,16 @@ import { hash } from 'ohash'
 import type {
   DatabasePreset,
   KeysOf,
-  Overrides,
   PickFrom,
+  SurrealAsyncDataOptions,
+  SurrealFetchOptions,
   RpcRequest,
   RpcResponse,
 } from '../types'
 
 export function useSurrealFetch<T = any>(
   endpoint: MaybeRefOrGetter<string>,
-  options: UseFetchOptions<T> & Overrides = {},
+  options: SurrealFetchOptions<T> = {},
 ): AsyncData<PickFrom<T, KeysOf<T>> | null, FetchError<any> | null> {
   const {
     database,
@@ -87,9 +88,7 @@ export function useSurrealFetch<T = any>(
 
 export function useSurrealRPC<T = any>(
   req: RpcRequest<T>,
-  options: AsyncDataOptions<RpcResponse<T>> & Overrides & {
-    key?: string
-  } = {},
+  options: SurrealAsyncDataOptions<RpcResponse<T>> = {},
 ): AsyncData<RpcResponse<T> | null, NuxtError<unknown> | null> {
   const { $surrealRPC } = useNuxtApp()
   const {

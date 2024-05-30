@@ -1,4 +1,5 @@
 import type { PublicRuntimeConfig } from '@nuxt/schema'
+import type { AsyncDataOptions, UseFetchOptions } from 'nuxt/app'
 
 /* Database Overrides */
 
@@ -16,6 +17,13 @@ export interface DatabasePreset {
     pass: string
   }
 }
+
+/* useAsyncData and useFetch custom options */
+
+export type SurrealAsyncDataOptions<T> = AsyncDataOptions<T> & Overrides & {
+  key?: string
+}
+export type SurrealFetchOptions<T> = UseFetchOptions<T> & Overrides
 
 /* Module build utils */
 
@@ -37,7 +45,7 @@ export type KeysOf<T> = Array<
     : never
 >
 
-/* SurrealDB Methods and Params types */
+/* SurrealDB RPC Methods and Params types */
 
 type CreateParams<T> = [
   thing: string,
