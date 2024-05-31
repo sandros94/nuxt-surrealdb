@@ -1,9 +1,6 @@
 <template>
   <div>
-    <input
-      v-model="search"
-      placeholder="Table name"
-    >
+    <input v-model="search" placeholder="Table name">
     <pre v-if="data && !error">
       {{ data }}
     </pre>
@@ -14,28 +11,30 @@
       Loading...
     </div>
     <hr>
-    <input
-      v-model="newProduct.brand"
-      placeholder="Brand"
-    >
-    <input
-      v-model="newProduct.name"
-      placeholder="Name"
-    >
-    <input
-      v-model="newProduct.price"
-      placeholder="Price"
-    >
-    <input
-      v-model="newProduct.currency"
-      placeholder="Currency"
-    >
-    <button @click="execute()">
+    <input v-model="newProduct.brand" placeholder="Brand">
+    <input v-model="newProduct.name" placeholder="Name">
+    <input v-model="newProduct.price" placeholder="Price">
+    <input v-model="newProduct.currency" placeholder="Currency">
+    <button @click="executeCreate(); execute()">
       Create
     </button>
     <pre v-if="dataCreate">
       {{ dataCreate }}
     </pre>
+    <hr>
+    <label for="removeProduct">Remove product by id</label>
+    <select id="removeProduct" v-model="removeProduct">
+      <option
+        v-for="product in data?.result || []"
+        :key="product.id"
+        :value="product.id"
+      >
+        {{ product.brand }}, {{ product.name }}
+      </option>
+    </select>
+    <button @click="console.log(removeProduct); executeRemove(); execute()">
+      Remove
+    </button>
   </div>
 </template>
 
@@ -48,18 +47,22 @@ interface Product {
   currency: string
 }
 
-const { create, select } = useSurrealDB()
+const { create, select, remove } = useSurrealDB()
 
 const search = ref('products')
-
-const { data, error } = await select<Product[]>(search, {
+const { data, error, execute } = await select<Product[]>(search, {
   database: 'staging',
-  key: 'select',
+  watch: [search],
 })
 
 const newProduct = reactive<Partial<Product>>({})
-const { data: dataCreate, execute } = await create<Product>('products', {
+const { data: dataCreate, execute: executeCreate } = await create<Product>('products', {
   data: newProduct,
+  database: 'staging',
+})
+
+const removeProduct = ref('')
+const { execute: executeRemove } = await remove(removeProduct, {
   database: 'staging',
 })
 

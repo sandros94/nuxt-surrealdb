@@ -52,7 +52,6 @@ export function useSurrealDB(overrides?: Overrides) {
     })
   }
 
-  // TODO: delete [ thing ]
   // TODO: info
   // TODO: insert [ thing, data ]
   // TODO: invalidate
@@ -83,6 +82,30 @@ export function useSurrealDB(overrides?: Overrides) {
     })
   }
 
+  // remove [ thing ] (`delete` is a js reserved name)
+  async function $remove<T = any>(
+    thing: MROGParam<T, 'delete', 0>,
+    ovr?: Overrides,
+  ) {
+    return $surrealRPC<T>({ method: 'delete', params: [toValue(thing)] }, ovr)
+  }
+  async function remove<T = any>(
+    thing: MROGParam<T, 'delete', 0>,
+    options?: SurrealRpcOptions<T>,
+  ) {
+    const { key, immediate, watch, ...opts } = options || {}
+
+    const params = computed<RpcRequest<T, 'delete'>['params']>(() => ([toValue(thing)]))
+    const _key = key ?? 'Sur_' + hash(['surreal', 'delete', toValue(params)])
+
+    return useSurrealRPC<T>({ method: 'delete', params }, {
+      ...opts,
+      key: _key,
+      immediate: immediate === undefined ? false : immediate,
+      watch: false,
+    })
+  }
+
   // select [ thing ]
   async function $select<T = any>(
     thing: MROGParam<T, 'select', 0>,
@@ -109,7 +132,6 @@ export function useSurrealDB(overrides?: Overrides) {
   // TODO: signin [ ... ]
   // TODO: signup [ NS, DB, SC, ... ]
   // TODO: update [ thing, data ]
-  // TODO: use [ ns, db ]
 
   async function $version(ovr?: Overrides) {
     return $surrealFetch('version', {
@@ -129,6 +151,8 @@ export function useSurrealDB(overrides?: Overrides) {
     query,
     $select,
     select,
+    $remove,
+    remove,
     $sql: $query,
     sql: query,
     $version,
