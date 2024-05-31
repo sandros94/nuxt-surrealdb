@@ -1,6 +1,64 @@
 # Changelog
 
 
+## v0.0.3
+
+[compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.0.2...v0.0.3)
+
+### 🚀 Enhancements
+
+- Query alias for sql function ([e6a165a](https://github.com/sandros94/nuxt-surrealdb/commit/e6a165a))
+- Dedicated SurrealRpcOptions type ([474e513](https://github.com/sandros94/nuxt-surrealdb/commit/474e513))
+- **select:** New function ([ee50c3e](https://github.com/sandros94/nuxt-surrealdb/commit/ee50c3e))
+- More type improvements ([60b11fe](https://github.com/sandros94/nuxt-surrealdb/commit/60b11fe))
+- **useSurrealRPC:** Type improvements and key defaults ([6f95e1e](https://github.com/sandros94/nuxt-surrealdb/commit/6f95e1e))
+- **useSurrealDB:** Functions params type improvements ([1c7472c](https://github.com/sandros94/nuxt-surrealdb/commit/1c7472c))
+- **create:** New useSurrealDB function ([bf7ab64](https://github.com/sandros94/nuxt-surrealdb/commit/bf7ab64))
+- **remove:** New useSurrealDB function ([5467290](https://github.com/sandros94/nuxt-surrealdb/commit/5467290))
+- **insert:** New useSurrealDB function ([fd46b99](https://github.com/sandros94/nuxt-surrealdb/commit/fd46b99))
+- **merge:** New useSurrealDB function ([f2d9e7a](https://github.com/sandros94/nuxt-surrealdb/commit/f2d9e7a))
+- **patch:** New useSurrealDB function ([2b46de0](https://github.com/sandros94/nuxt-surrealdb/commit/2b46de0))
+- **update:** New useSurrealDB function ([9e38976](https://github.com/sandros94/nuxt-surrealdb/commit/9e38976))
+- **authenticate:** New useSurrealDB function ([6bd0c09](https://github.com/sandros94/nuxt-surrealdb/commit/6bd0c09))
+- **info:** New useSurrealDB function ([dda55a2](https://github.com/sandros94/nuxt-surrealdb/commit/dda55a2))
+- **invalidate:** New useSurrealDB function ([8486d42](https://github.com/sandros94/nuxt-surrealdb/commit/8486d42))
+- **singin & singup:** New useSurrealDB functions ([2ec9235](https://github.com/sandros94/nuxt-surrealdb/commit/2ec9235))
+
+### 🩹 Fixes
+
+- Wrong useAsyncData base key ([a9491ef](https://github.com/sandros94/nuxt-surrealdb/commit/a9491ef))
+- Rpc types ([c5a1eb9](https://github.com/sandros94/nuxt-surrealdb/commit/c5a1eb9))
+- **useSurrealRPC:** Simplify reactivity layers ([d304f4a](https://github.com/sandros94/nuxt-surrealdb/commit/d304f4a))
+- **useSurrealRPC:** Missing return type ([559f0b9](https://github.com/sandros94/nuxt-surrealdb/commit/559f0b9))
+- Types and useSurrealRPC keys ([87df8a0](https://github.com/sandros94/nuxt-surrealdb/commit/87df8a0))
+- **useSurrealRPC:** Reactivity ([1c3aeac](https://github.com/sandros94/nuxt-surrealdb/commit/1c3aeac))
+- Allow override watch: false ([2e98fa8](https://github.com/sandros94/nuxt-surrealdb/commit/2e98fa8))
+- **useSurrealDB:** Database preset override ([9ee177d](https://github.com/sandros94/nuxt-surrealdb/commit/9ee177d))
+
+### 💅 Refactors
+
+- $surrealFetchOptionsOverride ([e6276dc](https://github.com/sandros94/nuxt-surrealdb/commit/e6276dc))
+- Use rpc for sql function ([98b0b0e](https://github.com/sandros94/nuxt-surrealdb/commit/98b0b0e))
+- Standardize parameters names ([5bfe95a](https://github.com/sandros94/nuxt-surrealdb/commit/5bfe95a))
+
+### 📖 Documentation
+
+- Fix readme ([27f70f9](https://github.com/sandros94/nuxt-surrealdb/commit/27f70f9))
+- **fix:** Database preset initialization ([cc5a493](https://github.com/sandros94/nuxt-surrealdb/commit/cc5a493))
+- Update readme ([9623f53](https://github.com/sandros94/nuxt-surrealdb/commit/9623f53))
+
+### 🏡 Chore
+
+- Reorganize types ([200d159](https://github.com/sandros94/nuxt-surrealdb/commit/200d159))
+- Remove leftover ([32efb65](https://github.com/sandros94/nuxt-surrealdb/commit/32efb65))
+- Update eslint config ([78ef3d3](https://github.com/sandros94/nuxt-surrealdb/commit/78ef3d3))
+- Update comments ([c769904](https://github.com/sandros94/nuxt-surrealdb/commit/c769904))
+- More type fixes ([cb51514](https://github.com/sandros94/nuxt-surrealdb/commit/cb51514))
+
+### ❤️ Contributors
+
+- Sandros94 ([@Sandros94](http://github.com/Sandros94))
+
 ## v0.0.2
 
 [compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.0.1...v0.0.2)
