@@ -19,5 +19,10 @@ export default createConfigForNuxt({
     rules: {
       '@typescript-eslint/no-unused-vars': 'warn',
       '@typescript-eslint/no-explicit-any': 'off',
+      'vue/max-attributes-per-line': ['warn', {
+        singleline: {
+          max: 3,
+        },
+      }],
     },
   })
