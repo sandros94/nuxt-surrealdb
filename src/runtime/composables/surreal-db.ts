@@ -107,7 +107,6 @@ export function useSurrealDB(overrides?: Overrides) {
     options?: SurrealAsyncDataOptions<RpcResponse<T>> & { vars: RpcRequest<T, 'query'>['params'][1] },
   ): Promise<AsyncData<RpcResponse<T> | null, FetchError<any> | null>> {
     const { vars, ...opts } = options || {}
-    console.log(vars)
     return useSurrealRPC<T>({ method: 'query', params: [sql, vars] }, opts)
   }
 
@@ -124,6 +123,8 @@ export function useSurrealDB(overrides?: Overrides) {
 
   return {
     items,
+    $query: $sql,
+    query: sql,
     $sql,
     sql,
     $version,
