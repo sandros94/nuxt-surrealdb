@@ -30,9 +30,9 @@ export function useSurrealDB(overrides?: Overrides) {
   // create [ thing, data ]
   async function $create<T = any>(
     thing: MROGParam<T, 'create', 0>,
-    opts?: Overrides & { data?: MROGParam<T, 'create', 1> },
+    options?: Overrides & { data?: MROGParam<T, 'create', 1> },
   ) {
-    const { data, ...ovr } = opts || {}
+    const { data, ...ovr } = options || {}
     return $surrealRPC<T>({ method: 'create', params: [toValue(thing), toValue(data)] }, ovr)
   }
   async function create<T = any>(
@@ -57,9 +57,9 @@ export function useSurrealDB(overrides?: Overrides) {
   // insert [ thing, data ]
   async function $insert<T = any>(
     thing: MROGParam<T, 'insert', 0>,
-    opts?: Overrides & { data?: MROGParam<T, 'insert', 1> },
+    options?: Overrides & { data?: MROGParam<T, 'insert', 1> },
   ) {
-    const { data, ...ovr } = opts || {}
+    const { data, ...ovr } = options || {}
     return $surrealRPC<T>({ method: 'insert', params: [toValue(thing), toValue(data)] }, ovr)
   }
   async function insert<T = any>(
@@ -84,16 +84,16 @@ export function useSurrealDB(overrides?: Overrides) {
   // merge [ thing, data ]
   async function $merge<T = any>(
     thing: MROGParam<T, 'merge', 0>,
-    opts: Overrides & { data: MROGParam<T, 'merge', 1> },
+    options: Overrides & { data: MROGParam<T, 'merge', 1> },
   ) {
-    const { data, ...ovr } = opts || {}
+    const { data, ...ovr } = options
     return $surrealRPC<T>({ method: 'merge', params: [toValue(thing), toValue(data)] }, ovr)
   }
   async function merge<T = any>(
     thing: MROGParam<T, 'merge', 0>,
     options: SurrealRpcOptions<T> & { data: MROGParam<T, 'merge', 1> },
   ): Promise<AsyncData<RpcResponse<T> | null, FetchError<any> | null>> {
-    const { data, immediate, key, watch, ...opts } = options || {}
+    const { data, immediate, key, watch, ...opts } = options
 
     const params = computed<RpcRequest<T, 'merge'>['params']>(() => ([toValue(thing), toValue(data)]))
     const _key = key ?? 'Sur_' + hash(['surreal', 'merge', toValue(params)])
@@ -134,9 +134,9 @@ export function useSurrealDB(overrides?: Overrides) {
   // query [ sql, vars ]
   async function $query<T = any>(
     sql: MROGParam<T, 'query', 0>,
-    opts?: Overrides & { vars?: MROGParam<T, 'query', 1> },
+    options?: Overrides & { vars?: MROGParam<T, 'query', 1> },
   ) {
-    const { vars, ...ovr } = opts || {}
+    const { vars, ...ovr } = options || {}
     return $surrealRPC<T>({ method: 'query', params: [toValue(sql), toValue(vars)] }, ovr)
   }
   async function query<T = any>(
@@ -158,9 +158,9 @@ export function useSurrealDB(overrides?: Overrides) {
   // remove [ thing ] (`delete` is a js reserved name)
   async function $remove<T = any>(
     thing: MROGParam<T, 'delete', 0>,
-    ovr?: Overrides,
+    overrides?: Overrides,
   ) {
-    return $surrealRPC<T>({ method: 'delete', params: [toValue(thing)] }, ovr)
+    return $surrealRPC<T>({ method: 'delete', params: [toValue(thing)] }, overrides)
   }
   async function remove<T = any>(
     thing: MROGParam<T, 'delete', 0>,
@@ -182,9 +182,9 @@ export function useSurrealDB(overrides?: Overrides) {
   // select [ thing ]
   async function $select<T = any>(
     thing: MROGParam<T, 'select', 0>,
-    ovr?: Overrides,
+    overrides?: Overrides,
   ) {
-    return $surrealRPC<T>({ method: 'select', params: [toValue(thing)] }, ovr)
+    return $surrealRPC<T>({ method: 'select', params: [toValue(thing)] }, overrides)
   }
   async function select<T = any>(
     thing: MROGParam<T, 'select', 0>,
