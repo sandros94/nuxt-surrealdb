@@ -4,6 +4,8 @@ import { hash } from 'ohash'
 
 import type {
   Overrides,
+  RpcMethods,
+  RpcParams,
   RpcRequest,
   RpcResponse,
   SurrealRpcOptions,
@@ -17,6 +19,8 @@ import {
   useSurrealFetch,
   useSurrealRPC,
 } from '#imports'
+
+type MROGParam<T, M extends keyof RpcMethods<T>, N extends number> = MaybeRefOrGetter<RpcParams<T, M>[N]>
 
 export function useSurrealDB(overrides?: Overrides) {
   const { $surrealFetch, $surrealFetchOptionsOverride, $surrealRPC } = useNuxtApp()
@@ -32,15 +36,15 @@ export function useSurrealDB(overrides?: Overrides) {
 
   // query [ sql, vars ]
   async function $query<T = any>(
-    sql: RpcRequest<T, 'query'>['params'][0],
-    opts?: Overrides & { vars?: RpcRequest<T, 'query'>['params'][1] },
+    sql: MROGParam<T, 'query', 0>,
+    opts?: Overrides & { vars?: MROGParam<T, 'query', 1> },
   ) {
     const { vars, ...ovr } = opts || {}
-    return $surrealRPC<T>({ method: 'query', params: [sql, vars] }, ovr)
+    return $surrealRPC<T>({ method: 'query', params: [toValue(sql), toValue(vars)] }, ovr)
   }
   async function query<T = any>(
-    sql: MaybeRefOrGetter<RpcRequest<T, 'query'>['params'][0]>,
-    options?: SurrealRpcOptions<T> & { vars?: MaybeRefOrGetter<RpcRequest<T, 'query'>['params'][1]> },
+    sql: MROGParam<T, 'query', 0>,
+    options?: SurrealRpcOptions<T> & { vars?: MROGParam<T, 'query', 1> },
   ): Promise<AsyncData<RpcResponse<T> | null, FetchError<any> | null>> {
     const { key, vars, watch, ...opts } = options || {}
 
@@ -56,13 +60,13 @@ export function useSurrealDB(overrides?: Overrides) {
 
   // select [ thing ]
   async function $select<T = any>(
-    thing: RpcRequest<T, 'select'>['params'][0],
+    thing: MROGParam<T, 'select', 0>,
     ovr?: Overrides,
   ) {
-    return $surrealRPC<T>({ method: 'select', params: [thing] }, ovr)
+    return $surrealRPC<T>({ method: 'select', params: [toValue(thing)] }, ovr)
   }
   async function select<T = any>(
-    thing: MaybeRefOrGetter<RpcRequest<T, 'select'>['params'][0]>,
+    thing: MROGParam<T, 'select', 0>,
     options?: SurrealRpcOptions<T>,
   ): Promise<AsyncData<RpcResponse<T> | null, FetchError<any> | null>> {
     const { key, watch, ...opts } = options || {}
