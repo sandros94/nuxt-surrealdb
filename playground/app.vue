@@ -4,7 +4,7 @@
     <pre v-if="data && !error">
       {{ data }}
     </pre>
-    <div v-else-if="error">
+    <div v-else-if="error" style="color: crimson;">
       {{ error }}
     </div>
     <div v-else>
@@ -35,6 +35,15 @@
     <button @click="console.log(removeProduct); executeRemove(); execute()">
       Remove
     </button>
+    <hr>
+    <div v-if="forcedError">
+      This is a forced error, cought by <b>
+        useSurrealRPC:
+      </b>
+      <div style="color: crimson;">
+        {{ forcedError }}
+      </div>
+    </div>
   </div>
 </template>
 
@@ -47,7 +56,7 @@ interface Product {
   currency: string
 }
 
-const { create, remove, select } = useSurrealDB({
+const { create, remove, select, sql } = useSurrealDB({
   database: 'staging',
 })
 
@@ -64,4 +73,8 @@ const { data: dataCreate, execute: executeCreate } = await create<Product>('prod
 
 const removeProduct = ref('')
 const { execute: executeRemove } = await remove(removeProduct)
+
+const { error: forcedError } = await sql<Product[]>('SELECT * ROM products;', {
+  server: false,
+})
 </script>

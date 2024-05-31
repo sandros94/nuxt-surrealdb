@@ -9,21 +9,22 @@ import {
 import type {
   KeysOf,
   PickFrom,
-  SurrealFetchOptions,
+  SurrealUseFetchOptions,
   SurrealRpcOptions,
   RpcRequest,
-  RpcResponse,
+  RpcResponseOk,
+  RpcResponseError,
 } from '../types'
 import type {
   ComputedRef,
   MaybeRefOrGetter,
 } from '#imports'
-import { ref, toValue } from '#imports'
+import { createError, ref, toValue } from '#imports'
 
-export function useSurrealFetch<T = any>(
+export function useSurrealFetch<DataT = any, ErrorT = any>(
   endpoint: MaybeRefOrGetter<string>,
-  options: SurrealFetchOptions<T> = {},
-): AsyncData<PickFrom<T, KeysOf<T>> | null, FetchError<any> | null> {
+  options: SurrealUseFetchOptions<DataT> = {},
+): AsyncData<PickFrom<DataT, KeysOf<DataT>> | null, ErrorT | FetchError<any> | null> {
   const {
     database,
     token,
@@ -50,14 +51,22 @@ export function useSurrealRPC<T = any>(
     params?: MaybeRefOrGetter<RpcRequest<T>['params']> | ComputedRef<RpcRequest<T>['params']>
   },
   options?: SurrealRpcOptions<T>,
-): AsyncData<RpcResponse<T> | null, FetchError<any> | null> {
+): AsyncData<RpcResponseOk<T> | null, RpcResponseError | FetchError<any> | null> {
   const id = ref(0)
   const { key, ...opts } = options || {}
 
   const _key = key ?? 'Sur_' + hash(['surreal', 'rpc', toValue(req.method), toValue(req.params)])
 
-  return useSurrealFetch<RpcResponse<T>>('rpc', {
+  return useSurrealFetch<RpcResponseOk<T>, RpcResponseError>('rpc', {
     ...opts,
+    onResponse({ response }) {
+      if (response.status === 200 && response._data.error) {
+        throw createError({
+          statusCode: response._data.error.code,
+          statusMessage: response._data.error.message,
+        })
+      }
+    },
     method: 'POST',
     body: {
       id: id.value++,

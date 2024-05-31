@@ -3,8 +3,8 @@ import type {} from 'nitropack'
 import type { FetchOptions, ResponseType } from 'ofetch'
 import { textToBase64 } from 'undio'
 
-import type { DatabasePreset, Overrides, RpcRequest, RpcResponse } from './types'
-import { defineNuxtPlugin, useCookie } from '#app'
+import type { DatabasePreset, Overrides, RpcRequest, RpcResponse, SurrealFetchOptions } from './types'
+import { createError, defineNuxtPlugin, useCookie } from '#imports'
 
 export default defineNuxtPlugin(({ $config }) => {
   const { databases, tokenCookieName } = $config.public.surrealdb
@@ -120,8 +120,16 @@ export default defineNuxtPlugin(({ $config }) => {
   function surrealRPC<T = any>(req: RpcRequest<T>, ovr?: Overrides) {
     let id = 0
 
-    return surrealFetch<RpcResponse<T>>('rpc', {
+    return surrealFetch<RpcResponse<T>, string, SurrealFetchOptions>('rpc', {
       ...surrealFetchOptionsOverride(ovr),
+      onResponse({ response }) {
+        if (response.status === 200 && response._data.error) {
+          throw createError({
+            statusCode: response._data.error.code,
+            statusMessage: response._data.error.message,
+          })
+        }
+      },
       method: 'POST',
       body: {
         id: id++,

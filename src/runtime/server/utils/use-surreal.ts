@@ -1,13 +1,10 @@
 import type { FetchOptions, ResponseType } from 'ofetch'
-import type { NitroFetchRequest } from 'nitropack'
 import { textToBase64 } from 'undio'
 import type { H3Event } from 'h3'
 import { getCookie } from 'h3'
 
-import type { DatabasePreset, Overrides, RpcRequest, RpcResponse } from '../../types'
+import type { DatabasePreset, Overrides, RpcRequest, RpcResponse, SurrealFetchOptions } from '../../types'
 import { useRuntimeConfig } from '#imports'
-
-type Methods = 'get' | 'post' | 'put' | 'patch' | 'delete'
 
 function authTokenFn(dbAuth: DatabasePreset['auth']) {
   if (!dbAuth) return undefined
@@ -29,12 +26,11 @@ function authTokenFn(dbAuth: DatabasePreset['auth']) {
 
 export function surrealFetch<
   T = any,
-  R extends NitroFetchRequest = NitroFetchRequest,
-  O extends ResponseType = ResponseType,
+  R extends string = string,
 >(
   event: H3Event,
   req: R,
-  options: Omit<FetchOptions<O>, 'method'> & { method: Uppercase<Methods> | Methods },
+  options: SurrealFetchOptions,
 ) {
   const { databases, tokenCookieName } = useRuntimeConfig(event).public.surrealdb
   const authToken = authTokenFn(databases.default.auth)

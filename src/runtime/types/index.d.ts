@@ -1,5 +1,6 @@
 import type { PublicRuntimeConfig } from '@nuxt/schema'
 import type { AsyncDataOptions, UseFetchOptions } from 'nuxt/app'
+import type { FetchOptions, ResponseType } from 'ofetch'
 
 /* Database Overrides */
 
@@ -23,8 +24,13 @@ export interface DatabasePreset {
 export type SurrealAsyncDataOptions<T> = AsyncDataOptions<T> & Overrides & {
   key?: string
 }
-export type SurrealFetchOptions<T> = UseFetchOptions<T> & Overrides
-export type SurrealRpcOptions<T> = Omit<SurrealFetchOptions<RpcResponse<T>>, 'method' | 'body'>
+export type SurrealFetchOptions<
+  T extends ResponseType = ResponseType,
+> = Omit<FetchOptions<T>, 'method'> & {
+  method?: Uppercase<SurrealMethods> | SurrealMethods
+}
+export type SurrealUseFetchOptions<T> = UseFetchOptions<T> & Overrides
+export type SurrealRpcOptions<T> = Omit<SurrealUseFetchOptions<RpcResponseOk<T>>, 'method' | 'body'>
 
 /* Utils */
 
@@ -66,6 +72,8 @@ export type JSONPatch<T> = {
   path: JSONPatchPath<T>
   value?: JSONPatchValue<T, JSONPatchPath<T>>
 }
+
+export type SurrealMethods = 'get' | 'post' | 'put' | 'patch' | 'delete'
 
 /* SurrealDB RPC Methods and Params types */
 

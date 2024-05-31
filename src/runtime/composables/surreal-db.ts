@@ -7,7 +7,8 @@ import type {
   RpcMethods,
   RpcParams,
   RpcRequest,
-  RpcResponse,
+  RpcResponseOk,
+  RpcResponseError,
   SurrealRpcOptions,
 } from '../types'
 
@@ -35,7 +36,7 @@ export function useSurrealDB(overrides?: Overrides) {
   async function authenticate(
     token: MROGParam<any, 'authenticate', 0>,
     options?: SurrealRpcOptions<any>,
-  ): Promise<AsyncData<RpcResponse<any> | null, FetchError<any> | null>> {
+  ): Promise<AsyncData<RpcResponseOk<any> | null, RpcResponseError | FetchError<any> | null>> {
     const { database, key, immediate, token: tokenOvr, watch, ...opts } = options || {}
 
     const params = computed<RpcRequest<any, 'authenticate'>['params']>(() => ([toValue(token)]))
@@ -62,7 +63,7 @@ export function useSurrealDB(overrides?: Overrides) {
   async function create<T = any>(
     thing: MROGParam<T, 'create', 0>,
     options?: SurrealRpcOptions<T> & { data?: MROGParam<T, 'create', 1> },
-  ): Promise<AsyncData<RpcResponse<T> | null, FetchError<any> | null>> {
+  ): Promise<AsyncData<RpcResponseOk<T> | null, RpcResponseError | FetchError<any> | null>> {
     const { data, database, immediate, key, token, watch, ...opts } = options || {}
 
     const params = computed<RpcRequest<T, 'create'>['params']>(() => ([toValue(thing), toValue(data)]))
@@ -86,7 +87,7 @@ export function useSurrealDB(overrides?: Overrides) {
   }
   async function info<T = any>(
     options?: SurrealRpcOptions<T>,
-  ): Promise<AsyncData<RpcResponse<T> | null, FetchError<any> | null>> {
+  ): Promise<AsyncData<RpcResponseOk<T> | null, RpcResponseError | FetchError<any> | null>> {
     const { database, key, token, ...opts } = options || {}
 
     const _key = key ?? 'Sur_' + hash(['surreal', 'info'])
@@ -110,7 +111,7 @@ export function useSurrealDB(overrides?: Overrides) {
   async function insert<T = any>(
     thing: MROGParam<T, 'insert', 0>,
     options?: SurrealRpcOptions<T> & { data?: MROGParam<T, 'insert', 1> },
-  ): Promise<AsyncData<RpcResponse<T> | null, FetchError<any> | null>> {
+  ): Promise<AsyncData<RpcResponseOk<T> | null, RpcResponseError | FetchError<any> | null>> {
     const { data, database, immediate, key, token, watch, ...opts } = options || {}
 
     const params = computed<RpcRequest<T, 'insert'>['params']>(() => ([toValue(thing), toValue(data)]))
@@ -134,7 +135,7 @@ export function useSurrealDB(overrides?: Overrides) {
   }
   async function invalidate(
     options?: SurrealRpcOptions<any>,
-  ): Promise<AsyncData<RpcResponse<any> | null, FetchError<any> | null>> {
+  ): Promise<AsyncData<RpcResponseOk<any> | null, RpcResponseError | FetchError<any> | null>> {
     const { database, immediate, key, token, watch, ...opts } = options || {}
 
     const _key = key ?? 'Sur_' + hash(['surreal', 'invalidate'])
@@ -160,7 +161,7 @@ export function useSurrealDB(overrides?: Overrides) {
   async function merge<T = any>(
     thing: MROGParam<T, 'merge', 0>,
     options: SurrealRpcOptions<T> & { data: MROGParam<T, 'merge', 1> },
-  ): Promise<AsyncData<RpcResponse<T> | null, FetchError<any> | null>> {
+  ): Promise<AsyncData<RpcResponseOk<T> | null, RpcResponseError | FetchError<any> | null>> {
     const { data, database, immediate, key, token, watch, ...opts } = options
 
     const params = computed<RpcRequest<T, 'merge'>['params']>(() => ([toValue(thing), toValue(data)]))
@@ -187,7 +188,7 @@ export function useSurrealDB(overrides?: Overrides) {
   async function patch<T = any>(
     thing: MROGParam<T, 'patch', 0>,
     options: SurrealRpcOptions<T> & { patches: MROGParam<T, 'patch', 1>, diff?: MROGParam<T, 'patch', 2> },
-  ): Promise<AsyncData<RpcResponse<T> | null, FetchError<any> | null>> {
+  ): Promise<AsyncData<RpcResponseOk<T> | null, RpcResponseError | FetchError<any> | null>> {
     const { database, diff, immediate, key, patches, token, watch, ...opts } = options
 
     const params = computed<RpcRequest<T, 'patch'>['params']>(() => ([toValue(thing), toValue(patches), toValue(diff)]))
@@ -214,7 +215,7 @@ export function useSurrealDB(overrides?: Overrides) {
   async function query<T = any>(
     sql: MROGParam<T, 'query', 0>,
     options?: SurrealRpcOptions<T> & { vars?: MROGParam<T, 'query', 1> },
-  ): Promise<AsyncData<RpcResponse<T> | null, FetchError<any> | null>> {
+  ): Promise<AsyncData<RpcResponseOk<T> | null, RpcResponseError | FetchError<any> | null>> {
     const { database, key, vars, token, watch, ...opts } = options || {}
 
     const params = computed<RpcRequest<T, 'query'>['params']>(() => ([toValue(sql), toValue(vars)]))
@@ -239,7 +240,7 @@ export function useSurrealDB(overrides?: Overrides) {
   async function remove(
     thing: MROGParam<any, 'delete', 0>,
     options?: SurrealRpcOptions<any>,
-  ): Promise<AsyncData<RpcResponse<any> | null, FetchError<any> | null>> {
+  ): Promise<AsyncData<RpcResponseOk<any> | null, RpcResponseError | FetchError<any> | null>> {
     const { database, key, immediate, token, watch, ...opts } = options || {}
 
     const params = computed<RpcRequest<any, 'delete'>['params']>(() => ([toValue(thing)]))
@@ -265,7 +266,7 @@ export function useSurrealDB(overrides?: Overrides) {
   async function select<T = any>(
     thing: MROGParam<T, 'select', 0>,
     options?: SurrealRpcOptions<T>,
-  ): Promise<AsyncData<RpcResponse<T> | null, FetchError<any> | null>> {
+  ): Promise<AsyncData<RpcResponseOk<T> | null, RpcResponseError | FetchError<any> | null>> {
     const { database, key, token, watch, ...opts } = options || {}
 
     const params = computed<RpcRequest<T, 'select'>['params']>(() => ([toValue(thing)]))
@@ -290,7 +291,7 @@ export function useSurrealDB(overrides?: Overrides) {
   async function signin<T = any>(
     auth: MROGParam<T, 'signin', 0>,
     options?: SurrealRpcOptions<T>,
-  ): Promise<AsyncData<RpcResponse<T> | null, FetchError<any> | null>> {
+  ): Promise<AsyncData<RpcResponseOk<T> | null, RpcResponseError | FetchError<any> | null>> {
     const { database, immediate, key, token, watch, ...opts } = options || {}
 
     const params = computed<RpcRequest<T, 'signin'>['params']>(() => ([toValue(auth)]))
@@ -316,7 +317,7 @@ export function useSurrealDB(overrides?: Overrides) {
   async function signup<T = any>(
     auth: MROGParam<T, 'signup', 0>,
     options?: SurrealRpcOptions<T>,
-  ): Promise<AsyncData<RpcResponse<T> | null, FetchError<any> | null>> {
+  ): Promise<AsyncData<RpcResponseOk<T> | null, RpcResponseError | FetchError<any> | null>> {
     const { database, immediate, key, token, watch, ...opts } = options || {}
 
     const params = computed<RpcRequest<T, 'signup'>['params']>(() => ([toValue(auth)]))
@@ -343,7 +344,7 @@ export function useSurrealDB(overrides?: Overrides) {
   async function update<T = any>(
     thing: MROGParam<T, 'update', 0>,
     options?: SurrealRpcOptions<T> & { data?: MROGParam<T, 'update', 1> },
-  ): Promise<AsyncData<RpcResponse<T> | null, FetchError<any> | null>> {
+  ): Promise<AsyncData<RpcResponseOk<T> | null, RpcResponseError | FetchError<any> | null>> {
     const { data, database, immediate, key, token, watch, ...opts } = options || {}
 
     const params = computed<RpcRequest<T, 'update'>['params']>(() => ([toValue(thing), toValue(data)]))
