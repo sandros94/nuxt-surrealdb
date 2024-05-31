@@ -106,7 +106,30 @@ export function useSurrealDB(overrides?: Overrides) {
     })
   }
 
-  // TODO: patch [ thing, patches, diff ]
+  // patch [ thing, patches, diff ]
+  async function $patch<T = any>(
+    thing: MROGParam<T, 'patch', 0>,
+    options: Overrides & { patches: MROGParam<T, 'patch', 1>, diff?: MROGParam<T, 'patch', 2> },
+  ) {
+    const { diff, patches, ...ovr } = options
+    return $surrealRPC<T>({ method: 'patch', params: [toValue(thing), toValue(patches), toValue(diff)] }, ovr)
+  }
+  async function patch<T = any>(
+    thing: MROGParam<T, 'patch', 0>,
+    options: SurrealRpcOptions<T> & { patches: MROGParam<T, 'patch', 1>, diff?: MROGParam<T, 'patch', 2> },
+  ): Promise<AsyncData<RpcResponse<T> | null, FetchError<any> | null>> {
+    const { diff, immediate, key, patches, watch, ...opts } = options
+
+    const params = computed<RpcRequest<T, 'patch'>['params']>(() => ([toValue(thing), toValue(patches), toValue(diff)]))
+    const _key = key ?? 'Sur_' + hash(['surreal', 'patch', toValue(params)])
+
+    return useSurrealRPC<T>({ method: 'patch', params }, {
+      ...opts,
+      immediate: immediate === undefined ? false : immediate,
+      key: _key,
+      watch: false,
+    })
+  }
 
   // query [ sql, vars ]
   async function $query<T = any>(
@@ -203,6 +226,8 @@ export function useSurrealDB(overrides?: Overrides) {
     insert,
     $merge,
     merge,
+    $patch,
+    patch,
     $query,
     query,
     $select,
