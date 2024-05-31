@@ -3,12 +3,28 @@ import type { FetchError } from 'ofetch'
 import { joinURL } from 'ufo'
 import { hash } from 'ohash'
 
-import type { Overrides, PickFrom, KeysOf } from '../types'
+import type {
+  Overrides,
+  PickFrom,
+  KeysOf,
+  RpcRequest,
+  RpcResponse,
+  SurrealAsyncDataOptions,
+} from '../types'
+
 import type { MaybeRefOrGetter } from '#imports'
-import { computed, createError, toValue, useAsyncData, useNuxtApp, useSurrealFetch } from '#imports'
+import {
+  computed,
+  createError,
+  toValue,
+  useAsyncData,
+  useNuxtApp,
+  useSurrealFetch,
+  useSurrealRPC,
+} from '#imports'
 
 export function useSurrealDB(overrides?: Overrides) {
-  const { $surrealFetch, $surrealFetchOptionsOverride } = useNuxtApp()
+  const { $surrealFetch, $surrealFetchOptionsOverride, $surrealRPC } = useNuxtApp()
 
   // TODO: GET /export Exports all data for a specific Namespace and Database
   // TODO: POST /import Imports data into a specific Namespace and Database
@@ -78,22 +94,28 @@ export function useSurrealDB(overrides?: Overrides) {
   // TODO: POST /signup Signs-up as a scope user to a specific scope
   // TODO: POST /signin Signs-in as a root, namespace, database, or scope user
 
-  async function sql<T = any>(sql: string, ovr?: Overrides): Promise<AsyncData<PickFrom<T, KeysOf<T>> | null, FetchError<any> | null>> {
-    return useSurrealFetch<T>('sql', {
-      ...(ovr || overrides),
-      method: 'POST',
-      body: sql,
-    })
+  async function $sql<T = any>(
+    sql: RpcRequest<T, 'query'>['params'][0],
+    opts?: Overrides & { vars: RpcRequest<T, 'query'>['params'][1] },
+  ) {
+    const { vars, ...ovr } = opts || {}
+    return $surrealRPC<T>({ method: 'query', params: [sql, vars] }, ovr)
   }
 
-  async function $sql<T = any>(sql: string, ovr?: Overrides) {
-    return $surrealFetch<T>('sql', {
+  async function sql<T = any>(
+    sql: RpcRequest<T, 'query'>['params'][0],
+    options?: SurrealAsyncDataOptions<RpcResponse<T>> & { vars: RpcRequest<T, 'query'>['params'][1] },
+  ): Promise<AsyncData<RpcResponse<T> | null, FetchError<any> | null>> {
+    const { vars, ...opts } = options || {}
+    console.log(vars)
+    return useSurrealRPC<T>({ method: 'query', params: [sql, vars] }, opts)
+  }
+
+  async function $version(ovr?: Overrides) {
+    return $surrealFetch('version', {
       ...$surrealFetchOptionsOverride(ovr || overrides),
-      method: 'POST',
-      body: sql,
     })
   }
-
   async function version(ovr?: Overrides): Promise<AsyncData<any, FetchError<any> | null>> {
     return useSurrealFetch('version', {
       ...$surrealFetchOptionsOverride(ovr || overrides),
@@ -102,8 +124,9 @@ export function useSurrealDB(overrides?: Overrides) {
 
   return {
     items,
-    sql,
     $sql,
+    sql,
+    $version,
     version,
   }
 }

@@ -1,5 +1,9 @@
 <template>
   <div>
+    <input
+      v-model="search"
+      placeholder="Table name"
+    >
     <pre v-if="data && !error">
       {{ data }}
     </pre>
@@ -21,8 +25,14 @@ interface Product {
   price: number
   currency: string
 }
-const { data, error } = await useSurrealRPC<Product[]>({
-  method: 'select',
-  params: ['products'],
+
+const { sql } = useSurrealDB()
+
+const search = ref('products')
+
+const { data, error } = await sql<Product[]>('SELECT * FROM type::table($tb);', {
+  vars: { tb: search },
 })
+
+error.value && console.error('error', error.value)
 </script>
