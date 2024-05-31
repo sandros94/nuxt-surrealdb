@@ -74,7 +74,24 @@ export function useSurrealDB(overrides?: Overrides) {
     })
   }
 
-  // TODO: info
+  // info
+  async function $info<T = any>(
+    overrides?: Overrides,
+  ) {
+    return $surrealRPC<T>({ method: 'info', params: [] }, overrides)
+  }
+  async function info<T = any>(
+    options?: SurrealRpcOptions<T>,
+  ) {
+    const { key, ...opts } = options || {}
+
+    const _key = key ?? 'Sur_' + hash(['surreal', 'info'])
+
+    return useSurrealRPC<T>({ method: 'info', params: [] }, {
+      ...opts,
+      key: _key,
+    })
+  }
 
   // insert [ thing, data ]
   async function $insert<T = any>(
@@ -269,6 +286,8 @@ export function useSurrealDB(overrides?: Overrides) {
     authenticate,
     $create,
     create,
+    $info,
+    info,
     $insert,
     insert,
     $merge,
