@@ -206,7 +206,30 @@ export function useSurrealDB(overrides?: Overrides) {
 
   // TODO: signup [ NS, DB, SC, ... ]
 
-  // TODO: update [ thing, data ]
+  // update [ thing, data ]
+  async function $update<T = any>(
+    thing: MROGParam<T, 'update', 0>,
+    options?: Overrides & { data?: MROGParam<T, 'update', 1> },
+  ) {
+    const { data, ...ovr } = options || {}
+    return $surrealRPC<T>({ method: 'update', params: [toValue(thing), toValue(data)] }, ovr)
+  }
+  async function update<T = any>(
+    thing: MROGParam<T, 'update', 0>,
+    options?: SurrealRpcOptions<T> & { data?: MROGParam<T, 'update', 1> },
+  ): Promise<AsyncData<RpcResponse<T> | null, FetchError<any> | null>> {
+    const { data, immediate, key, watch, ...opts } = options || {}
+
+    const params = computed<RpcRequest<T, 'update'>['params']>(() => ([toValue(thing), toValue(data)]))
+    const _key = key ?? 'Sur_' + hash(['surreal', 'update', toValue(params)])
+
+    return useSurrealRPC<T>({ method: 'update', params }, {
+      ...opts,
+      immediate: immediate === undefined ? false : immediate,
+      key: _key,
+      watch: false,
+    })
+  }
 
   async function $version(ovr?: Overrides) {
     return $surrealFetch('version', {
@@ -236,6 +259,8 @@ export function useSurrealDB(overrides?: Overrides) {
     remove,
     $sql: $query,
     sql: query,
+    $update,
+    update,
     $version,
     version,
   }
