@@ -118,7 +118,26 @@ export function useSurrealDB(overrides?: Overrides) {
     })
   }
 
-  // TODO: invalidate
+  // invalidate
+  async function $invalidate<T = any>(
+    overrides?: Overrides,
+  ) {
+    return $surrealRPC<T>({ method: 'invalidate', params: [] }, overrides)
+  }
+  async function invalidate<T = any>(
+    options?: SurrealRpcOptions<T>,
+  ) {
+    const { immediate, key, watch, ...opts } = options || {}
+
+    const _key = key ?? 'Sur_' + hash(['surreal', 'invalidate'])
+
+    return useSurrealRPC<T>({ method: 'invalidate', params: [] }, {
+      ...opts,
+      immediate: immediate === undefined ? false : immediate,
+      key: _key,
+      watch: watch === undefined ? false : watch,
+    })
+  }
 
   // merge [ thing, data ]
   async function $merge<T = any>(
@@ -290,6 +309,8 @@ export function useSurrealDB(overrides?: Overrides) {
     info,
     $insert,
     insert,
+    $invalidate,
+    invalidate,
     $merge,
     merge,
     $patch,
