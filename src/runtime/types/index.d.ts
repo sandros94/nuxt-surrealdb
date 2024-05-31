@@ -26,7 +26,7 @@ export type SurrealAsyncDataOptions<T> = AsyncDataOptions<T> & Overrides & {
 export type SurrealFetchOptions<T> = UseFetchOptions<T> & Overrides
 export type SurrealRpcOptions<T> = Omit<SurrealFetchOptions<RpcResponse<T>>, 'method' | 'body'>
 
-/* Module build utils */
+/* Utils */
 
 export type PickFrom<T, K extends Array<string>> = T extends Array<any>
   ? T
@@ -46,26 +46,47 @@ export type KeysOf<T> = Array<
     : never
 >
 
+export type JSONPatchPath<T> = T extends object ? {
+  [K in keyof T]-?: K extends string ? `/${K}` | `/${K}${Path<T[K]>}` : never
+}[keyof T] : ''
+
+export type JSONPatchValue<T, P extends string> = P extends `${infer K}/${infer Rest}`
+  ? K extends keyof T
+    ? Rest extends JSONPatchPath<T[K]>
+      ? JSONPatchValue<T[K], Rest>
+      : T[K]
+    : never
+  : P extends keyof T
+    ? T[P]
+    : never
+
+export type JSONPatch<T> = {
+  op: 'add' | 'remove' | 'replace' | 'copy' | 'move' | 'test'
+  from?: JSONPatchPath<T>
+  path: JSONPatchPath<T>
+  value?: JSONPatchValue<T, JSONPatchPath<T>>
+}
+
 /* SurrealDB RPC Methods and Params types */
 
 type CreateParams<T> = [
   thing: string,
-  data?: T,
+  data?: Partial<T>,
 ]
 
 type InsertParams<T> = [
   thing: string,
-  data?: T,
+  data?: Partial<T>,
 ]
 
 type MergeParams<T> = [
   thing: string,
-  data: T,
+  data: Partial<T>,
 ]
 
 type PatchParams<T> = [
   thing: string,
-  patches: Array<{ op: string, path: string, value: T }>,
+  patches: JSONPatch<T>[],
   diff?: boolean,
 ]
 
@@ -90,7 +111,7 @@ type SignUpParams<T = { [key: string]: string }> = [{
 
 type UpdateParams<T> = [
   thing: string,
-  data?: T,
+  data?: Partial<T>,
 ]
 
 type UseParams = [
@@ -119,11 +140,11 @@ export interface RpcMethodsWS<T> extends RpcMethods<T> {
   kill: [string]
   let: [
     name: string,
-    value: T,
+    value: any,
   ]
   live: [
     table: string,
-    diff?: T,
+    diff?: Partial<T>,
   ]
   unset: [string]
 }
