@@ -45,7 +45,7 @@ export function useSurrealDB(overrides?: Overrides) {
       ...opts,
       key: _key,
       immediate: immediate === undefined ? false : immediate,
-      watch: false,
+      watch: watch === undefined ? false : watch,
     })
   }
 
@@ -70,7 +70,7 @@ export function useSurrealDB(overrides?: Overrides) {
       ...opts,
       immediate: immediate === undefined ? false : immediate,
       key: _key,
-      watch: false,
+      watch: watch === undefined ? false : watch,
     })
   }
 
@@ -114,7 +114,7 @@ export function useSurrealDB(overrides?: Overrides) {
       ...opts,
       immediate: immediate === undefined ? false : immediate,
       key: _key,
-      watch: false,
+      watch: watch === undefined ? false : watch,
     })
   }
 
@@ -160,7 +160,7 @@ export function useSurrealDB(overrides?: Overrides) {
       ...opts,
       immediate: immediate === undefined ? false : immediate,
       key: _key,
-      watch: false,
+      watch: watch === undefined ? false : watch,
     })
   }
 
@@ -185,7 +185,7 @@ export function useSurrealDB(overrides?: Overrides) {
       ...opts,
       immediate: immediate === undefined ? false : immediate,
       key: _key,
-      watch: false,
+      watch: watch === undefined ? false : watch,
     })
   }
 
@@ -233,7 +233,7 @@ export function useSurrealDB(overrides?: Overrides) {
       ...opts,
       key: _key,
       immediate: immediate === undefined ? false : immediate,
-      watch: false,
+      watch: watch === undefined ? false : watch,
     })
   }
 
@@ -285,7 +285,7 @@ export function useSurrealDB(overrides?: Overrides) {
       ...opts,
       immediate: immediate === undefined ? false : immediate,
       key: _key,
-      watch: false,
+      watch: watch === undefined ? false : watch,
     })
   }
 
