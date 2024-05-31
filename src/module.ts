@@ -1,4 +1,4 @@
-import { defineNuxtModule, addPlugin, addImportsDir, createResolver } from '@nuxt/kit'
+import { defineNuxtModule, addPlugin, addImportsDir, addServerImportsDir, createResolver } from '@nuxt/kit'
 import { defu } from 'defu'
 
 import type { DatabasePreset } from './runtime/types'
@@ -38,5 +38,6 @@ export default defineNuxtModule<ModuleOptions>({
 
     addPlugin(resolve('./runtime', 'plugin'))
     addImportsDir(resolve('./runtime', 'composables'))
+    addServerImportsDir(resolve('./runtime', 'server', 'utils'))
   },
 })
