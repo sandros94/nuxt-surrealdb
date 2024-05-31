@@ -42,7 +42,6 @@ export function useSurrealDB(overrides?: Overrides) {
     const { data, immediate, key, watch, ...opts } = options || {}
 
     const params = computed<RpcRequest<T, 'create'>['params']>(() => ([toValue(thing), toValue(data)]))
-    console.log('params', params.value)
     const _key = key ?? 'Sur_' + hash(['surreal', 'create', toValue(params)])
 
     return useSurrealRPC<T>({ method: 'create', params }, {
