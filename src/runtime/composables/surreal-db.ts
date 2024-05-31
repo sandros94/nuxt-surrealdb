@@ -1,5 +1,6 @@
 import type { AsyncData } from 'nuxt/app'
 import type { FetchError } from 'ofetch'
+import { hash } from 'ohash'
 
 import type {
   Overrides,
@@ -29,21 +30,31 @@ export function useSurrealDB(overrides?: Overrides) {
   // TODO: merge [ thing, data ]
   // TODO: patch [ thing, patches, diff ]
 
+  // query [ sql, vars ]
   async function $query<T = any>(
     sql: RpcRequest<T, 'query'>['params'][0],
-    opts?: Overrides & { vars: RpcRequest<T, 'query'>['params'][1] },
+    opts?: Overrides & { vars?: RpcRequest<T, 'query'>['params'][1] },
   ) {
     const { vars, ...ovr } = opts || {}
     return $surrealRPC<T>({ method: 'query', params: [sql, vars] }, ovr)
   }
   async function query<T = any>(
-    sql: RpcRequest<T, 'query'>['params'][0],
-    options?: SurrealRpcOptions<T> & { vars: RpcRequest<T, 'query'>['params'][1] },
+    sql: MaybeRefOrGetter<RpcRequest<T, 'query'>['params'][0]>,
+    options?: SurrealRpcOptions<T> & { vars?: MaybeRefOrGetter<RpcRequest<T, 'query'>['params'][1]> },
   ): Promise<AsyncData<RpcResponse<T> | null, FetchError<any> | null>> {
-    const { vars, ...opts } = options || {}
-    return useSurrealRPC<T>({ method: 'query', params: [sql, vars] }, opts)
+    const { key, vars, watch, ...opts } = options || {}
+
+    const params = computed<RpcRequest<T, 'query'>['params']>(() => ([toValue(sql), toValue(vars)]))
+    const _key = key ?? 'Sur_' + hash(['surreal', 'query', toValue(params)])
+
+    return useSurrealRPC<T>({ method: 'query', params }, {
+      ...opts,
+      key: _key,
+      watch: watch === false ? [] : [params, ...(watch || [])],
+    })
   }
 
+  // select [ thing ]
   async function $select<T = any>(
     thing: RpcRequest<T, 'select'>['params'][0],
     ovr?: Overrides,
@@ -54,9 +65,16 @@ export function useSurrealDB(overrides?: Overrides) {
     thing: MaybeRefOrGetter<RpcRequest<T, 'select'>['params'][0]>,
     options?: SurrealRpcOptions<T>,
   ): Promise<AsyncData<RpcResponse<T> | null, FetchError<any> | null>> {
-    const params = computed(() => ([toValue(thing)]))
-    // @ts-expect-error TODO: better RPC type inference
-    return useSurrealRPC<T>({ method: 'select', params }, options)
+    const { key, watch, ...opts } = options || {}
+
+    const params = computed<RpcRequest<T, 'select'>['params']>(() => ([toValue(thing)]))
+    const _key = key ?? 'Sur_' + hash(['surreal', 'query', toValue(params)])
+
+    return useSurrealRPC<T>({ method: 'select', params }, {
+      ...opts,
+      key: _key,
+      watch: watch === false ? [] : [params, ...(watch || [])],
+    })
   }
 
   // TODO: signin [ ... ]

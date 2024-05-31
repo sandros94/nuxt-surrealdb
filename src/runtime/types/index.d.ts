@@ -128,15 +128,15 @@ export interface RpcMethodsWS<T> extends RpcMethods<T> {
   unset: [string]
 }
 
-export type RpcParams<M extends keyof RpcMethods<any>, T> = RpcMethods<T>[M]
-export type RpcParamsWS<M extends keyof RpcMethodsWS<any>, T> = RpcMethodsWS<T>[M]
+export type RpcParams<T, M extends keyof RpcMethods<T>> = RpcMethods<T>[M]
+export type RpcParamsWS<T, M extends keyof RpcMethodsWS<T>> = RpcMethodsWS<T>[M]
 
 /* SurrealDB RPC Request and Response types */
 
 export interface RpcRequest<
   T = any,
   M extends keyof RpcMethods<T> = keyof RpcMethods<T>,
-  P extends RpcParams<M, T> = RpcParams<M, T>,
+  P extends RpcParams<T, M> = RpcParams<T, M>,
 > {
   method: M
   params: P

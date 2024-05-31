@@ -1,6 +1,9 @@
-import { useFetch, useNuxtApp } from 'nuxt/app'
 import type { AsyncData } from 'nuxt/app'
 import type { FetchError } from 'ofetch'
+import {
+  useFetch,
+  useNuxtApp,
+} from 'nuxt/app'
 
 import type {
   KeysOf,
@@ -10,7 +13,11 @@ import type {
   RpcRequest,
   RpcResponse,
 } from '../types'
-import { type MaybeRefOrGetter, ref } from '#imports'
+import type {
+  MaybeRefOrGetter,
+  ComputedRef,
+} from '#imports'
+import { ref } from '#imports'
 
 export function useSurrealFetch<T = any>(
   endpoint: MaybeRefOrGetter<string>,
@@ -37,7 +44,10 @@ export function useSurrealFetch<T = any>(
 }
 
 export function useSurrealRPC<T = any>(
-  req: RpcRequest<T>,
+  req: {
+    method: RpcRequest<T>['method']
+    params: RpcRequest<T>['params'] | ComputedRef<RpcRequest<T>['params']>
+  },
   options?: SurrealRpcOptions<T>,
 ): AsyncData<RpcResponse<T> | null, FetchError<any> | null> {
   const id = ref(0)
