@@ -14,6 +14,28 @@
       Loading...
     </div>
     <hr>
+    <input
+      v-model="newProduct.brand"
+      placeholder="Brand"
+    >
+    <input
+      v-model="newProduct.name"
+      placeholder="Name"
+    >
+    <input
+      v-model="newProduct.price"
+      placeholder="Price"
+    >
+    <input
+      v-model="newProduct.currency"
+      placeholder="Currency"
+    >
+    <button @click="execute()">
+      Create
+    </button>
+    <pre v-if="dataCreate">
+      {{ dataCreate }}
+    </pre>
   </div>
 </template>
 
@@ -26,11 +48,20 @@ interface Product {
   currency: string
 }
 
-const { select } = useSurrealDB()
+const { create, select } = useSurrealDB()
 
 const search = ref('products')
 
-const { data, error } = await select<Product[]>(search)
+const { data, error } = await select<Product[]>(search, {
+  database: 'staging',
+  key: 'select',
+})
+
+const newProduct = reactive<Partial<Product>>({})
+const { data: dataCreate, execute } = await create<Product>('products', {
+  data: newProduct,
+  database: 'staging',
+})
 
 error.value && console.error('error', error.value)
 </script>

@@ -26,7 +26,33 @@ export function useSurrealDB(overrides?: Overrides) {
   const { $surrealFetch, $surrealFetchOptionsOverride, $surrealRPC } = useNuxtApp()
 
   // TODO: authenticate [ token ]
-  // TODO: create [ thing, data ]
+
+  // create [ thing, data ]
+  async function $create<T = any>(
+    thing: MROGParam<T, 'create', 0>,
+    opts?: Overrides & { data?: MROGParam<T, 'create', 1> },
+  ) {
+    const { data, ...ovr } = opts || {}
+    return $surrealRPC<T>({ method: 'create', params: [toValue(thing), toValue(data)] }, ovr)
+  }
+  async function create<T = any>(
+    thing: MROGParam<T, 'create', 0>,
+    options?: SurrealRpcOptions<T> & { data?: MROGParam<T, 'create', 1> },
+  ): Promise<AsyncData<RpcResponse<T> | null, FetchError<any> | null>> {
+    const { data, immediate, key, watch, ...opts } = options || {}
+
+    const params = computed<RpcRequest<T, 'create'>['params']>(() => ([toValue(thing), toValue(data)]))
+    console.log('params', params.value)
+    const _key = key ?? 'Sur_' + hash(['surreal', 'create', toValue(params)])
+
+    return useSurrealRPC<T>({ method: 'create', params }, {
+      ...opts,
+      immediate: immediate === undefined ? false : immediate,
+      key: _key,
+      watch: false,
+    })
+  }
+
   // TODO: delete [ thing ]
   // TODO: info
   // TODO: insert [ thing, data ]
@@ -98,6 +124,8 @@ export function useSurrealDB(overrides?: Overrides) {
   }
 
   return {
+    $create,
+    create,
     $query,
     query,
     $select,
