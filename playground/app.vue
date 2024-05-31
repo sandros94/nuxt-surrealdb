@@ -26,13 +26,11 @@ interface Product {
   currency: string
 }
 
-const { sql } = useSurrealDB()
+const { select } = useSurrealDB()
 
 const search = ref('products')
 
-const { data, error } = await sql<Product[]>('SELECT * FROM type::table($tb);', {
-  vars: { tb: search },
-})
+const { data, error } = await select<Product[]>(search)
 
 error.value && console.error('error', error.value)
 </script>

@@ -1,5 +1,4 @@
 import { useFetch, useNuxtApp } from 'nuxt/app'
-import { type MaybeRefOrGetter, ref } from 'vue'
 import type { AsyncData } from 'nuxt/app'
 import type { FetchError } from 'ofetch'
 
@@ -7,9 +6,11 @@ import type {
   KeysOf,
   PickFrom,
   SurrealFetchOptions,
+  SurrealRpcOptions,
   RpcRequest,
   RpcResponse,
 } from '../types'
+import { type MaybeRefOrGetter, ref } from '#imports'
 
 export function useSurrealFetch<T = any>(
   endpoint: MaybeRefOrGetter<string>,
