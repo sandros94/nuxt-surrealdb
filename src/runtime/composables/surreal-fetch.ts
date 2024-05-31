@@ -38,7 +38,7 @@ export function useSurrealFetch<T = any>(
 export function useSurrealRPC<T = any>(
   req: RpcRequest<T>,
   options?: Omit<SurrealFetchOptions<RpcResponse<T>>, 'method' | 'body'>,
-) {
+): AsyncData<RpcResponse<T> | null, FetchError<any> | null> {
   const id = ref(0)
 
   return useSurrealFetch<RpcResponse<T>>('rpc', {
