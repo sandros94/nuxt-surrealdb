@@ -126,7 +126,7 @@ export default defineNuxtPlugin(({ $config }) => {
         if (response.status === 200 && response._data.error) {
           throw createError({
             statusCode: response._data.error.code,
-            statusMessage: response._data.error.message,
+            message: response._data.error.message,
           })
         }
       },
