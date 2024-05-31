@@ -16,15 +16,6 @@ A Nuxt module aimed to simplify the use of [SurrealDB](https://surrealdb.com).
 This module is still under development and not suitable for production use, proceed at your own risk. Expect breaking changes!
 There are no docs atm, so please refer to the [playground](/playground/app.vue) or the [source code](/src/).
 
-## Roadmap
-
-- [x] custom fetch plugin and composable.
-- [ ] ~~on PAR with the official [SurrealDB Rest integration](https://surrealdb.com/docs/surrealdb/integration/http).~~
-- [x] on PAR with the official [SurrealDB RPC integration](https://surrealdb.com/docs/surrealdb/integration/rpc).
-- [ ] server side surrealFetch and surrealRPC utils
-- [ ] built-in auth composable.
-- [ ] custom websocket composable.
-
 ## Features
 
 <!-- Highlight some of the features your module provide here -->
