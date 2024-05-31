@@ -1,5 +1,6 @@
 import type { AsyncData } from 'nuxt/app'
 import type { FetchError } from 'ofetch'
+import { hash } from 'ohash'
 import {
   useFetch,
   useNuxtApp,
@@ -14,10 +15,10 @@ import type {
   RpcResponse,
 } from '../types'
 import type {
-  MaybeRefOrGetter,
   ComputedRef,
+  MaybeRefOrGetter,
 } from '#imports'
-import { ref } from '#imports'
+import { ref, toValue } from '#imports'
 
 export function useSurrealFetch<T = any>(
   endpoint: MaybeRefOrGetter<string>,
@@ -45,19 +46,24 @@ export function useSurrealFetch<T = any>(
 
 export function useSurrealRPC<T = any>(
   req: {
-    method: RpcRequest<T>['method']
-    params: RpcRequest<T>['params'] | ComputedRef<RpcRequest<T>['params']>
+    method: MaybeRefOrGetter<RpcRequest<T>['method']>
+    params: MaybeRefOrGetter<RpcRequest<T>['params']> | ComputedRef<RpcRequest<T>['params']>
   },
   options?: SurrealRpcOptions<T>,
 ): AsyncData<RpcResponse<T> | null, FetchError<any> | null> {
   const id = ref(0)
+  const { key, ...opts } = options || {}
+
+  const _key = key ?? 'Sur_' + hash(['surreal', 'rpc', toValue(req.method), toValue(req.params)])
 
   return useSurrealFetch<RpcResponse<T>>('rpc', {
-    ...options,
+    ...opts,
     method: 'POST',
     body: {
       id: id.value++,
-      ...req,
+      method: toValue(req.method),
+      params: toValue(req.params),
     },
+    key: _key,
   })
 }
