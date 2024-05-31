@@ -61,8 +61,7 @@ export function useSurrealRPC<T = any>(
     method: 'POST',
     body: {
       id: id.value++,
-      method: toValue(req.method),
-      params: toValue(req.params),
+      ...req,
     },
     key: _key,
   })
