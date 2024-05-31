@@ -47,7 +47,7 @@ export function useSurrealFetch<T = any>(
 export function useSurrealRPC<T = any>(
   req: {
     method: MaybeRefOrGetter<RpcRequest<T>['method']>
-    params: MaybeRefOrGetter<RpcRequest<T>['params']> | ComputedRef<RpcRequest<T>['params']>
+    params?: MaybeRefOrGetter<RpcRequest<T>['params']> | ComputedRef<RpcRequest<T>['params']>
   },
   options?: SurrealRpcOptions<T>,
 ): AsyncData<RpcResponse<T> | null, FetchError<any> | null> {

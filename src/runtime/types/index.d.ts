@@ -114,11 +114,6 @@ type UpdateParams<T> = [
   data?: Partial<T>,
 ]
 
-type UseParams = [
-  NS?: string,
-  DB?: string,
-]
-
 export interface RpcMethods<T> {
   authenticate: [string]
   create: CreateParams<T>
@@ -133,7 +128,6 @@ export interface RpcMethods<T> {
   signin: SignInParams<T>
   signup: SignUpParams<T>
   update: UpdateParams<T>
-  use: UseParams
 }
 
 export interface RpcMethodsWS<T> extends RpcMethods<T> {
@@ -147,6 +141,10 @@ export interface RpcMethodsWS<T> extends RpcMethods<T> {
     diff?: Partial<T>,
   ]
   unset: [string]
+  use: [
+    NS?: string,
+    DB?: string,
+  ]
 }
 
 export type RpcParams<T, M extends keyof RpcMethods<T>> = RpcMethods<T>[M]
@@ -160,7 +158,7 @@ export interface RpcRequest<
   P extends RpcParams<T, M> = RpcParams<T, M>,
 > {
   method: M
-  params: P
+  params?: P
 }
 
 export interface RpcRequestWS<
@@ -169,7 +167,7 @@ export interface RpcRequestWS<
   P extends RpcParamsWS<M, T> = RpcParamsWS<M, T>,
 > {
   method: M
-  params: P
+  params?: P
 }
 
 type Test = RpcRequest<any, 'create'>
