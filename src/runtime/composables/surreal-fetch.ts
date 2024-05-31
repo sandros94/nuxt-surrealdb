@@ -1,11 +1,9 @@
-import { useFetch, useNuxtApp, useRuntimeConfig } from 'nuxt/app'
+import { useFetch, useNuxtApp } from 'nuxt/app'
 import { type MaybeRefOrGetter, ref } from 'vue'
 import type { AsyncData } from 'nuxt/app'
 import type { FetchError } from 'ofetch'
-import { textToBase64 } from 'undio'
 
 import type {
-  DatabasePreset,
   KeysOf,
   PickFrom,
   SurrealFetchOptions,
@@ -22,71 +20,24 @@ export function useSurrealFetch<T = any>(
     token,
     ...opts
   } = options
-  const _token = ref<string | undefined>(token)
+  const { $surrealFetch, $surrealFetchOptionsOverride } = useNuxtApp()
 
-  function authToken(db: DatabasePreset): string | undefined {
-    if (db.auth) {
-      if (typeof db.auth === 'string') {
-        if (db.auth.startsWith('Bearer ')) {
-          return db.auth
-        }
-        else {
-          const [user, pass] = db.auth.split(':')
-          if (user && pass) {
-            return `Basic ${textToBase64(`${user}:${pass}`, { dataURL: false })}`
-          }
-        }
-      }
-      else if (db.auth.user && db.auth.pass) {
-        return `Basic ${textToBase64(`${db.auth.user}:${db.auth.pass}`, { dataURL: false })}`
-      }
-    }
-  }
-
-  const headers: Record<string, string> = {}
-  if (database !== undefined) {
-    const db = ref<DatabasePreset>()
-
-    if (typeof database !== 'string' && typeof database !== 'number' && typeof database !== 'symbol') {
-      db.value = database
-    }
-    else {
-      const { databases } = useRuntimeConfig().public.surrealdb
-      db.value = databases[database]
-    }
-
-    if (db.value.host && !opts.baseURL) {
-      opts.baseURL = db.value.host
-    }
-    if (db.value.NS) {
-      headers.NS = db.value.NS
-    }
-    if (db.value.DB) {
-      headers.DB = db.value.DB
-    }
-    if (db.value.auth && !token) {
-      _token.value = authToken(db.value)
-    }
-  }
-  if (_token.value) {
-    headers.Authorization = _token.value
-  }
+  const { baseURL, headers } = $surrealFetchOptionsOverride({ database, token })
 
   return useFetch(endpoint, {
     ...opts,
+    ...(baseURL !== undefined && { baseURL }),
     headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
       ...opts.headers,
       ...headers,
     },
-    $fetch: useNuxtApp().$surrealFetch,
+    $fetch: $surrealFetch,
   })
 }
 
 export function useSurrealRPC<T = any>(
   req: RpcRequest<T>,
-  options: SurrealFetchOptions<RpcResponse<T>> = {},
+  options?: Omit<SurrealFetchOptions<RpcResponse<T>>, 'method' | 'body'>,
 ) {
   const id = ref(0)
 

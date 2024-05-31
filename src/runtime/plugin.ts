@@ -10,22 +10,23 @@ export default defineNuxtPlugin(({ $config }) => {
   const { databases, tokenCookieName } = $config.public.surrealdb
   const userAuth = useCookie(tokenCookieName)
 
-  let authToken: string | undefined = undefined
+  const authToken = authTokenFn(databases.default.auth)
 
-  if (databases.default.auth) {
-    if (typeof databases.default.auth === 'string') {
-      if (databases.default.auth.startsWith('Bearer ')) {
-        authToken = databases.default.auth
+  function authTokenFn(dbAuth: DatabasePreset['auth']) {
+    if (!dbAuth) return undefined
+    if (typeof dbAuth === 'string') {
+      if (dbAuth.startsWith('Bearer ')) {
+        return dbAuth
       }
       else {
-        const [user, pass] = databases.default.auth.split(':')
+        const [user, pass] = dbAuth.split(':')
         if (user && pass) {
-          authToken = `Basic ${textToBase64(`${user}:${pass}`, { dataURL: false })}`
+          return `Basic ${textToBase64(`${user}:${pass}`, { dataURL: false })}`
         }
       }
     }
-    else if (databases.default.auth.user && databases.default.auth.pass) {
-      authToken = `Basic ${textToBase64(`${databases.default.auth.user}:${databases.default.auth.pass}`, { dataURL: false })}`
+    else {
+      return `Basic ${textToBase64(`${dbAuth.user}:${dbAuth.pass}`, { dataURL: false })}`
     }
   }
 
@@ -60,18 +61,18 @@ export default defineNuxtPlugin(({ $config }) => {
   function surrealFetchOptionsOverride<
     R extends ResponseType = ResponseType,
   >(
-    overrides: Overrides & (Pick<FetchOptions<R>, 'baseURL' | 'headers'>) = {},
+    overrides: Overrides = {},
+    defaults?: Pick<FetchOptions<R>, 'headers'>,
   ) {
     const {
       database,
       token,
-      headers: _headers,
-      baseURL: _baseURL,
     } = overrides
 
+    const headers = defaults?.headers as Record<string, string> || {}
     let db: DatabasePreset | undefined = undefined
-    const headers: Record<string, string> = {}
-    let baseURL = undefined
+    let baseURL: string | undefined = undefined
+    let dbAuth: string | undefined = undefined
 
     if (database !== undefined) {
       if (typeof database !== 'string' && typeof database !== 'number' && typeof database !== 'symbol') {
@@ -80,7 +81,7 @@ export default defineNuxtPlugin(({ $config }) => {
       else {
         db = databases[database]
       }
-      if (db.host && !_baseURL) {
+      if (db.host) {
         baseURL = db.host
       }
       if (db.NS) {
@@ -89,16 +90,27 @@ export default defineNuxtPlugin(({ $config }) => {
       if (db.DB) {
         headers.DB = db.DB
       }
+      if (db.auth) {
+        dbAuth = authTokenFn(db.auth)
+      }
     }
-    if (token) {
-      headers.Authorization = token
+
+    if (token !== false) {
+      const _token = authTokenFn(token)
+      if (_token || userAuth.value || dbAuth || authToken) {
+        headers.Authorization
+          = _token
+          ?? userAuth.value
+            ? `Bearer ${userAuth.value}`
+            : dbAuth
+            ?? authToken as string
+      }
     }
 
     return {
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        ..._headers,
         ...headers,
       },
       ...(baseURL !== undefined && { baseURL }),

@@ -5,7 +5,7 @@ import type { AsyncDataOptions, UseFetchOptions } from 'nuxt/app'
 
 export interface Overrides {
   database?: keyof PublicRuntimeConfig['surrealdb']['databases'] | DatabasePreset
-  token?: string
+  token?: string | false
 }
 
 export interface DatabasePreset {
