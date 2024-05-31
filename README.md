@@ -20,15 +20,47 @@ There are no docs atm, so please refer to the [playground](/playground/app.vue) 
 
 - [x] custom fetch plugin and composable.
 - [ ] ~~on PAR with the official [SurrealDB Rest integration](https://surrealdb.com/docs/surrealdb/integration/http).~~
-- [ ] on PAR with the official [SurrealDB RPC integration](https://surrealdb.com/docs/surrealdb/integration/rpc).
-- [ ] auth support.
+- [x] on PAR with the official [SurrealDB RPC integration](https://surrealdb.com/docs/surrealdb/integration/rpc).
+- [ ] server side surrealFetch and surrealRPC utils
+- [ ] built-in auth composable.
 - [ ] custom websocket composable.
 
 ## Features
 
 <!-- Highlight some of the features your module provide here -->
-- 🚀 &nbsp;Custom built-in `$surrealFetch` and `useSurrealFetch`.
-- 📦 &nbsp;Custom Database Presets, each with its `host`, `namespace`, `database`, `auth` (optional)
+- 🚀&nbsp;Custom built-in `$surrealFetch` and `useSurrealFetch`.
+- 📦&nbsp;Custom Database Presets, to use on a per-function/composable basis.
+- ⚡️&nbsp;Built-in support for RPC endpoint via `$surrealRPC` and `useSurrealRPC`.
+- 💡&nbsp;Each RPC method is mapped to a `useSurrealDB` exported function.
+
+### RPC functions
+
+The main `useSurrealDB` exports a number of functions that directly communicate with the RPC endpoint. Each function has two variants, one starts with `$` and one without. The first is based on `$surrealRPC`, that provides the plain function, while the latter uses `useSurrealRPC`, taking advantage of `useSurrealFetch` (and thus, [`useFetch`](https://nuxt.com/docs/api/composables/use-fetch)).
+
+Here the full list:
+
+```ts
+const {
+  authenticate, // $authenticate
+  create,       // $create
+  info,         // $info
+  insert,       // $insert
+  invalidate,   // $invalidate
+  merge,        // $merge
+  patch,        // $patch
+  query,        // $query
+  remove,       // $remove
+  select,       // $select
+  signin,       // $signin
+  signup,       // $signup
+  sql,          // $sql
+  update,       // $update
+  version,      // $version
+} = useSurrealDB()
+```
+
+> [!NOTE]
+> `sql` function is an alias for `query` while `version` uses its [HTTP endpoint](https://surrealdb.com/docs/surrealdb/integration/http#version).
 
 ### Database Presets
 

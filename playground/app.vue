@@ -47,24 +47,21 @@ interface Product {
   currency: string
 }
 
-const { create, remove, select } = useSurrealDB()
+const { create, remove, select } = useSurrealDB({
+  database: 'staging',
+})
 
 const search = ref('products')
 const { data, error, execute } = await select<Product[]>(search, {
-  database: 'staging',
   watch: [search],
 })
+error.value && console.error('error', error.value)
 
 const newProduct = reactive<Partial<Product>>({})
 const { data: dataCreate, execute: executeCreate } = await create<Product>('products', {
   data: newProduct,
-  database: 'staging',
 })
 
 const removeProduct = ref('')
-const { execute: executeRemove } = await remove(removeProduct, {
-  database: 'staging',
-})
-
-error.value && console.error('error', error.value)
+const { execute: executeRemove } = await remove(removeProduct)
 </script>
