@@ -24,6 +24,7 @@ export type SurrealAsyncDataOptions<T> = AsyncDataOptions<T> & Overrides & {
   key?: string
 }
 export type SurrealFetchOptions<T> = UseFetchOptions<T> & Overrides
+export type SurrealRpcOptions<T> = Omit<SurrealFetchOptions<RpcResponse<T>>, 'method' | 'body'>
 
 /* Module build utils */
 
