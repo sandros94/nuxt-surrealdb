@@ -80,6 +80,30 @@ export function useSurrealDB(overrides?: Overrides) {
 
   // TODO: invalidate
   // TODO: merge [ thing, data ]
+  async function $merge<T = any>(
+    thing: MROGParam<T, 'merge', 0>,
+    opts: Overrides & { data: MROGParam<T, 'merge', 1> },
+  ) {
+    const { data, ...ovr } = opts || {}
+    return $surrealRPC<T>({ method: 'merge', params: [toValue(thing), toValue(data)] }, ovr)
+  }
+  async function merge<T = any>(
+    thing: MROGParam<T, 'merge', 0>,
+    options: SurrealRpcOptions<T> & { data: MROGParam<T, 'merge', 1> },
+  ): Promise<AsyncData<RpcResponse<T> | null, FetchError<any> | null>> {
+    const { data, immediate, key, watch, ...opts } = options || {}
+
+    const params = computed<RpcRequest<T, 'merge'>['params']>(() => ([toValue(thing), toValue(data)]))
+    const _key = key ?? 'Sur_' + hash(['surreal', 'merge', toValue(params)])
+
+    return useSurrealRPC<T>({ method: 'merge', params }, {
+      ...opts,
+      immediate: immediate === undefined ? false : immediate,
+      key: _key,
+      watch: false,
+    })
+  }
+
   // TODO: patch [ thing, patches, diff ]
 
   // query [ sql, vars ]
@@ -173,6 +197,8 @@ export function useSurrealDB(overrides?: Overrides) {
     create,
     $insert,
     insert,
+    $merge,
+    merge,
     $query,
     query,
     $select,
