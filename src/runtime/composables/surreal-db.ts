@@ -260,9 +260,53 @@ export function useSurrealDB(overrides?: Overrides) {
     })
   }
 
-  // TODO: signin [ ... ]
+  // signin [ ... ]
+  async function $signin<T = any>(
+    auth: MROGParam<T, 'signin', 0>,
+    options?: Overrides,
+  ) {
+    return $surrealRPC<T>({ method: 'signin', params: [toValue(auth)] }, options)
+  }
+  async function signin<T = any>(
+    auth: MROGParam<T, 'signin', 0>,
+    options?: SurrealRpcOptions<T>,
+  ): Promise<AsyncData<RpcResponse<T> | null, FetchError<any> | null>> {
+    const { immediate, key, watch, ...opts } = options || {}
 
-  // TODO: signup [ NS, DB, SC, ... ]
+    const params = computed<RpcRequest<T, 'signin'>['params']>(() => ([toValue(auth)]))
+    const _key = key ?? 'Sur_' + hash(['surreal', 'signin', toValue(params)])
+
+    return useSurrealRPC<T>({ method: 'signin', params }, {
+      ...opts,
+      immediate: immediate === undefined ? false : immediate,
+      key: _key,
+      watch: watch === undefined ? false : watch,
+    })
+  }
+
+  // signup [ NS, DB, SC, ... ]
+  async function $signup<T = any>(
+    auth: MROGParam<T, 'signup', 0>,
+    options?: Overrides,
+  ) {
+    return $surrealRPC<T>({ method: 'signup', params: [toValue(auth)] }, options)
+  }
+  async function signup<T = any>(
+    auth: MROGParam<T, 'signup', 0>,
+    options?: SurrealRpcOptions<T>,
+  ): Promise<AsyncData<RpcResponse<T> | null, FetchError<any> | null>> {
+    const { immediate, key, watch, ...opts } = options || {}
+
+    const params = computed<RpcRequest<T, 'signup'>['params']>(() => ([toValue(auth)]))
+    const _key = key ?? 'Sur_' + hash(['surreal', 'signup', toValue(params)])
+
+    return useSurrealRPC<T>({ method: 'signup', params }, {
+      ...opts,
+      immediate: immediate === undefined ? false : immediate,
+      key: _key,
+      watch: watch === undefined ? false : watch,
+    })
+  }
 
   // update [ thing, data ]
   async function $update<T = any>(
@@ -317,10 +361,14 @@ export function useSurrealDB(overrides?: Overrides) {
     patch,
     $query,
     query,
-    $select,
-    select,
     $remove,
     remove,
+    $select,
+    select,
+    $signin,
+    signin,
+    $signup,
+    signup,
     $sql: $query,
     sql: query,
     $update,
