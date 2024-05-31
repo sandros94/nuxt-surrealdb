@@ -1,6 +1,27 @@
 # Changelog
 
 
+## v0.0.4
+
+[compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.0.3...v0.0.4)
+
+### 🚀 Enhancements
+
+- **surrealFetch & surrealRPC:** New server utils ([e577733](https://github.com/sandros94/nuxt-surrealdb/commit/e577733))
+- Catch RPC errors ([358d41c](https://github.com/sandros94/nuxt-surrealdb/commit/358d41c))
+
+### 📖 Documentation
+
+- Move roadmap to issue ([ad99533](https://github.com/sandros94/nuxt-surrealdb/commit/ad99533))
+
+### 🏡 Chore
+
+- Fix builds ([8387783](https://github.com/sandros94/nuxt-surrealdb/commit/8387783))
+
+### ❤️ Contributors
+
+- Sandros94 ([@Sandros94](http://github.com/Sandros94))
+
 ## v0.0.3
 
 [compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.0.2...v0.0.3)
