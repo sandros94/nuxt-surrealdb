@@ -53,7 +53,8 @@ export function useSurrealDB(overrides?: Overrides) {
   }
 
   // TODO: info
-  // TODO: insert [ thing, data ]
+
+  // insert [ thing, data ]
   async function $insert<T = any>(
     thing: MROGParam<T, 'insert', 0>,
     opts?: Overrides & { data?: MROGParam<T, 'insert', 1> },
@@ -79,7 +80,8 @@ export function useSurrealDB(overrides?: Overrides) {
   }
 
   // TODO: invalidate
-  // TODO: merge [ thing, data ]
+
+  // merge [ thing, data ]
   async function $merge<T = any>(
     thing: MROGParam<T, 'merge', 0>,
     opts: Overrides & { data: MROGParam<T, 'merge', 1> },
@@ -178,7 +180,9 @@ export function useSurrealDB(overrides?: Overrides) {
   }
 
   // TODO: signin [ ... ]
+
   // TODO: signup [ NS, DB, SC, ... ]
+
   // TODO: update [ thing, data ]
 
   async function $version(ovr?: Overrides) {

@@ -47,7 +47,7 @@ interface Product {
   currency: string
 }
 
-const { create, select, remove } = useSurrealDB()
+const { create, remove, select } = useSurrealDB()
 
 const search = ref('products')
 const { data, error, execute } = await select<Product[]>(search, {
