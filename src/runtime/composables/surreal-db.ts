@@ -25,7 +25,29 @@ type MROGParam<T, M extends keyof RpcMethods<T>, N extends number> = MaybeRefOrG
 export function useSurrealDB(overrides?: Overrides) {
   const { $surrealFetch, $surrealFetchOptionsOverride, $surrealRPC } = useNuxtApp()
 
-  // TODO: authenticate [ token ]
+  // authenticate [ token ]
+  async function $authenticate<T = any>(
+    token: MROGParam<T, 'authenticate', 0>,
+    overrides?: Overrides,
+  ) {
+    return $surrealRPC<T>({ method: 'authenticate', params: [toValue(token)] }, overrides)
+  }
+  async function authenticate<T = any>(
+    token: MROGParam<T, 'authenticate', 0>,
+    options?: SurrealRpcOptions<T>,
+  ) {
+    const { key, immediate, watch, ...opts } = options || {}
+
+    const params = computed<RpcRequest<T, 'authenticate'>['params']>(() => ([toValue(token)]))
+    const _key = key ?? 'Sur_' + hash(['surreal', 'authenticate', toValue(params)])
+
+    return useSurrealRPC<T>({ method: 'authenticate', params }, {
+      ...opts,
+      key: _key,
+      immediate: immediate === undefined ? false : immediate,
+      watch: false,
+    })
+  }
 
   // create [ thing, data ]
   async function $create<T = any>(
@@ -243,6 +265,8 @@ export function useSurrealDB(overrides?: Overrides) {
   }
 
   return {
+    $authenticate,
+    authenticate,
     $create,
     create,
     $insert,
