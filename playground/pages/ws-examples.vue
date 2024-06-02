@@ -11,22 +11,14 @@
     <pre>
       {{ data }}
     </pre>
-    <button @click="userInfo">
+    <button @click="info()">
       Get user info
     </button>
   </div>
 </template>
 
 <script setup lang="ts">
-const { data, rpc } = useSurrealWS('staging')
+const { data, info, live } = useSurrealWS('staging')
 
-rpc({
-  method: 'live',
-  params: ['products'],
-})
-function userInfo() {
-  rpc({
-    method: 'info',
-  })
-}
+live('products')
 </script>
