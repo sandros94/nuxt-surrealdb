@@ -9,11 +9,11 @@ type PublicDatabases = PublicRuntimeConfig['surrealdb']['databases']
 // Module options TypeScript interface definition
 export interface ModuleOptions {
   auth?: {
+    adminMaxAge?: number
     database?: keyof PublicDatabases | false
     sessionName?: string
     cookieName?: string
     sameSite?: boolean | 'strict' | 'lax' | 'none'
-    maxAge?: number
   }
   defaultDatabase?: keyof PublicDatabases
   databases?: {
@@ -35,11 +35,11 @@ export default defineNuxtModule<ModuleOptions>({
   },
   defaults: {
     auth: {
+      adminMaxAge: 60 * 60 * 24 * 7,
       database: 'default',
       sessionName: 'nuxt-session',
       cookieName: 'nuxt-surrealdb',
       sameSite: 'lax',
-      maxAge: 60 * 60 * 24 * 7,
     },
     defaultDatabase: 'default',
     databases: {

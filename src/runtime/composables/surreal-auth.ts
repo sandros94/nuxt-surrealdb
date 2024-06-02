@@ -4,26 +4,31 @@ import { defu } from 'defu'
 import type { RpcParams } from '../types'
 
 import type { UserSession } from '#surreal-auth'
-import { computed, createError, refreshCookie, useCookie, useRuntimeConfig, useState, useSurrealDB } from '#imports'
+import { computed, createError, useCookie, useRuntimeConfig, useState, useSurrealDB } from '#imports'
 
 export function useSurrealAuth() {
   const {
     databases,
     auth: {
+      adminMaxAge,
       database,
       sessionName,
       cookieName,
-      maxAge,
       sameSite,
     },
   } = useRuntimeConfig().public.surrealdb
   const authDatabase = database as keyof PublicRuntimeConfig['surrealdb']['databases']
-  const { $authenticate, $info, $invalidate, $signin, $signup } = useSurrealDB({ database: authDatabase })
+  const { $authenticate, $info, $invalidate, $signin, $signup, $sql } = useSurrealDB({ database: authDatabase })
 
   const session = useState<UserSession>(sessionName, () => ({}))
 
   // TODO: Handle token maxAge update aftert a reAuthenticate
-  const token = useCookie(cookieName, { maxAge, sameSite: (sameSite as boolean | 'lax' | 'strict' | 'none'), secure: !import.meta.dev })
+  const setToken = (unixTimestamp?: number) => useCookie(cookieName, {
+    ...(unixTimestamp && { expires: (new Date(unixTimestamp * 1000)) }),
+    sameSite: (sameSite as boolean | 'lax' | 'strict' | 'none'),
+    secure: !import.meta.dev,
+  })
+  const token = setToken()
 
   // authenticate
   async function reAuthenticate() {
@@ -32,23 +37,30 @@ export function useSurrealAuth() {
     await refreshInfo()
   }
 
+  async function getSessionExp(authToken?: string) {
+    const _token = authToken || token.value
+    return await $sql('SELECT exp FROM $session;', { database: authDatabase, token: `Bearer ${_token}` })
+  }
+
   // info
-  async function refreshInfo() {
-    if (!token.value) throw createError({ statusCode: 401, message: 'Unauthorized' })
+  async function refreshInfo(authToken?: string) {
+    const _token = authToken || token.value
+    if (!_token) throw createError({ statusCode: 401, message: 'Unauthorized' })
     const { result } = await $info<UserSession['user']>({
       database: authDatabase,
-      token: `Bearer ${token.value}`,
+      token: `Bearer ${_token}`,
     })
     if (!result) return
     session.value.user = result
   }
 
   // invalidate
-  async function invalidate() {
-    if (!token.value) throw createError({ statusCode: 401, message: 'Unauthorized' })
+  async function invalidate(authToken?: string) {
+    const _token = authToken || token.value
+    if (!_token) throw createError({ statusCode: 401, message: 'Unauthorized' })
     await $invalidate({
       database: authDatabase,
-      token: `Bearer ${token.value}`,
+      token: `Bearer ${_token}`,
     })
     token.value = null
     session.value = {}
@@ -69,9 +81,17 @@ export function useSurrealAuth() {
       ..._credentials,
     }, { database: authDatabase, token: false })
     if (result) {
-      token.value = result
-      refreshCookie(cookieName)
-      await refreshInfo()
+      await getSessionExp(result).then(async ({ result: query }) => {
+        if (typeof query[0].result[0].exp === 'number') {
+          setToken(query[0].result[0].exp).value = result
+          await refreshInfo(result)
+        }
+        else {
+          // Assume a system user logged in
+          setToken(adminMaxAge).value = result
+          await refreshInfo(result)
+        }
+      })
     }
   }
 
@@ -86,18 +106,18 @@ export function useSurrealAuth() {
       },
     )
     if (!_credentials.NS || !_credentials.DB || !_credentials.SC) throw createError({ statusCode: 500, message: 'Invalid database preset' })
-    const { result } = await $signup<string>({
+    await $signup({
       ..._credentials,
-    }, { database: authDatabase, token: false })
-    if (result) {
-      token.value = result
-      refreshCookie(cookieName)
-      await signin(_credentials)
-      await refreshInfo()
-    }
+    }, { database: authDatabase, token: false }).then(async ({ result }) => {
+      await getSessionExp(result).then(async ({ result: query }) => {
+        setToken(query[0].result[0].exp).value = result
+        await refreshInfo(result)
+      })
+    })
   }
 
   return {
+    getSessionExp,
     isAuthenticated: computed(() => Boolean(session.value.user)),
     invalidate,
     reAuthenticate,
