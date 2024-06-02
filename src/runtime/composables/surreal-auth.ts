@@ -39,7 +39,7 @@ export function useSurrealAuth() {
 
   async function getSessionExp(authToken?: string) {
     const _token = authToken || token.value
-    return await $sql('SELECT exp FROM $session;', { database: authDatabase, token: `Bearer ${_token}` })
+    return await $sql<[{ result: [{ exp: number | 'NONE' | null }] }]>('SELECT exp FROM $session;', { database: authDatabase, token: `Bearer ${_token}` })
   }
 
   // info
@@ -82,7 +82,7 @@ export function useSurrealAuth() {
     }, { database: authDatabase, token: false })
     if (result) {
       await getSessionExp(result).then(async ({ result: query }) => {
-        if (typeof query[0].result[0].exp === 'number') {
+        if (query && typeof query[0].result[0].exp === 'number') {
           setToken(query[0].result[0].exp).value = result
           await refreshInfo(result)
         }
@@ -110,6 +110,7 @@ export function useSurrealAuth() {
       ..._credentials,
     }, { database: authDatabase, token: false }).then(async ({ result }) => {
       await getSessionExp(result).then(async ({ result: query }) => {
+        if (!query || typeof query[0].result[0].exp !== 'number') throw createError({ statusCode: 500, message: 'Failed to create session' })
         setToken(query[0].result[0].exp).value = result
         await refreshInfo(result)
       })
