@@ -230,9 +230,25 @@ export function useSurrealWS<T = any>(
     })
   }
 
-  // TODO: signin [ ... ]
+  // signin [ ... ]
+  function signin(
+    auth: MROGParam<any, 'signin', 0>,
+  ) {
+    return rpc({
+      method: 'signin',
+      params: [toValue(auth)],
+    })
+  }
 
-  // TODO: signup [ NS, DB, SC, ... ]
+  // signup [ NS, DB, SC, ... ]
+  function signup(
+    auth: MROGParam<any, 'signup', 0>,
+  ) {
+    return rpc({
+      method: 'signup',
+      params: [toValue(auth)],
+    })
+  }
 
   // unset [ name ]
   function unset(
@@ -291,6 +307,8 @@ export function useSurrealWS<T = any>(
     select,
     _send,
     send,
+    signin,
+    signup,
     sql: query,
     status,
     unset,
