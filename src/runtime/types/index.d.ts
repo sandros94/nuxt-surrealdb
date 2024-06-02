@@ -174,7 +174,7 @@ export interface RpcRequest<
 export interface RpcRequestWS<
   T = any,
   M extends keyof RpcMethodsWS<T> = keyof RpcMethodsWS<T>,
-  P extends RpcParamsWS<M, T> = RpcParamsWS<M, T>,
+  P extends RpcParamsWS<T, M> = RpcParamsWS<T, M>,
 > {
   method: M
   params?: P
