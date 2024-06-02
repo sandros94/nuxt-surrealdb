@@ -78,7 +78,6 @@ export function useSurrealWS<T = any>(database?: Overrides['database'], options?
   const data = computed(() => destr<RpcResponse<T> | null>(_data.value))
 
   function rpc<T = any>(req: RpcRequestWS<T>) {
-    if (status.value === 'CLOSED') return
     return _send(JSON.stringify({
       id: idCounter.value++,
       ...req,
