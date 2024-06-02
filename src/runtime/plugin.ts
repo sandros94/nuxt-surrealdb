@@ -8,10 +8,11 @@ import type { DatabasePreset, Overrides, RpcRequest, RpcResponse, SurrealFetchOp
 import { createError, defineNuxtPlugin, useSurrealAuth } from '#imports'
 
 export default defineNuxtPlugin(async ({ $config }) => {
-  const { databases, auth: { database: authDatabase } } = $config.public.surrealdb
+  const { databases, defaultDatabase, auth: { database: authDatabase } } = $config.public.surrealdb
+  const defaultDB = databases[defaultDatabase as keyof PublicRuntimeConfig['surrealdb']['databases']]
   const { token: userAuth, session } = useSurrealAuth()
 
-  const authToken = authTokenFn(databases.default.auth)
+  const authToken = authTokenFn(defaultDB.auth)
 
   function authTokenFn(dbAuth: DatabasePreset['auth']) {
     if (!dbAuth) return undefined
@@ -35,19 +36,19 @@ export default defineNuxtPlugin(async ({ $config }) => {
   }
 
   const surrealFetch = $fetch.create({
-    baseURL: databases.default.host,
+    baseURL: defaultDB.host,
     onRequest({ options }) {
       options.headers = options.headers || {}
 
       // @ts-expect-error NS header type missing
-      if (databases.default.NS && options.headers.NS === undefined) {
+      if (defaultDB.NS && options.headers.NS === undefined) {
         // @ts-expect-error NS header type missing
-        options.headers.NS = databases.default.NS
+        options.headers.NS = defaultDB.NS
       }
       // @ts-expect-error DB header type missing
-      if (databases.default.DB && options.headers.DB === undefined) {
+      if (defaultDB.DB && options.headers.DB === undefined) {
         // @ts-expect-error DB header type missing
-        options.headers.DB = databases.default.DB
+        options.headers.DB = defaultDB.DB
       }
       // @ts-expect-error Authorization header type missing
       if (authToken && !userAuth.value && !options.headers.Authorization) {

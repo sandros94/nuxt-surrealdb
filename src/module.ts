@@ -4,21 +4,24 @@ import { defu } from 'defu'
 
 import type { DatabasePreset } from './runtime/types'
 
+type PublicDatabases = PublicRuntimeConfig['surrealdb']['databases']
+
 // Module options TypeScript interface definition
 export interface ModuleOptions {
   auth?: {
-    database?: keyof PublicRuntimeConfig['surrealdb']['databases'] | false
+    database?: keyof PublicDatabases | false
     sessionName?: string
     cookieName?: string
     sameSite?: boolean | 'strict' | 'lax' | 'none'
     maxAge?: number
   }
+  defaultDatabase?: keyof PublicDatabases
   databases?: {
     default?: DatabasePreset
     [key: string]: DatabasePreset | undefined
   }
   server?: {
-    defaultDatabase?: keyof PublicRuntimeConfig['surrealdb']['databases'] | keyof RuntimeConfig['surrealdb']['databases']
+    defaultDatabase?: keyof PublicDatabases | keyof RuntimeConfig['surrealdb']['databases']
     databases?: {
       [key: string]: DatabasePreset | undefined
     }
@@ -38,6 +41,7 @@ export default defineNuxtModule<ModuleOptions>({
       sameSite: 'lax',
       maxAge: 60 * 60 * 24 * 7,
     },
+    defaultDatabase: 'default',
     databases: {
       default: {
         host: '',
@@ -63,6 +67,7 @@ export default defineNuxtModule<ModuleOptions>({
       {
         auth: options.auth,
         databases: options.databases,
+        defaultDatabase: options.defaultDatabase,
       },
     )
     // Private RuntimeConfig
@@ -72,8 +77,8 @@ export default defineNuxtModule<ModuleOptions>({
     >(
       nuxt.options.runtimeConfig.surrealdb,
       {
-        defaultDatabase: options.server?.defaultDatabase,
         databases: options.server?.databases,
+        defaultDatabase: options.server?.defaultDatabase,
       },
     )
 
