@@ -1,3 +1,4 @@
+import type { UseWebSocketOptions } from '@vueuse/core'
 import { useWebSocket } from '@vueuse/core'
 import { joinURL } from 'ufo'
 import { destr } from 'destr'
@@ -23,9 +24,15 @@ import {
 
 type MROGParam<T, M extends keyof RpcMethodsWS<T>, N extends number> = MaybeRefOrGetter<RpcParamsWS<T, M>[N]>
 
-export function useSurrealWS<T = any>(database?: Overrides['database'], options?: { auth?: MaybeRef<string | null> | false }) {
+export function useSurrealWS<T = any>(
+  database?: Overrides['database'],
+  options?: UseWebSocketOptions & {
+    auth?: MaybeRef<string | null> | false
+  },
+) {
   const { databases, defaultDatabase, auth: { database: authDatabase } } = useRuntimeConfig().public.surrealdb
   const { token: userAuth } = useSurrealAuth()
+  const { auth, onConnected: _onConnected, onDisconnected: _onDisconnected, ...opts } = options || {}
   const _database = computed(() => {
     if (database !== undefined) {
       if (typeof database !== 'string' && typeof database !== 'number' && typeof database !== 'symbol') {
@@ -69,10 +76,13 @@ export function useSurrealWS<T = any>(database?: Overrides['database'], options?
           params: [toValue(options.auth)],
         }))
       }
+      _onConnected?.(ws)
     },
-    onDisconnected() {
+    onDisconnected(ws, event) {
       idCounter.value = 0
+      _onDisconnected?.(ws, event)
     },
+    ...opts,
   })
 
   const data = computed(() => destr<RpcResponse<T> | null>(_data.value))
