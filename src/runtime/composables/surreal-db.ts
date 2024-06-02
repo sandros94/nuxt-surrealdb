@@ -52,7 +52,7 @@ export function useSurrealDB(overrides?: Overrides) {
     })
   }
 
-  // create [ thing, data ]
+  // create [ thing, data? ]
   async function $create<T = any>(
     thing: MROGParam<T, 'create', 0>,
     options?: Overrides & { data?: MROGParam<T, 'create', 1> },
@@ -100,7 +100,7 @@ export function useSurrealDB(overrides?: Overrides) {
     })
   }
 
-  // insert [ thing, data ]
+  // insert [ thing, data? ]
   async function $insert<T = any>(
     thing: MROGParam<T, 'insert', 0>,
     options?: Overrides & { data?: MROGParam<T, 'insert', 1> },
@@ -177,7 +177,7 @@ export function useSurrealDB(overrides?: Overrides) {
     })
   }
 
-  // patch [ thing, patches, diff ]
+  // patch [ thing, patches, diff? ]
   async function $patch<T = any>(
     thing: MROGParam<T, 'patch', 0>,
     options: Overrides & { patches: MROGParam<T, 'patch', 1>, diff?: MROGParam<T, 'patch', 2> },
@@ -204,7 +204,7 @@ export function useSurrealDB(overrides?: Overrides) {
     })
   }
 
-  // query [ sql, vars ]
+  // query [ sql, vars? ]
   async function $query<T = any>(
     sql: MROGParam<T, 'query', 0>,
     options?: Overrides & { vars?: MROGParam<T, 'query', 1> },
@@ -230,7 +230,7 @@ export function useSurrealDB(overrides?: Overrides) {
     })
   }
 
-  // remove [ thing ] (`delete` is a js reserved name)
+  // remove [ thing ] (`delete` is a reserved word in JS)
   async function $remove(
     thing: MROGParam<any, 'delete', 0>,
     options?: Overrides,
@@ -333,7 +333,7 @@ export function useSurrealDB(overrides?: Overrides) {
     })
   }
 
-  // update [ thing, data ]
+  // update [ thing, data? ]
   async function $update<T = any>(
     thing: MROGParam<T, 'update', 0>,
     options?: Overrides & { data?: MROGParam<T, 'update', 1> },
