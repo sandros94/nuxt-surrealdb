@@ -62,7 +62,7 @@ export function useSurrealWS<T = any>(
         method: 'use',
         params: [_database.value.NS, _database.value.DB],
       }))
-      if (options?.auth !== false && _database.value === databases[authDatabase as keyof typeof databases]) {
+      if (userAuth.value && options?.auth !== false && _database.value === databases[authDatabase as keyof typeof databases]) {
         ws.send(JSON.stringify({
           id: idCounter.value++,
           method: 'authenticate',
