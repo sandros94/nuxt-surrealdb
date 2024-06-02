@@ -158,7 +158,7 @@ export default defineNuxtConfig({
 })
 ```
 
-It is also possible to expand or change database properties (like `server.databases.production.auth` above) to be available only on Nuxt server-side. This becomes particularly useful for a more traditional database auth approach without exposing credentials client-side or a different `host` address in a private network.
+It is also possible to expand or change database properties (like `server.databases.production.auth` above) to be available only on Nuxt server-side. This becomes particularly useful for a more traditional database auth approach without exposing credentials client-side or to use a different `host` address in a private network.
 
 ---
 
