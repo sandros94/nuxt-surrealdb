@@ -10,6 +10,7 @@ export default defineNuxtConfig({
     databases: {
       staging: {
         host: '',
+        ws: '',
         NS: '',
         DB: '',
         SC: '',

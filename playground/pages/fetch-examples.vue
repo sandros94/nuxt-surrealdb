@@ -1,5 +1,13 @@
 <template>
   <div>
+    <div style="display: inline-flex;">
+      <NuxtLink to="/">
+        Home
+      </NuxtLink>
+      <NuxtLink to="/ws-examples">
+        Websocket examples
+      </NuxtLink>
+    </div>
     <div style="display: flex; flex: auto; flex-direction: row; width: 100svw; gap: 1rem;">
       <div style="width: fit-content; border-right: 1px solid #aaa; padding-right: 1rem;">
         <input v-model="search" placeholder="Table name">

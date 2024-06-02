@@ -45,6 +45,7 @@ export default defineNuxtModule<ModuleOptions>({
     databases: {
       default: {
         host: '',
+        ws: '',
         NS: '',
         DB: '',
         SC: '',

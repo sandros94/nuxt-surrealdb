@@ -4,6 +4,9 @@
       <NuxtLink to="/fetch-examples">
         Fetch examples
       </NuxtLink>
+      <NuxtLink to="/ws-examples">
+        Websocket examples
+      </NuxtLink>
     </div>
   </div>
 </template>
