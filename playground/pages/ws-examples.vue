@@ -8,9 +8,9 @@
         Fetch examples
       </NuxtLink>
     </div>
-    <div>
-      {{ _data }}
-    </div>
+    <pre>
+      {{ data }}
+    </pre>
     <button @click="userInfo">
       Get user info
     </button>
@@ -18,7 +18,7 @@
 </template>
 
 <script setup lang="ts">
-const { _data, rpc } = useSurrealWS('staging')
+const { data, rpc } = useSurrealWS('staging')
 
 rpc({
   method: 'live',

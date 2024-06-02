@@ -1,5 +1,6 @@
 import { useWebSocket } from '@vueuse/core'
 import { joinURL } from 'ufo'
+import { destr } from 'destr'
 
 import type { Overrides, RpcRequestWS, RpcResponse } from '../types'
 import type { MaybeRef } from '#imports'
@@ -57,8 +58,10 @@ export function useSurrealWS<T = any>(database?: Overrides['database'], options?
     },
   })
 
+  const data = computed(() => destr<RpcResponse<T> | null>(_data.value))
+
   function rpc<T = any>(req: RpcRequestWS<T>) {
-    if (status.value !== 'OPEN') return
+    if (status.value === 'CLOSED') return
     return _send(JSON.stringify({
       id: idCounter.value++,
       ...req,
@@ -68,6 +71,7 @@ export function useSurrealWS<T = any>(database?: Overrides['database'], options?
   return {
     close,
     _data,
+    data,
     open,
     rpc,
     _send,
