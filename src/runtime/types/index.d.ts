@@ -18,6 +18,7 @@ export interface Overrides {
 
 export interface DatabasePreset {
   host?: string
+  ws?: string
   NS?: string
   DB?: string
   SC?: string
@@ -172,8 +173,8 @@ export interface RpcRequest<
 
 export interface RpcRequestWS<
   T = any,
-  M extends keyof RpcMethodsWS<T> = keyof RpcMethods<T>,
-  P extends RpcParamsWS<M, T> = RpcParamsWS<M, T>,
+  M extends keyof RpcMethodsWS<T> = keyof RpcMethodsWS<T>,
+  P extends RpcParamsWS<T, M> = RpcParamsWS<T, M>,
 > {
   method: M
   params?: P

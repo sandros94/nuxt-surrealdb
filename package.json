@@ -46,6 +46,7 @@
   },
   "dependencies": {
     "@nuxt/kit": "^3.11.2",
+    "@vueuse/core": "^10.10.0",
     "undio": "^0.2.0"
   },
   "devDependencies": {

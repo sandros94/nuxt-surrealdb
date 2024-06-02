@@ -23,6 +23,7 @@ There are no docs atm, so please refer to the [playground](/playground/app.vue) 
 - 📦&nbsp;Custom Database Presets, to use on a per-function/composable basis.
 - ⚡️&nbsp;Built-in support for RPC endpoint via `$surrealRPC` and `useSurrealRPC`.
 - 💡&nbsp;Each RPC method is mapped to a `useSurrealDB` exported function.
+- 🌟&nbsp;Built-in support for Websocket communication via RPC endpoint using `useSurrealWS` composable.
 
 ### RPC functions
 
@@ -53,6 +54,47 @@ const {
 > [!NOTE]
 > `sql` function is an alias for `query` while `version` uses its [HTTP endpoint](https://surrealdb.com/docs/surrealdb/integration/http#version).
 
+### RPC Websocket
+
+The `useSurrealWS` composable exposes a Websocket connection to handle live communication with SurrealDB. It uses `useWebsocket` from `@vueuse/core` under the hood, this means that SSR, auto-connect and auto-disconnect are handled automatically by default. Data is Automatically parsed from `JSON` to `string` both in input as well in `data` return.
+If available, upon Websocket connection, it will any Auth token from a prior user login. Database Presets and Websocket options are available as main arguments of the composable.
+
+Below a list of the main functions available from the Websocket composable:
+
+```ts
+const {
+  authenticate,
+  close,
+  create,
+  data,
+  define,  // Surreal's `let`
+  info,
+  insert,
+  invalidate,
+  kill,
+  live,
+  merge,
+  open,
+  patch,
+  query,
+  remove,
+  rpc,
+  select,
+  send,
+  signin,
+  signup,
+  sql,     // alias for query
+  status,
+  unset,
+  update,
+  use,
+  ws,
+} = useSurrealWS()
+```
+
+> [!WARNING]
+> Currently while the `signin` and `signup` functions are avaible, they are limited to that Websocket connection. Therefore if data is required outside of that composable it is advised to use the main `useSurrealDB` composable for `SCOPE` user authentication.
+
 ### Database Presets
 
 It is possible to customize the `default` preset or define your own Database presets either via `nuxt.config.ts` or `.env`.
@@ -62,6 +104,7 @@ It is possible to customize the `default` preset or define your own Database pre
 
 ```dotenv
 NUXT_PUBLIC_SURREALDB_DATABASES_PRODUCTION_HOST="https://example.com"
+NUXT_PUBLIC_SURREALDB_DATABASES_PRODUCTION_WS="wss://example.com"
 NUXT_PUBLIC_SURREALDB_DATABASES_PRODUCTION_NS="surrealdb"
 NUXT_PUBLIC_SURREALDB_DATABASES_PRODUCTION_DB="docs"
 NUXT_PUBLIC_SURREALDB_DATABASES_PRODUCTION_SC="user"
@@ -83,6 +126,7 @@ export default defineNuxtConfig({
     databases: {
       staging: {
         host: 'https://staging.example.com',
+        ws: 'wss://staging.example.com',
         NS: 'staging',
         DB: 'demo',
 
@@ -96,6 +140,7 @@ export default defineNuxtConfig({
       },
       production: {
         host: '', // initialize any property that will be set via `.env`
+        ws: '',
         NS: '',
         DB: ''
       },
