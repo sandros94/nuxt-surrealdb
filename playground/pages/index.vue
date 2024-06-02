@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div style="display: inline-flex;">
+    <div style="display: inline-flex; gap: 1rem;">
       <NuxtLink to="/fetch-examples">
         Fetch examples
       </NuxtLink>
