@@ -1,14 +1,15 @@
 // The following nitropack import is from https://github.com/nuxt/module-builder/issues/141#issuecomment-2078248248
 import type {} from 'nitropack'
+import type { PublicRuntimeConfig } from 'nuxt/schema'
 import type { FetchOptions, ResponseType } from 'ofetch'
 import { textToBase64 } from 'undio'
 
 import type { DatabasePreset, Overrides, RpcRequest, RpcResponse, SurrealFetchOptions } from './types'
-import { createError, defineNuxtPlugin, useCookie } from '#imports'
+import { createError, defineNuxtPlugin, useSurrealAuth } from '#imports'
 
-export default defineNuxtPlugin(({ $config }) => {
-  const { databases, tokenCookieName } = $config.public.surrealdb
-  const userAuth = useCookie(tokenCookieName)
+export default defineNuxtPlugin(async ({ $config }) => {
+  const { databases, auth: { database: authDatabase } } = $config.public.surrealdb
+  const { token: userAuth, session } = useSurrealAuth()
 
   const authToken = authTokenFn(databases.default.auth)
 
@@ -22,6 +23,9 @@ export default defineNuxtPlugin(({ $config }) => {
         const [user, pass] = dbAuth.split(':')
         if (user && pass) {
           return `Basic ${textToBase64(`${user}:${pass}`, { dataURL: false })}`
+        }
+        else {
+          return dbAuth
         }
       }
     }
@@ -61,18 +65,18 @@ export default defineNuxtPlugin(({ $config }) => {
   function surrealFetchOptionsOverride<
     R extends ResponseType = ResponseType,
   >(
-    overrides: Overrides = {},
+    overrides?: Overrides,
     defaults?: Pick<FetchOptions<R>, 'headers'>,
   ) {
     const {
       database,
       token,
-    } = overrides
+    } = overrides || {}
 
     const headers = defaults?.headers as Record<string, string> || {}
     let db: DatabasePreset | undefined = undefined
     let baseURL: string | undefined = undefined
-    let dbAuth: string | undefined = undefined
+    let dbAuth = authToken
 
     if (database !== undefined) {
       if (typeof database !== 'string' && typeof database !== 'number' && typeof database !== 'symbol') {
@@ -90,20 +94,22 @@ export default defineNuxtPlugin(({ $config }) => {
       if (db.DB) {
         headers.DB = db.DB
       }
-      if (db.auth) {
+      if (db.auth && token !== false) {
         dbAuth = authTokenFn(db.auth)
       }
     }
 
     if (token !== false) {
-      const _token = authTokenFn(token)
-      if (_token || userAuth.value || dbAuth || authToken) {
-        headers.Authorization
-          = _token
-          ?? userAuth.value
-            ? `Bearer ${userAuth.value}`
-            : dbAuth
-            ?? authToken as string
+      if (token === true && dbAuth !== undefined) {
+        headers.Authorization = dbAuth
+      }
+      else if (typeof token === 'string' || typeof token === 'object') {
+        const _token = authTokenFn(token)
+        _token !== undefined && (headers.Authorization = _token)
+      }
+      else {
+        const _token = userAuth.value ? `Bearer ${userAuth.value}` : dbAuth
+        _token !== undefined && (headers.Authorization = _token)
       }
     }
 
@@ -136,6 +142,17 @@ export default defineNuxtPlugin(({ $config }) => {
         ...req,
       },
     })
+  }
+
+  if (userAuth.value && !session.value.user && authDatabase !== false as false | string) {
+    const { result } = await surrealRPC({
+      method: 'info',
+    }, {
+      database: authDatabase as keyof PublicRuntimeConfig['surrealdb']['databases'],
+    })
+    if (result) {
+      session.value.user = result
+    }
   }
 
   return {

@@ -12,6 +12,9 @@ export default defineNuxtConfig({
         auth: '',
       },
     },
+    auth: {
+      database: 'staging',
+    },
   },
   devtools: { enabled: true },
 })

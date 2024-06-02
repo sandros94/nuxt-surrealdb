@@ -286,7 +286,7 @@ export function useSurrealDB(overrides?: Overrides) {
     auth: MROGParam<T, 'signin', 0>,
     options?: Overrides,
   ) {
-    return $surrealRPC<T>({ method: 'signin', params: [toValue(auth)] }, options || overrides)
+    return $surrealRPC({ method: 'signin', params: [toValue(auth)] }, options || overrides)
   }
   async function signin<T = any>(
     auth: MROGParam<T, 'signin', 0>,
@@ -297,7 +297,7 @@ export function useSurrealDB(overrides?: Overrides) {
     const params = computed<RpcRequest<T, 'signin'>['params']>(() => ([toValue(auth)]))
     const _key = key ?? 'Sur_' + hash(['surreal', 'signin', toValue(params)])
 
-    return useSurrealRPC<T>({ method: 'signin', params }, {
+    return useSurrealRPC({ method: 'signin', params }, {
       ...opts,
       database: database || overrides?.database,
       token: token || overrides?.token,
@@ -402,5 +402,7 @@ export function useSurrealDB(overrides?: Overrides) {
     update,
     $version,
     version,
+    $surrealFetch,
+    $surrealRPC,
   }
 }

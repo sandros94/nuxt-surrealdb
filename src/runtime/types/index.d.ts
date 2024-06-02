@@ -1,22 +1,26 @@
-import type { PublicRuntimeConfig } from '@nuxt/schema'
+import type { PublicRuntimeConfig } from 'nuxt/schema'
 import type { AsyncDataOptions, UseFetchOptions } from 'nuxt/app'
 import type { FetchOptions, ResponseType } from 'ofetch'
 
+export type * from './auth'
+
 /* Database Overrides */
+
+export type AuthToken = string | {
+  user: string
+  pass: string
+}
 
 export interface Overrides {
   database?: keyof PublicRuntimeConfig['surrealdb']['databases'] | DatabasePreset
-  token?: string | false
+  token?: AuthToken | boolean
 }
 
 export interface DatabasePreset {
   host?: string
-  NS?: string | null
-  DB?: string | null
-  auth?: string | {
-    user: string
-    pass: string
-  }
+  NS?: string
+  DB?: string
+  auth?: AuthToken
 }
 
 /* useAsyncData and useFetch custom options */
@@ -103,19 +107,15 @@ type QueryParams = [
   vars?: Record<string, any>,
 ]
 
-type SignInParams<T = { [key: string]: string | undefined }> = [{
-  NS?: string
-  DB?: string
-  SC?: string
-  user?: string
-  pass?: string
-} & T]
+// TODO: Check if it is possible to not use Record<string, string | undefined>
+type SignInParams = [Record<string, string | undefined>]
 
-type SignUpParams<T = { [key: string]: string }> = [{
-  NS?: string
-  DB?: string
-  SC?: string
-} & T]
+type SignUpParams = [{
+  NS: string
+  DB: string
+  SC: string
+  [key: string]: string
+}]
 
 type UpdateParams<T> = [
   thing: string,
@@ -133,8 +133,8 @@ export interface RpcMethods<T> {
   patch: PatchParams<T>
   query: QueryParams
   select: [string]
-  signin: SignInParams<T>
-  signup: SignUpParams<T>
+  signin: SignInParams
+  signup: SignUpParams
   update: UpdateParams<T>
 }
 

@@ -19,6 +19,9 @@ function authTokenFn(dbAuth: DatabasePreset['auth']) {
       if (user && pass) {
         return `Basic ${textToBase64(`${user}:${pass}`, { dataURL: false })}`
       }
+      else {
+        return dbAuth
+      }
     }
   }
   else {
@@ -34,9 +37,9 @@ export function surrealFetch<
   req: R,
   options: SurrealFetchOptions,
 ) {
-  const { databases, tokenCookieName } = useRuntimeConfig(event).public.surrealdb
+  const { databases, auth: { cookieName } } = useRuntimeConfig(event).public.surrealdb
   const authToken = authTokenFn(databases.default.auth)
-  const userAuth = getCookie(event, tokenCookieName)
+  const userAuth = getCookie(event, cookieName)
 
   const surrealFetch = $fetch.create({
     baseURL: databases.default.host,
@@ -80,14 +83,14 @@ export function surrealFetchOptionsOverride<
     database,
     token,
   } = overrides
-  const { databases, tokenCookieName } = useRuntimeConfig(event).public.surrealdb
+  const { databases, auth: { cookieName } } = useRuntimeConfig(event).public.surrealdb
   const authToken = authTokenFn(databases.default.auth)
-  const userAuth = getCookie(event, tokenCookieName)
+  const userAuth = getCookie(event, cookieName)
 
   const headers = defaults?.headers as Record<string, string> || {}
   let db: DatabasePreset | undefined = undefined
   let baseURL: string | undefined = undefined
-  let dbAuth: string | undefined = undefined
+  let dbAuth = authToken
 
   if (database !== undefined) {
     if (typeof database !== 'string' && typeof database !== 'number' && typeof database !== 'symbol') {
@@ -105,20 +108,22 @@ export function surrealFetchOptionsOverride<
     if (db.DB) {
       headers.DB = db.DB
     }
-    if (db.auth) {
+    if (db.auth && token !== false) {
       dbAuth = authTokenFn(db.auth)
     }
   }
 
   if (token !== false) {
-    const _token = authTokenFn(token)
-    if (_token || userAuth || dbAuth || authToken) {
-      headers.Authorization
-        = _token
-        ?? userAuth
-          ? `Bearer ${userAuth}`
-          : dbAuth
-          ?? authToken as string
+    if (token === true && dbAuth !== undefined) {
+      headers.Authorization = dbAuth
+    }
+    else if (typeof token === 'string' || typeof token === 'object') {
+      const _token = authTokenFn(token)
+      _token !== undefined && (headers.Authorization = _token)
+    }
+    else {
+      const _token = userAuth ? `Bearer ${userAuth}` : dbAuth
+      _token !== undefined && (headers.Authorization = _token)
     }
   }
 
