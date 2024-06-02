@@ -2,9 +2,26 @@ import { useWebSocket } from '@vueuse/core'
 import { joinURL } from 'ufo'
 import { destr } from 'destr'
 
-import type { Overrides, RpcRequestWS, RpcResponse } from '../types'
-import type { MaybeRef } from '#imports'
-import { computed, ref, toValue, useRuntimeConfig, useSurrealAuth } from '#imports'
+import type {
+  Overrides,
+  RpcMethodsWS,
+  RpcParamsWS,
+  RpcRequestWS,
+  RpcResponse,
+} from '../types'
+import type {
+  MaybeRef,
+  MaybeRefOrGetter,
+} from '#imports'
+import {
+  computed,
+  ref,
+  toValue,
+  useRuntimeConfig,
+  useSurrealAuth,
+} from '#imports'
+
+type MROGParam<T, M extends keyof RpcMethodsWS<T>, N extends number> = MaybeRefOrGetter<RpcParamsWS<T, M>[N]>
 
 export function useSurrealWS<T = any>(database?: Overrides['database'], options?: { auth?: MaybeRef<string | null> | false }) {
   const { databases, defaultDatabase, auth: { database: authDatabase } } = useRuntimeConfig().public.surrealdb
@@ -68,13 +85,25 @@ export function useSurrealWS<T = any>(database?: Overrides['database'], options?
     }))
   }
 
+  function query<T = any>(
+    sql: MROGParam<T, 'query', 0>,
+    vars?: MROGParam<T, 'query', 1>,
+  ) {
+    return rpc({
+      method: 'query',
+      params: [toValue(sql), toValue(vars)],
+    })
+  }
+
   return {
     close,
     _data,
     data,
     open,
+    query,
     rpc,
     _send,
+    sql: query,
     status,
     ws,
   }
