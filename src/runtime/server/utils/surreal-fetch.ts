@@ -10,9 +10,9 @@ import { defu } from 'defu'
 import type { DatabasePreset, Overrides, RpcRequest, RpcResponse, SurrealFetchOptions } from '../../types'
 import { useRuntimeConfig } from '#imports'
 
-type SurrealDatabasesKeys = keyof ReturnType<typeof useSurrealDatabases>
+export type SurrealDatabasesKeys = keyof ReturnType<typeof useSurrealDatabases>
 
-type ServerOverrides = Omit<Overrides, 'database'> & {
+export type ServerOverrides = Omit<Overrides, 'database'> & {
   database?: SurrealDatabasesKeys | DatabasePreset
 }
 
