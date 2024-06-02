@@ -1,6 +1,48 @@
 # Changelog
 
 
+## v0.0.6
+
+[compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.0.5...v0.0.6)
+
+### 🚀 Enhancements
+
+- ⚠️  Inherit cookie expiration from session expiration ([cdcccba](https://github.com/sandros94/nuxt-surrealdb/commit/cdcccba))
+- **useSurrealDB:** New server util ([41e6b1a](https://github.com/sandros94/nuxt-surrealdb/commit/41e6b1a))
+- **useSurrealWS:** New composable ([b3bbb4c](https://github.com/sandros94/nuxt-surrealdb/commit/b3bbb4c))
+- **useSurrealWS:** Handle response destr ([cbaab1f](https://github.com/sandros94/nuxt-surrealdb/commit/cbaab1f))
+- **sql:** New useSurrealWS function ([d05db6e](https://github.com/sandros94/nuxt-surrealdb/commit/d05db6e))
+- **useSurrealWS:** Expose websocket options ([d84c2e5](https://github.com/sandros94/nuxt-surrealdb/commit/d84c2e5))
+- **useSurrealWS:** Add missing functions ([173359f](https://github.com/sandros94/nuxt-surrealdb/commit/173359f))
+- **useSurrealWS:** Signin & signup functions ([4099732](https://github.com/sandros94/nuxt-surrealdb/commit/4099732))
+
+### 🩹 Fixes
+
+- **useSurrealAuth:** Stronger types ([5287dcc](https://github.com/sandros94/nuxt-surrealdb/commit/5287dcc))
+- **useSurrealWS:** Authentication of logged in user ([d0e1d09](https://github.com/sandros94/nuxt-surrealdb/commit/d0e1d09))
+- **useSurrealWS:** Remove status check ([89dfd91](https://github.com/sandros94/nuxt-surrealdb/commit/89dfd91))
+- Websocket types ([e150017](https://github.com/sandros94/nuxt-surrealdb/commit/e150017))
+- **useSurrealWS:** First auth check ([69c3cf1](https://github.com/sandros94/nuxt-surrealdb/commit/69c3cf1))
+
+### 📖 Documentation
+
+- **useSurrealWS:** Update readme info ([841b8a0](https://github.com/sandros94/nuxt-surrealdb/commit/841b8a0))
+
+### 🏡 Chore
+
+- **release:** V0.0.5 ([6a79161](https://github.com/sandros94/nuxt-surrealdb/commit/6a79161))
+- Update comments ([39f2601](https://github.com/sandros94/nuxt-surrealdb/commit/39f2601))
+- Update playground ([ab01a55](https://github.com/sandros94/nuxt-surrealdb/commit/ab01a55))
+- Update playground ([b2f88d5](https://github.com/sandros94/nuxt-surrealdb/commit/b2f88d5))
+
+#### ⚠️ Breaking Changes
+
+- ⚠️  Inherit cookie expiration from session expiration ([cdcccba](https://github.com/sandros94/nuxt-surrealdb/commit/cdcccba))
+
+### ❤️ Contributors
+
+- Sandros94 ([@Sandros94](http://github.com/Sandros94))
+
 ## v0.0.5
 
 [compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.0.4...v0.0.5)
