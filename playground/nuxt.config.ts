@@ -4,18 +4,27 @@ export default defineNuxtConfig({
   },
   modules: ['nuxt-surrealdb'],
   surrealdb: {
+    auth: {
+      database: 'staging',
+    },
     databases: {
       staging: {
         host: '',
         NS: '',
         DB: '',
         SC: '',
-        auth: '',
       },
     },
-    auth: {
-      database: 'staging',
+    server: {
+      databases: {
+        staging: {
+          auth: '',
+        },
+      },
     },
   },
   devtools: { enabled: true },
+  imports: {
+    autoImport: true,
+  },
 })

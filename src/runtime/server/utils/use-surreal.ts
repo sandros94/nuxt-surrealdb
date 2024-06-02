@@ -1,12 +1,20 @@
 // The following nitropack import is from https://github.com/nuxt/module-builder/issues/141#issuecomment-2078248248
 import type {} from 'nitropack'
+import type { PublicRuntimeConfig, RuntimeConfig } from 'nuxt/schema'
 import type { FetchOptions, ResponseType } from 'ofetch'
 import { textToBase64 } from 'undio'
 import type { H3Event } from 'h3'
 import { getCookie } from 'h3'
+import { defu } from 'defu'
 
 import type { DatabasePreset, Overrides, RpcRequest, RpcResponse, SurrealFetchOptions } from '../../types'
 import { useRuntimeConfig } from '#imports'
+
+type SurrealDatabasesKeys = keyof ReturnType<typeof useSurrealDatabases>
+
+type ServerOverrides = Omit<Overrides, 'database'> & {
+  database?: SurrealDatabasesKeys | DatabasePreset
+}
 
 function authTokenFn(dbAuth: DatabasePreset['auth']) {
   if (!dbAuth) return undefined
@@ -29,7 +37,29 @@ function authTokenFn(dbAuth: DatabasePreset['auth']) {
   }
 }
 
-export function surrealFetch<
+export function useSurrealDatabases(event: H3Event) {
+  const {
+    surrealdb: {
+      databases: privateDatabases,
+    },
+    public: {
+      surrealdb: {
+        databases: publicDatabases,
+      },
+    },
+  } = useRuntimeConfig(event)
+
+  const databases = defu<
+    PublicRuntimeConfig['surrealdb']['databases'],
+    RuntimeConfig['surrealdb']['databases'][]
+  >(publicDatabases, privateDatabases)
+
+  return {
+    ...databases,
+  }
+}
+
+export function useSurrealFetch<
   T = any,
   R extends string = string,
 >(
@@ -37,24 +67,25 @@ export function surrealFetch<
   req: R,
   options: SurrealFetchOptions,
 ) {
-  const { databases, auth: { cookieName } } = useRuntimeConfig(event).public.surrealdb
-  const authToken = authTokenFn(databases.default.auth)
+  const { surrealdb: { defaultDatabase }, public: { surrealdb: { auth: { cookieName } } } } = useRuntimeConfig(event)
+  const defaultDB = useSurrealDatabases(event)[defaultDatabase as SurrealDatabasesKeys]
+  const authToken = authTokenFn(defaultDB.auth)
   const userAuth = getCookie(event, cookieName)
 
   const surrealFetch = $fetch.create({
-    baseURL: databases.default.host,
+    baseURL: defaultDB.host,
     onRequest({ options }) {
       options.headers = options.headers || {}
 
       // @ts-expect-error NS header type missing
-      if (databases.default.NS && options.headers.NS === undefined) {
+      if (defaultDB.NS && options.headers.NS === undefined) {
         // @ts-expect-error NS header type missing
-        options.headers.NS = databases.default.NS
+        options.headers.NS = defaultDB.NS
       }
       // @ts-expect-error DB header type missing
-      if (databases.default.DB && options.headers.DB === undefined) {
+      if (defaultDB.DB && options.headers.DB === undefined) {
         // @ts-expect-error DB header type missing
-        options.headers.DB = databases.default.DB
+        options.headers.DB = defaultDB.DB
       }
       // @ts-expect-error Authorization header type missing
       if (authToken && !userAuth && !options.headers.Authorization) {
@@ -72,19 +103,20 @@ export function surrealFetch<
   return surrealFetch<T>(req, options)
 }
 
-export function surrealFetchOptionsOverride<
+export function useSurrealFetchOptionsOverride<
   R extends ResponseType = ResponseType,
 >(
   event: H3Event,
-  overrides: Overrides = {},
+  overrides: ServerOverrides = {},
   defaults?: Pick<FetchOptions<R>, 'headers'>,
 ) {
   const {
     database,
     token,
   } = overrides
-  const { databases, auth: { cookieName } } = useRuntimeConfig(event).public.surrealdb
-  const authToken = authTokenFn(databases.default.auth)
+  const { surrealdb: { defaultDatabase }, public: { surrealdb: { auth: { cookieName } } } } = useRuntimeConfig(event)
+  const databases = useSurrealDatabases(event)
+  const authToken = authTokenFn(databases[defaultDatabase as SurrealDatabasesKeys].auth)
   const userAuth = getCookie(event, cookieName)
 
   const headers = defaults?.headers as Record<string, string> || {}
@@ -137,11 +169,11 @@ export function surrealFetchOptionsOverride<
   }
 }
 
-export function surrealRPC<T = any>(event: H3Event, req: RpcRequest<T>, ovr?: Overrides) {
+export function useSurrealRPC<T = any>(event: H3Event, req: RpcRequest<T>, ovr?: ServerOverrides) {
   let id = 0
 
-  return surrealFetch<RpcResponse<T>>(event, 'rpc', {
-    ...surrealFetchOptionsOverride(event, ovr),
+  return useSurrealFetch<RpcResponse<T>>(event, 'rpc', {
+    ...useSurrealFetchOptionsOverride(event, ovr),
     method: 'POST',
     body: {
       id: id++,

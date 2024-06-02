@@ -100,10 +100,19 @@ export default defineNuxtConfig({
         DB: ''
       },
     },
+    server: {
+      databases: {
+        production: {
+          auth: '', // NUXT_SURREALDB_DATABASES_PRODUCTION_AUTH='root:root'
+        }
+      }
+    }
   },
   // ...
 })
 ```
+
+It is also possible to expand or change database properties (like `server.databases.production.auth` above) to be available only on Nuxt server-side. This becomes particularly useful for a more traditional database auth approach without exposing credentials client-side or a different `host` address in a private network.
 
 ---
 

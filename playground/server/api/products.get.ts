@@ -1,5 +1,5 @@
 export default eventHandler(async (event) => {
-  return surrealRPC(event, {
+  return useSurrealRPC(event, {
     method: 'select',
     params: ['products'],
   }, {
