@@ -64,6 +64,7 @@ It is possible to customize the `default` preset or define your own Database pre
 NUXT_PUBLIC_SURREALDB_DATABASES_PRODUCTION_HOST="https://example.com"
 NUXT_PUBLIC_SURREALDB_DATABASES_PRODUCTION_NS="surrealdb"
 NUXT_PUBLIC_SURREALDB_DATABASES_PRODUCTION_DB="docs"
+NUXT_PUBLIC_SURREALDB_DATABASES_PRODUCTION_SC="user"
 
 # For auth
 # user and pass separated by a colon

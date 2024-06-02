@@ -1,4 +1,6 @@
 import type { PublicRuntimeConfig } from 'nuxt/schema'
+import { defu } from 'defu'
+
 import type { RpcParams } from '../types'
 
 import type { UserSession } from '#surreal-auth'
@@ -53,14 +55,18 @@ export function useSurrealAuth() {
   }
 
   // signin
-  async function signin(credentials: Omit<RpcParams<any, 'signin'>[0], 'NS' | 'DB'>) {
-    const { NS, DB } = databases[authDatabase]
-    const { SC, ...crd } = credentials
+  async function signin(credentials: RpcParams<any, 'signin'>[0]) {
+    const _credentials = defu(
+      credentials,
+      {
+        NS: databases[authDatabase].NS,
+        DB: databases[authDatabase].DB,
+        SC: databases[authDatabase].SC,
+      },
+    )
+    if (!_credentials.NS || !_credentials.DB || !_credentials.SC) throw createError({ statusCode: 500, message: 'Invalid database preset' })
     const { result } = await $signin<string>({
-      ...crd,
-      NS,
-      DB,
-      SC,
+      ..._credentials,
     }, { database: authDatabase, token: false })
     if (result) {
       token.value = result
@@ -70,19 +76,23 @@ export function useSurrealAuth() {
   }
 
   // signup
-  async function signup(credentials: Omit<RpcParams<any, 'signup'>[0], 'NS' | 'DB'>) {
-    const { NS, DB } = databases[authDatabase]
-    const { SC, ...crd } = credentials
+  async function signup(credentials: RpcParams<any, 'signup'>[0]) {
+    const _credentials = defu(
+      credentials,
+      {
+        NS: databases[authDatabase].NS,
+        DB: databases[authDatabase].DB,
+        SC: databases[authDatabase].SC,
+      },
+    )
+    if (!_credentials.NS || !_credentials.DB || !_credentials.SC) throw createError({ statusCode: 500, message: 'Invalid database preset' })
     const { result } = await $signup<string>({
-      ...crd,
-      NS,
-      DB,
-      SC,
+      ..._credentials,
     }, { database: authDatabase, token: false })
     if (result) {
       token.value = result
       refreshCookie(cookieName)
-      await signin({ ...crd, SC })
+      await signin(_credentials)
       await refreshInfo()
     }
   }

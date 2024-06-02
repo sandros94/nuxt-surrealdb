@@ -30,6 +30,7 @@ export default defineNuxtModule<ModuleOptions>({
         host: '',
         NS: '',
         DB: '',
+        SC: '',
         auth: '',
       },
     },

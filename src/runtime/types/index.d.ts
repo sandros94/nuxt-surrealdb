@@ -20,6 +20,7 @@ export interface DatabasePreset {
   host?: string
   NS?: string
   DB?: string
+  SC?: string
   auth?: AuthToken
 }
 

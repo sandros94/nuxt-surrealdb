@@ -108,9 +108,6 @@ const { signin, signout, session, refreshInfo } = useSurrealAuth()
 interface UserCredentials {
   username?: string
   password?: string
-  SC: string
 }
-const credentials = reactive<UserCredentials>({
-  SC: 'user',
-})
+const credentials = reactive<UserCredentials>({})
 </script>

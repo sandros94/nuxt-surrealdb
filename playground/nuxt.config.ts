@@ -9,6 +9,7 @@ export default defineNuxtConfig({
         host: '',
         NS: '',
         DB: '',
+        SC: '',
         auth: '',
       },
     },
