@@ -22,7 +22,7 @@ There are no docs atm, so please refer to the [playground](/playground/app.vue) 
 - 🚀&nbsp;Custom built-in `$surrealFetch` and `useSurrealFetch` (based on `$fetch` and `useFetch` respectively).
 - 📦&nbsp;Custom Database Presets, to be able to use multiple Databases on a per-function/composable basis.
 - ⚡️&nbsp;Built-in support for [RPC endpoint](https://surrealdb.com/docs/surrealdb/integration/rpc) via `$surrealRPC` and `useSurrealRPC`.
-- 🏗️&nbsp;Built-in Nuxt server `useSurrealRPC` composable and server-side private host/auth for private network communication with SurrealDB.
+- 🏗️&nbsp;Built-in Nuxt server `useSurrealRPC` util with server-side private DB Presets for a private network communication with SurrealDB.
 - 💡&nbsp;Each RPC method is mapped to a `useSurrealDB` exported function.
 - 🌟&nbsp;Built-in support for Websocket communication with RPC methods using the `useSurrealWS` composable.
 
