@@ -18,7 +18,7 @@
 </template>
 
 <script setup lang="ts">
-const { _data, rpc } = useSurrealWS()
+const { _data, rpc } = useSurrealWS('staging')
 
 rpc({
   method: 'live',

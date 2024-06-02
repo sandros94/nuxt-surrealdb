@@ -2,10 +2,11 @@ import { useWebSocket } from '@vueuse/core'
 import { joinURL } from 'ufo'
 
 import type { Overrides, RpcRequestWS, RpcResponse } from '../types'
-import { computed, ref, useRuntimeConfig, useSurrealAuth } from '#imports'
+import type { MaybeRef } from '#imports'
+import { computed, ref, toValue, useRuntimeConfig, useSurrealAuth } from '#imports'
 
-export function useSurrealWS<T = any>(database?: Overrides['database']) {
-  const { databases, defaultDatabase } = useRuntimeConfig().public.surrealdb
+export function useSurrealWS<T = any>(database?: Overrides['database'], options?: { auth?: MaybeRef<string | null> | false }) {
+  const { databases, defaultDatabase, auth: { database: authDatabase } } = useRuntimeConfig().public.surrealdb
   const { token: userAuth } = useSurrealAuth()
   const _database = computed(() => {
     if (database !== undefined) {
@@ -22,8 +23,6 @@ export function useSurrealWS<T = any>(database?: Overrides['database']) {
   })
   const idCounter = ref(0)
 
-  console.log(_database.value)
-
   const {
     close,
     data: _data,
@@ -38,11 +37,20 @@ export function useSurrealWS<T = any>(database?: Overrides['database']) {
         method: 'use',
         params: [_database.value.NS, _database.value.DB],
       }))
-      ws.send(JSON.stringify({
-        id: idCounter.value++,
-        method: 'authenticate',
-        params: [userAuth.value],
-      }))
+      if (options?.auth !== false && _database.value === databases[authDatabase as keyof typeof databases]) {
+        ws.send(JSON.stringify({
+          id: idCounter.value++,
+          method: 'authenticate',
+          params: [userAuth.value],
+        }))
+      }
+      else if (options?.auth) {
+        ws.send(JSON.stringify({
+          id: idCounter.value++,
+          method: 'authenticate',
+          params: [toValue(options.auth)],
+        }))
+      }
     },
     onDisconnected() {
       idCounter.value = 0
