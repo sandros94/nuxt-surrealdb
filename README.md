@@ -19,11 +19,11 @@ There are no docs atm, so please refer to the [playground](/playground/app.vue) 
 ## Features
 
 <!-- Highlight some of the features your module provide here -->
-- 🚀&nbsp;Custom built-in `$surrealFetch` and `useSurrealFetch`.
-- 📦&nbsp;Custom Database Presets, to use on a per-function/composable basis.
-- ⚡️&nbsp;Built-in support for RPC endpoint via `$surrealRPC` and `useSurrealRPC`.
+- 🚀&nbsp;Custom built-in `$surrealFetch` and `useSurrealFetch` (based on `$fetch` and `useFetch` respectively).
+- 📦&nbsp;Custom Database Presets, to be able to use multiple Databases on a per-function/composable basis.
+- ⚡️&nbsp;Built-in support for [RPC endpoint](https://surrealdb.com/docs/surrealdb/integration/rpc) via `$surrealRPC` and `useSurrealRPC`.
 - 💡&nbsp;Each RPC method is mapped to a `useSurrealDB` exported function.
-- 🌟&nbsp;Built-in support for Websocket communication via RPC endpoint using `useSurrealWS` composable.
+- 🌟&nbsp;Built-in support for Websocket communication with RPC methods using the `useSurrealWS` composable.
 
 ### RPC functions
 
