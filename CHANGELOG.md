@@ -1,6 +1,29 @@
 # Changelog
 
 
+## v0.0.5
+
+[compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.0.4...v0.0.5)
+
+### 🚀 Enhancements
+
+- **useSurrealAuth:** New composable ([2ed09c2](https://github.com/sandros94/nuxt-surrealdb/commit/2ed09c2))
+- **useSurrealAuth:** `SC` param per database preset ([a054de8](https://github.com/sandros94/nuxt-surrealdb/commit/a054de8))
+- Server-side database preset customization ([7568bde](https://github.com/sandros94/nuxt-surrealdb/commit/7568bde))
+- DefaultDatabase selection ([c8b11d9](https://github.com/sandros94/nuxt-surrealdb/commit/c8b11d9))
+
+### 🩹 Fixes
+
+- Use `message` in createError to handle longer messages ([eb5b410](https://github.com/sandros94/nuxt-surrealdb/commit/eb5b410))
+
+### 🏡 Chore
+
+- **release:** V0.0.4 ([39a582d](https://github.com/sandros94/nuxt-surrealdb/commit/39a582d))
+
+### ❤️ Contributors
+
+- Sandros94 ([@Sandros94](http://github.com/Sandros94))
+
 ## v0.0.4
 
 [compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.0.3...v0.0.4)
