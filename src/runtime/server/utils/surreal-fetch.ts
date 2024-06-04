@@ -37,7 +37,7 @@ function authTokenFn(dbAuth: DatabasePreset['auth']) {
   }
 }
 
-export function useSurrealDatabases(event: H3Event) {
+export function useSurrealDatabases(event?: H3Event) {
   const {
     surrealdb: {
       databases: privateDatabases,
