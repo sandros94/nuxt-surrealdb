@@ -1,10 +1,6 @@
 import type { AsyncData } from 'nuxt/app'
 import type { FetchError } from 'ofetch'
 import { hash } from 'ohash'
-import {
-  useFetch,
-  useNuxtApp,
-} from 'nuxt/app'
 
 import type {
   KeysOf,
@@ -12,14 +8,20 @@ import type {
   SurrealUseFetchOptions,
   SurrealRpcOptions,
   RpcRequest,
-  RpcResponseOk,
   RpcResponseError,
 } from '../types'
 import type {
   ComputedRef,
   MaybeRefOrGetter,
 } from '#imports'
-import { createError, ref, toValue } from '#imports'
+import {
+  createError,
+  ref,
+  toValue,
+  useFetch,
+  useNuxtApp,
+  useRuntimeConfig,
+} from '#imports'
 
 export function useSurrealFetch<DataT = any, ErrorT = any>(
   endpoint: MaybeRefOrGetter<string>,
@@ -45,19 +47,20 @@ export function useSurrealFetch<DataT = any, ErrorT = any>(
   })
 }
 
-export function useSurrealRPC<T = any>(
+export function useSurrealRPC<DataT = any>(
   req: {
-    method: MaybeRefOrGetter<RpcRequest<T>['method']>
-    params?: MaybeRefOrGetter<RpcRequest<T>['params']> | ComputedRef<RpcRequest<T>['params']>
+    method: MaybeRefOrGetter<RpcRequest<DataT>['method']>
+    params?: MaybeRefOrGetter<RpcRequest<DataT>['params']> | ComputedRef<RpcRequest<DataT>['params']>
   },
-  options?: SurrealRpcOptions<T>,
-): AsyncData<RpcResponseOk<T> | null, RpcResponseError | FetchError<any> | null> {
+  options?: SurrealRpcOptions<DataT>,
+): AsyncData<PickFrom<DataT, KeysOf<DataT>> | null, FetchError<any> | RpcResponseError | null> {
   const id = ref(0)
   const { key, ...opts } = options || {}
+  const { unwrapRpcResponse } = useRuntimeConfig().public.surrealdb
 
   const _key = key ?? 'Sur_' + hash(['surreal', 'rpc', toValue(req.method), toValue(req.params)])
 
-  return useSurrealFetch<RpcResponseOk<T>, RpcResponseError>('rpc', {
+  return useSurrealFetch<DataT, RpcResponseError>('rpc', {
     ...opts,
     onResponse({ response }) {
       if (response.status === 200 && response._data.error) {
@@ -65,6 +68,9 @@ export function useSurrealRPC<T = any>(
           statusCode: response._data.error.code,
           message: response._data.error.message,
         })
+      }
+      else if (response.status === 200 && response._data.result && unwrapRpcResponse) {
+        response._data = response._data.result
       }
     },
     method: 'POST',

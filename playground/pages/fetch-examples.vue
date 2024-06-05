@@ -35,7 +35,7 @@
         <label for="removeProduct">Remove product by id</label>
         <select id="removeProduct" v-model="removeProduct">
           <option
-            v-for="product in data?.result || []"
+            v-for="product in data || []"
             :key="product.id"
             :value="product.id"
           >

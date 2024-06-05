@@ -4,11 +4,16 @@ import type { PublicRuntimeConfig } from 'nuxt/schema'
 import type { FetchOptions, ResponseType } from 'ofetch'
 import { textToBase64 } from 'undio'
 
-import type { DatabasePreset, Overrides, RpcRequest, RpcResponse, SurrealFetchOptions } from './types'
+import type { DatabasePreset, Overrides, RpcRequest, SurrealFetchOptions } from './types'
 import { createError, defineNuxtPlugin, useSurrealAuth } from '#imports'
 
 export default defineNuxtPlugin(async ({ $config }) => {
-  const { databases, defaultDatabase, auth: { database: authDatabase } } = $config.public.surrealdb
+  const {
+    databases,
+    defaultDatabase,
+    auth: { database: authDatabase },
+    unwrapRpcResponse,
+  } = $config.public.surrealdb
   const defaultDB = databases[defaultDatabase as keyof PublicRuntimeConfig['surrealdb']['databases']]
   const { token: userAuth, session } = useSurrealAuth()
 
@@ -127,7 +132,7 @@ export default defineNuxtPlugin(async ({ $config }) => {
   function surrealRPC<T = any>(req: RpcRequest<T>, ovr?: Overrides) {
     let id = 0
 
-    return surrealFetch<RpcResponse<T>, string, SurrealFetchOptions>('rpc', {
+    return surrealFetch<T, string, SurrealFetchOptions>('rpc', {
       ...surrealFetchOptionsOverride(ovr),
       onResponse({ response }) {
         if (response.status === 200 && response._data.error) {
@@ -135,6 +140,9 @@ export default defineNuxtPlugin(async ({ $config }) => {
             statusCode: response._data.error.code,
             message: response._data.error.message,
           })
+        }
+        else if (response.status === 200 && response._data.result && unwrapRpcResponse) {
+          response._data = response._data.result
         }
       },
       method: 'POST',
@@ -146,13 +154,13 @@ export default defineNuxtPlugin(async ({ $config }) => {
   }
 
   if (userAuth.value && !session.value.user && authDatabase !== false as false | string) {
-    const { result } = await surrealRPC({
+    const user = await surrealRPC({
       method: 'info',
     }, {
       database: authDatabase as keyof PublicRuntimeConfig['surrealdb']['databases'],
     })
-    if (result) {
-      session.value.user = result
+    if (user) {
+      session.value.user = user
     }
   }
 

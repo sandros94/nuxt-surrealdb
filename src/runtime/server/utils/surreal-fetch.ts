@@ -8,7 +8,7 @@ import { getCookie } from 'h3'
 import { defu } from 'defu'
 
 import type { DatabasePreset, Overrides, RpcRequest, RpcResponse, SurrealFetchOptions } from '../../types'
-import { useRuntimeConfig } from '#imports'
+import { createError, useRuntimeConfig } from '#imports'
 
 export type SurrealDatabasesKeys = keyof ReturnType<typeof useSurrealDatabases>
 
@@ -170,10 +170,22 @@ export function useSurrealFetchOptionsOverride<
 }
 
 export function useSurrealRPC<T = any>(event: H3Event, req: RpcRequest<T>, ovr?: ServerOverrides) {
+  const { unwrapRpcResponse } = useRuntimeConfig(event).public.surrealdb
   let id = 0
 
   return useSurrealFetch<RpcResponse<T>>(event, 'rpc', {
     ...useSurrealFetchOptionsOverride(event, ovr),
+    onResponse({ response }) {
+      if (response.status === 200 && response._data.error) {
+        throw createError({
+          statusCode: response._data.error.code,
+          message: response._data.error.message,
+        })
+      }
+      else if (response.status === 200 && response._data.result && unwrapRpcResponse) {
+        response._data = response._data.result
+      }
+    },
     method: 'POST',
     body: {
       id: id++,
