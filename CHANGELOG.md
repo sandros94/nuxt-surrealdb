@@ -1,6 +1,34 @@
 # Changelog
 
 
+## v0.0.7
+
+[compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.0.6...v0.0.7)
+
+### 🚀 Enhancements
+
+- ⚠️  UnwrapRpcResponse by default ([312fd93](https://github.com/sandros94/nuxt-surrealdb/commit/312fd93))
+
+### 🩹 Fixes
+
+- Make `useSurrealDatabases` event optional ([d4ec768](https://github.com/sandros94/nuxt-surrealdb/commit/d4ec768))
+
+### 📖 Documentation
+
+- Update readme ([b2c71a5](https://github.com/sandros94/nuxt-surrealdb/commit/b2c71a5))
+- Update readme ([36dd4f7](https://github.com/sandros94/nuxt-surrealdb/commit/36dd4f7))
+- Update readme 🙄 ([68828ec](https://github.com/sandros94/nuxt-surrealdb/commit/68828ec))
+- Update readme ([e8dee46](https://github.com/sandros94/nuxt-surrealdb/commit/e8dee46))
+- Add social card ([c84d316](https://github.com/sandros94/nuxt-surrealdb/commit/c84d316))
+
+#### ⚠️ Breaking Changes
+
+- ⚠️  UnwrapRpcResponse by default ([312fd93](https://github.com/sandros94/nuxt-surrealdb/commit/312fd93))
+
+### ❤️ Contributors
+
+- Sandros94 ([@Sandros94](http://github.com/Sandros94))
+
 ## v0.0.6
 
 [compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.0.5...v0.0.6)
