@@ -56,16 +56,17 @@ export function useSurrealDB(overrides?: Overrides) {
   // create [ thing, data? ]
   async function $create<T = any>(
     thing: MROGParam<T, 'create', 0>,
-    options?: Overrides & { data?: MROGParam<T, 'create', 1> },
+    data?: MROGParam<T, 'create', 1>,
+    ovr?: Overrides,
   ) {
-    const { data, ...ovr } = options || {}
     return $surrealRPC<T>({ method: 'create', params: [toValue(thing), toValue(data)] }, ovr || overrides)
   }
   async function create<T = any>(
     thing: MROGParam<T, 'create', 0>,
-    options?: UseSurrealRpcOptions<T> & { data?: MROGParam<T, 'create', 1> },
+    data?: MROGParam<T, 'create', 1>,
+    options?: UseSurrealRpcOptions<T>,
   ): Promise<AsyncData<PickFrom<T, KeysOf<T>> | null, FetchError<any> | RpcResponseError | null>> {
-    const { data, database, immediate, key, token, watch, ...opts } = options || {}
+    const { database, immediate, key, token, watch, ...opts } = options || {}
 
     const params = computed<RpcRequest<T, 'create'>['params']>(() => ([toValue(thing), toValue(data)]))
     const _key = key ?? 'Sur_' + hash(['surreal', 'create', toValue(params)])
@@ -104,16 +105,17 @@ export function useSurrealDB(overrides?: Overrides) {
   // insert [ thing, data? ]
   async function $insert<T = any>(
     thing: MROGParam<T, 'insert', 0>,
-    options?: Overrides & { data?: MROGParam<T, 'insert', 1> },
+    data?: MROGParam<T, 'insert', 1>,
+    ovr?: Overrides,
   ) {
-    const { data, ...ovr } = options || {}
     return $surrealRPC<T>({ method: 'insert', params: [toValue(thing), toValue(data)] }, ovr || overrides)
   }
   async function insert<T = any>(
     thing: MROGParam<T, 'insert', 0>,
-    options?: UseSurrealRpcOptions<T> & { data?: MROGParam<T, 'insert', 1> },
+    data?: MROGParam<T, 'insert', 1>,
+    options?: UseSurrealRpcOptions<T>,
   ): Promise<AsyncData<PickFrom<T, KeysOf<T>> | null, FetchError<any> | RpcResponseError | null>> {
-    const { data, database, immediate, key, token, watch, ...opts } = options || {}
+    const { database, immediate, key, token, watch, ...opts } = options || {}
 
     const params = computed<RpcRequest<T, 'insert'>['params']>(() => ([toValue(thing), toValue(data)]))
     const _key = key ?? 'Sur_' + hash(['surreal', 'insert', toValue(params)])
@@ -154,16 +156,17 @@ export function useSurrealDB(overrides?: Overrides) {
   // merge [ thing, data ]
   async function $merge<T = any>(
     thing: MROGParam<T, 'merge', 0>,
-    options: Overrides & { data: MROGParam<T, 'merge', 1> },
+    data: MROGParam<T, 'merge', 1>,
+    ovr?: Overrides,
   ) {
-    const { data, ...ovr } = options
     return $surrealRPC<T>({ method: 'merge', params: [toValue(thing), toValue(data)] }, ovr || overrides)
   }
   async function merge<T = any>(
     thing: MROGParam<T, 'merge', 0>,
-    options: UseSurrealRpcOptions<T> & { data: MROGParam<T, 'merge', 1> },
+    data: MROGParam<T, 'merge', 1>,
+    options?: UseSurrealRpcOptions<T>,
   ): Promise<AsyncData<PickFrom<T, KeysOf<T>> | null, FetchError<any> | RpcResponseError | null>> {
-    const { data, database, immediate, key, token, watch, ...opts } = options
+    const { database, immediate, key, token, watch, ...opts } = options || {}
 
     const params = computed<RpcRequest<T, 'merge'>['params']>(() => ([toValue(thing), toValue(data)]))
     const _key = key ?? 'Sur_' + hash(['surreal', 'merge', toValue(params)])
@@ -181,16 +184,19 @@ export function useSurrealDB(overrides?: Overrides) {
   // patch [ thing, patches, diff? ]
   async function $patch<T = any>(
     thing: MROGParam<T, 'patch', 0>,
-    options: Overrides & { patches: MROGParam<T, 'patch', 1>, diff?: MROGParam<T, 'patch', 2> },
+    patches: MROGParam<T, 'patch', 1>,
+    diff?: MROGParam<T, 'patch', 2>,
+    ovr?: Overrides,
   ) {
-    const { diff, patches, ...ovr } = options
     return $surrealRPC<T>({ method: 'patch', params: [toValue(thing), toValue(patches), toValue(diff)] }, ovr || overrides)
   }
   async function patch<T = any>(
     thing: MROGParam<T, 'patch', 0>,
-    options: UseSurrealRpcOptions<T> & { patches: MROGParam<T, 'patch', 1>, diff?: MROGParam<T, 'patch', 2> },
+    patches: MROGParam<T, 'patch', 1>,
+    diff?: MROGParam<T, 'patch', 2>,
+    options?: UseSurrealRpcOptions<T>,
   ): Promise<AsyncData<PickFrom<T, KeysOf<T>> | null, FetchError<any> | RpcResponseError | null>> {
-    const { database, diff, immediate, key, patches, token, watch, ...opts } = options
+    const { database, immediate, key, token, watch, ...opts } = options || {}
 
     const params = computed<RpcRequest<T, 'patch'>['params']>(() => ([toValue(thing), toValue(patches), toValue(diff)]))
     const _key = key ?? 'Sur_' + hash(['surreal', 'patch', toValue(params)])
@@ -208,16 +214,17 @@ export function useSurrealDB(overrides?: Overrides) {
   // query [ sql, vars? ]
   async function $query<T = any>(
     sql: MROGParam<T, 'query', 0>,
-    options?: Overrides & { vars?: MROGParam<T, 'query', 1> },
+    vars?: MROGParam<T, 'query', 1>,
+    ovr?: Overrides,
   ) {
-    const { vars, ...ovr } = options || {}
     return $surrealRPC<T>({ method: 'query', params: [toValue(sql), toValue(vars)] }, ovr || overrides)
   }
   async function query<T = any>(
     sql: MROGParam<T, 'query', 0>,
-    options?: UseSurrealRpcOptions<T> & { vars?: MROGParam<T, 'query', 1> },
+    vars?: MROGParam<T, 'query', 1>,
+    options?: UseSurrealRpcOptions<T>,
   ): Promise<AsyncData<PickFrom<T, KeysOf<T>> | null, FetchError<any> | RpcResponseError | null>> {
-    const { database, key, vars, token, watch, ...opts } = options || {}
+    const { database, key, token, watch, ...opts } = options || {}
 
     const params = computed<RpcRequest<T, 'query'>['params']>(() => ([toValue(sql), toValue(vars)]))
     const _key = key ?? 'Sur_' + hash(['surreal', 'query', toValue(params)])
@@ -337,16 +344,17 @@ export function useSurrealDB(overrides?: Overrides) {
   // update [ thing, data? ]
   async function $update<T = any>(
     thing: MROGParam<T, 'update', 0>,
-    options?: Overrides & { data?: MROGParam<T, 'update', 1> },
+    data?: MROGParam<T, 'update', 1>,
+    ovr?: Overrides,
   ) {
-    const { data, ...ovr } = options || {}
     return $surrealRPC<T>({ method: 'update', params: [toValue(thing), toValue(data)] }, ovr || overrides)
   }
   async function update<T = any>(
     thing: MROGParam<T, 'update', 0>,
-    options?: UseSurrealRpcOptions<T> & { data?: MROGParam<T, 'update', 1> },
+    data?: MROGParam<T, 'update', 1>,
+    options?: UseSurrealRpcOptions<T>,
   ): Promise<AsyncData<PickFrom<T, KeysOf<T>> | null, FetchError<any> | RpcResponseError | null>> {
-    const { data, database, immediate, key, token, watch, ...opts } = options || {}
+    const { database, immediate, key, token, watch, ...opts } = options || {}
 
     const params = computed<RpcRequest<T, 'update'>['params']>(() => ([toValue(thing), toValue(data)]))
     const _key = key ?? 'Sur_' + hash(['surreal', 'update', toValue(params)])

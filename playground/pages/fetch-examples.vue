@@ -103,21 +103,20 @@ const { data, error, execute } = await select<Product[]>(search, {
 error.value && console.error('error', error.value)
 
 const newProduct = reactive<Partial<Product>>({})
-const { data: dataCreate, execute: executeCreate } = await create<Product>('products', {
-  data: newProduct,
-})
+const { data: dataCreate, execute: executeCreate } = await create<Product>('products', newProduct)
 
 const removeProduct = ref('')
 const { execute: executeRemove } = await remove(removeProduct)
 
-const { error: forcedError } = await sql<Product[]>('SELECT * ROM products;', {
-  server: false,
-})
+const { error: forcedError } = await sql<Product[]>(
+  'SELECT * ROM products;',
+  undefined,
+  { server: false },
+)
 
 const { signin, signout, session, refreshInfo } = useSurrealAuth()
-interface UserCredentials {
+const credentials = reactive<{
   username?: string
   password?: string
-}
-const credentials = reactive<UserCredentials>({})
+}>({})
 </script>
