@@ -35,8 +35,8 @@ export type SurrealFetchOptions<
 > = Omit<FetchOptions<T>, 'method'> & {
   method?: Uppercase<SurrealMethods> | SurrealMethods
 }
-export type SurrealUseFetchOptions<T> = UseFetchOptions<T> & Overrides
-export type SurrealRpcOptions<T> = Omit<SurrealUseFetchOptions<T>, 'method' | 'body' | 'onResponse'>
+export type UseSurrealFetchOptions<T> = UseFetchOptions<T> & Overrides
+export type UseSurrealRpcOptions<T> = Omit<UseSurrealFetchOptions<T>, 'method' | 'body' | 'onResponse'>
 
 /* Utils */
 

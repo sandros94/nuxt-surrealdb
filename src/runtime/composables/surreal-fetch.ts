@@ -5,8 +5,8 @@ import { hash } from 'ohash'
 import type {
   KeysOf,
   PickFrom,
-  SurrealUseFetchOptions,
-  SurrealRpcOptions,
+  UseSurrealFetchOptions,
+  UseSurrealRpcOptions,
   RpcRequest,
   RpcResponseError,
 } from '../types'
@@ -25,7 +25,7 @@ import {
 
 export function useSurrealFetch<DataT = any, ErrorT = any>(
   endpoint: MaybeRefOrGetter<string>,
-  options: SurrealUseFetchOptions<DataT> = {},
+  options: UseSurrealFetchOptions<DataT> = {},
 ): AsyncData<PickFrom<DataT, KeysOf<DataT>> | null, ErrorT | FetchError<any> | null> {
   const {
     database,
@@ -52,7 +52,7 @@ export function useSurrealRPC<DataT = any>(
     method: MaybeRefOrGetter<RpcRequest<DataT>['method']>
     params?: MaybeRefOrGetter<RpcRequest<DataT>['params']> | ComputedRef<RpcRequest<DataT>['params']>
   },
-  options?: SurrealRpcOptions<DataT>,
+  options?: UseSurrealRpcOptions<DataT>,
 ): AsyncData<PickFrom<DataT, KeysOf<DataT>> | null, FetchError<any> | RpcResponseError | null> {
   const id = ref(0)
   const { key, ...opts } = options || {}
