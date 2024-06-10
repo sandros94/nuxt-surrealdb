@@ -1,6 +1,27 @@
 # Changelog
 
 
+## v0.0.8
+
+[compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.0.7...v0.0.8)
+
+### 🩹 Fixes
+
+- ⚠️  More appropriate options types ([b984905](https://github.com/sandros94/nuxt-surrealdb/commit/b984905))
+
+### 💅 Refactors
+
+- **useSurrealDB:** ⚠️  Follow ws param structure ([9489044](https://github.com/sandros94/nuxt-surrealdb/commit/9489044))
+
+#### ⚠️ Breaking Changes
+
+- ⚠️  More appropriate options types ([b984905](https://github.com/sandros94/nuxt-surrealdb/commit/b984905))
+- **useSurrealDB:** ⚠️  Follow ws param structure ([9489044](https://github.com/sandros94/nuxt-surrealdb/commit/9489044))
+
+### ❤️ Contributors
+
+- Sandros94 ([@Sandros94](http://github.com/Sandros94))
+
 ## v0.0.7
 
 [compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.0.6...v0.0.7)
