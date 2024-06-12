@@ -19,8 +19,8 @@
 
 <script setup lang="ts">
 const { data, live } = useSurrealWS({ database: 'staging' })
-const logs = ref<any[]>([])
-
 live('products')
+
+const logs = ref<any[]>([])
 watch(data, () => logs.value.push(data.value))
 </script>
