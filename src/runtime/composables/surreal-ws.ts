@@ -11,7 +11,6 @@ import type {
   RpcResponse,
 } from '../types'
 import type {
-  MaybeRef,
   MaybeRefOrGetter,
 } from '#imports'
 import {
@@ -25,14 +24,15 @@ import {
 type MROGParam<T, M extends keyof RpcMethodsWS<T>, N extends number> = MaybeRefOrGetter<RpcParamsWS<T, M>[N]>
 
 export function useSurrealWS<T = any>(
-  database?: Overrides['database'],
   options?: UseWebSocketOptions & {
-    auth?: MaybeRef<string | null> | false
+    database?: Overrides['database']
+    auth?: string | null | false
   },
 ) {
   const { databases, defaultDatabase, auth: { database: authDatabase } } = useRuntimeConfig().public.surrealdb
   const { token: userAuth } = useSurrealAuth()
-  const { auth, onConnected: _onConnected, onDisconnected: _onDisconnected, ...opts } = options || {}
+
+  const { auth, onConnected: _onConnected, onDisconnected: _onDisconnected, database, ...opts } = options || {}
   const _database = computed(() => {
     if (database !== undefined) {
       if (typeof database !== 'string' && typeof database !== 'number' && typeof database !== 'symbol') {
@@ -86,8 +86,7 @@ export function useSurrealWS<T = any>(
   })
 
   const data = computed(() => destr<RpcResponse<T> | null>(_data.value))
-
-  function send(data: Record<string, any>, useBuffer?: boolean) {
+  function send(data: Record<string, any>, useBuffer = true) {
     return _send(JSON.stringify(data), useBuffer)
   }
 

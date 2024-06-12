@@ -9,16 +9,18 @@
       </NuxtLink>
     </div>
     <pre>
-      {{ data }}
+      Data: {{ data ?? 'Connecting...' }}
     </pre>
-    <button @click="info()">
-      Get user info
-    </button>
+    <pre>
+      Logs: {{ logs }}
+    </pre>
   </div>
 </template>
 
 <script setup lang="ts">
-const { data, info, live } = useSurrealWS('staging')
+const { data, live } = useSurrealWS({ database: 'staging' })
+const logs = ref<any[]>([])
 
 live('products')
+watch(data, () => logs.value.push(data.value))
 </script>
