@@ -18,8 +18,8 @@
 </template>
 
 <script setup lang="ts">
-const { data, live } = useSurrealWS({ database: 'staging' })
-live('products')
+const { data, live } = useSurrealWS({ database: 'nasa' })
+live('eva_missions')
 
 const logs = ref<any[]>([])
 watch(data, () => logs.value.push(data.value))
