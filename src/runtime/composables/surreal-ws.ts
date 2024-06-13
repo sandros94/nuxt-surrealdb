@@ -82,7 +82,6 @@ export function useSurrealWS(
     const _newData = destr<RpcResponseWS<any> | null>(newData)
     if (_newData && _newData.id === useId) {
       isReady.db = true
-      console.log(typeof _data.value, _data.value)
     }
     else if (_newData && _newData.id === authId) {
       isReady.auth = true
