@@ -1,6 +1,29 @@
 # Changelog
 
 
+## v0.0.9
+
+[compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.0.8...v0.0.9)
+
+### 🚀 Enhancements
+
+- **useSurrealWS:** Simplify the options override ([5df69b0](https://github.com/sandros94/nuxt-surrealdb/commit/5df69b0))
+- **useSurrealWS:** Unwrap rpc response by default ([bacbccd](https://github.com/sandros94/nuxt-surrealdb/commit/bacbccd))
+
+### 🩹 Fixes
+
+- **useSurrealWS:** Ws configuration execution order fixes #6 ([#6](https://github.com/sandros94/nuxt-surrealdb/issues/6))
+
+### 🏡 Chore
+
+- Update playground ([57e46f3](https://github.com/sandros94/nuxt-surrealdb/commit/57e46f3))
+- Update public playground ([0fb0bf3](https://github.com/sandros94/nuxt-surrealdb/commit/0fb0bf3))
+- Remove leftovers ([84c5f7e](https://github.com/sandros94/nuxt-surrealdb/commit/84c5f7e))
+
+### ❤️ Contributors
+
+- Sandros94 ([@Sandros94](http://github.com/Sandros94))
+
 ## v0.0.8
 
 [compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.0.7...v0.0.8)
