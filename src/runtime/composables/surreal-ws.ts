@@ -8,17 +8,19 @@ import type {
   RpcMethodsWS,
   RpcParamsWS,
   RpcRequestWS,
-  RpcResponse,
+  RpcResponseWS,
 } from '../types'
 import type {
   MaybeRefOrGetter,
 } from '#imports'
 import {
   computed,
+  reactive,
   ref,
   toValue,
   useRuntimeConfig,
   useSurrealAuth,
+  watch,
 } from '#imports'
 
 type MROGParam<T, M extends keyof RpcMethodsWS<T>, N extends number> = MaybeRefOrGetter<RpcParamsWS<T, M>[N]>
@@ -32,7 +34,7 @@ export function useSurrealWS<T = any>(
   const { databases, defaultDatabase, auth: { database: authDatabase } } = useRuntimeConfig().public.surrealdb
   const { token: userAuth } = useSurrealAuth()
 
-  const { auth, onConnected: _onConnected, onDisconnected: _onDisconnected, database, ...opts } = options || {}
+  const { database, onDisconnected: _onDisconnected, ...opts } = options || {}
   const _database = computed(() => {
     if (database !== undefined) {
       if (typeof database !== 'string' && typeof database !== 'number' && typeof database !== 'symbol') {
@@ -46,7 +48,15 @@ export function useSurrealWS<T = any>(
       return databases[defaultDatabase as keyof typeof databases]
     }
   })
-  const idCounter = ref(0)
+  const useId = 0
+  const authId = 1
+  const idCounter = ref(2)
+  const isReady = reactive({
+    db: false,
+    auth: false,
+  })
+  const queue: Record<string, any>[] = []
+  const isAuthDatabase = !!(options?.auth !== false && _database.value === databases[authDatabase as keyof typeof databases])
 
   const {
     close,
@@ -55,29 +65,7 @@ export function useSurrealWS<T = any>(
     send: _send,
     status,
     ws,
-  } = useWebSocket<RpcResponse<T>>(joinURL(_database.value.ws!, 'rpc'), {
-    onConnected(ws) {
-      ws.send(JSON.stringify({
-        id: idCounter.value++,
-        method: 'use',
-        params: [_database.value.NS, _database.value.DB],
-      }))
-      if (userAuth.value && options?.auth !== false && _database.value === databases[authDatabase as keyof typeof databases]) {
-        ws.send(JSON.stringify({
-          id: idCounter.value++,
-          method: 'authenticate',
-          params: [userAuth.value],
-        }))
-      }
-      else if (options?.auth) {
-        ws.send(JSON.stringify({
-          id: idCounter.value++,
-          method: 'authenticate',
-          params: [toValue(options.auth)],
-        }))
-      }
-      _onConnected?.(ws)
-    },
+  } = useWebSocket<RpcResponseWS<T>>(joinURL(_database.value.ws!, 'rpc'), {
     onDisconnected(ws, event) {
       idCounter.value = 0
       _onDisconnected?.(ws, event)
@@ -85,9 +73,60 @@ export function useSurrealWS<T = any>(
     ...opts,
   })
 
-  const data = computed(() => destr<RpcResponse<T> | null>(_data.value))
+  const data = computed(() => destr<RpcResponseWS<any> | null>(_data.value))
+  const stopInitWatcher = watch(data, (newData) => {
+    if (newData && newData.id === useId) {
+      isReady.db = true
+    }
+    else if (newData && newData.id === authId) {
+      isReady.auth = true
+      _sendQueue()
+      stopInitWatcher()
+    }
+    if (!userAuth.value || !isAuthDatabase) {
+      _sendQueue()
+      stopInitWatcher()
+    }
+  })
+
+  function _init() {
+    _send(JSON.stringify({
+      id: useId,
+      method: 'use',
+      params: [_database.value.NS, _database.value.DB],
+    }))
+    if (userAuth.value && isAuthDatabase) {
+      _send(JSON.stringify({
+        id: authId,
+        method: 'query',
+        params: [userAuth.value],
+      }))
+    }
+    else if (options?.auth) {
+      _send(JSON.stringify({
+        id: authId,
+        method: 'query',
+        params: [options.auth],
+      }))
+    }
+  }
+
+  function _sendQueue() {
+    if (!queue.length) return
+    for (const message of queue) {
+      _send(JSON.stringify(message))
+    }
+  }
+
   function send(data: Record<string, any>, useBuffer = true) {
-    return _send(JSON.stringify(data), useBuffer)
+    if (!isReady.db || (isAuthDatabase && !isReady.auth)) {
+      queue.push(data)
+      _init()
+      return false
+    }
+    else {
+      return _send(JSON.stringify(data), useBuffer)
+    }
   }
 
   function rpc<T = any>(req: RpcRequestWS<T>) {

@@ -186,6 +186,11 @@ export interface RpcResponseOk<R> {
   result: R
   error?: never
 }
+export interface RpcResponseOkWS<R> {
+  id: number
+  result: R
+  error?: never
+}
 
 export interface RpcResponseError {
   result?: never
@@ -194,9 +199,17 @@ export interface RpcResponseError {
     message: string
   }
 }
+export interface RpcResponseErrorWS {
+  id: number
+  result?: never
+  error: {
+    code: number
+    message: string
+  }
+}
 
 export type RpcResponse<R> = RpcResponseOk<R> | RpcResponseError
-export type RpcRes<R> = RpcResponse<R>
+export type RpcResponseWS<R> = RpcResponseOkWS<R> | RpcResponseErrorWS
 
 /* SurrealDB HTTP Response types */
 
