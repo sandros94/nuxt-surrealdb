@@ -25,13 +25,18 @@ import {
 
 type MROGParam<T, M extends keyof RpcMethodsWS<T>, N extends number> = MaybeRefOrGetter<RpcParamsWS<T, M>[N]>
 
-export function useSurrealWS<T = any>(
+export function useSurrealWS(
   options?: UseWebSocketOptions & {
     database?: Overrides['database']
     auth?: string | null | false
   },
 ) {
-  const { databases, defaultDatabase, auth: { database: authDatabase } } = useRuntimeConfig().public.surrealdb
+  const {
+    auth: { database: authDatabase },
+    databases,
+    defaultDatabase,
+    unwrapRpcResponse,
+  } = useRuntimeConfig().public.surrealdb
   const { token: userAuth } = useSurrealAuth()
 
   const { database, onDisconnected: _onDisconnected, ...opts } = options || {}
@@ -65,7 +70,7 @@ export function useSurrealWS<T = any>(
     send: _send,
     status,
     ws,
-  } = useWebSocket<RpcResponseWS<T>>(joinURL(_database.value.ws!, 'rpc'), {
+  } = useWebSocket<string>(joinURL(_database.value.ws!, 'rpc'), {
     onDisconnected(ws, event) {
       idCounter.value = 0
       _onDisconnected?.(ws, event)
@@ -73,12 +78,13 @@ export function useSurrealWS<T = any>(
     ...opts,
   })
 
-  const data = computed(() => destr<RpcResponseWS<any> | null>(_data.value))
-  const stopInitWatcher = watch(data, (newData) => {
-    if (newData && newData.id === useId) {
+  const stopInitWatcher = watch(_data, (newData) => {
+    const _newData = destr<RpcResponseWS<any> | null>(newData)
+    if (_newData && _newData.id === useId) {
       isReady.db = true
+      console.log(typeof _data.value, _data.value)
     }
-    else if (newData && newData.id === authId) {
+    else if (_newData && _newData.id === authId) {
       isReady.auth = true
       _sendQueue()
       stopInitWatcher()
@@ -117,6 +123,16 @@ export function useSurrealWS<T = any>(
       _send(JSON.stringify(message))
     }
   }
+
+  const data = computed(() => {
+    const res = destr<RpcResponseWS<any> | null>(_data.value)
+    if (unwrapRpcResponse && !res?.error) {
+      return res?.result
+    }
+    else {
+      return res
+    }
+  })
 
   function send(data: Record<string, any>, useBuffer = true) {
     if (!isReady.db || (isAuthDatabase && !isReady.auth)) {
