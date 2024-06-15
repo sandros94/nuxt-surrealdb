@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v0.0.10
+
+[compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.0.9...v0.0.10)
+
+### 🚀 Enhancements
+
+- Module alias ([bbddc33](https://github.com/sandros94/nuxt-surrealdb/commit/bbddc33))
+
+### ❤️ Contributors
+
+- Sandros94 ([@Sandros94](http://github.com/Sandros94))
+
 ## v0.0.9
 
 [compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.0.8...v0.0.9)
