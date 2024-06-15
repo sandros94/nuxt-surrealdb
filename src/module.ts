@@ -61,6 +61,12 @@ export default defineNuxtModule<ModuleOptions>({
   setup(options, nuxt) {
     const { resolve } = createResolver(import.meta.url)
 
+    // Transpile runtime
+    const runtimeDir = resolve('./runtime')
+    nuxt.options.build.transpile.push(runtimeDir)
+
+    nuxt.options.alias['#surrealdb'] = runtimeDir
+
     // Public RuntimeConfig
     nuxt.options.runtimeConfig.public.surrealdb = defu<
       PublicRuntimeConfig['surrealdb'],
@@ -86,10 +92,10 @@ export default defineNuxtModule<ModuleOptions>({
       },
     )
 
-    nuxt.options.alias['#surreal-auth'] = resolve('./runtime', 'types', 'auth')
+    nuxt.options.alias['#surreal-auth'] = resolve(runtimeDir, 'types', 'auth')
 
-    addPlugin(resolve('./runtime', 'plugin'))
-    addImportsDir(resolve('./runtime', 'composables'))
-    addServerImportsDir(resolve('./runtime', 'server', 'utils'))
+    addPlugin(resolve(runtimeDir, 'plugin'))
+    addImportsDir(resolve(runtimeDir, 'composables'))
+    addServerImportsDir(resolve(runtimeDir, 'server', 'utils'))
   },
 })

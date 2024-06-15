@@ -184,16 +184,16 @@ type Test = RpcRequest<any, 'create'>
 
 export interface RpcResponseOk<R> {
   result: R
-  error?: never
+  error: never
 }
 export interface RpcResponseOkWS<R> {
   id: number
   result: R
-  error?: never
+  error: never
 }
 
 export interface RpcResponseError {
-  result?: never
+  result: never
   error: {
     code: number
     message: string
@@ -201,7 +201,7 @@ export interface RpcResponseError {
 }
 export interface RpcResponseErrorWS {
   id: number
-  result?: never
+  result: never
   error: {
     code: number
     message: string
