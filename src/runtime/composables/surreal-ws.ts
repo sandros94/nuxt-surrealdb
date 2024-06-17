@@ -207,8 +207,8 @@ export function useSurrealWS(
     })
   }
 
-  // define [ name, value ] (`let` is a reserved word in JS)
-  function define<T = any>(
+  // set [ name, value ] (`let` is a reserved word in JS)
+  function set<T = any>(
     name: MROGParam<T, 'let', 0>,
     value: MROGParam<T, 'let', 1>,
   ) {
@@ -345,7 +345,6 @@ export function useSurrealWS(
     create,
     _data,
     data,
-    define,
     info,
     insert,
     invalidate,
@@ -360,6 +359,7 @@ export function useSurrealWS(
     select,
     _send,
     send,
+    set,
     signin,
     signup,
     sql: query,
