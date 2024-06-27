@@ -33,6 +33,9 @@ export default defineNuxtModule<ModuleOptions>({
   meta: {
     name: 'nuxt-surrealdb',
     configKey: 'surrealdb',
+    compatibility: {
+      nuxt: '>=3.10.0',
+    },
   },
   defaults: {
     auth: {
