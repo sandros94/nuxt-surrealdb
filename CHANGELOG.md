@@ -1,6 +1,42 @@
 # Changelog
 
 
+## v0.1.0
+
+[compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.0.10...v0.1.0)
+
+### 🚀 Enhancements
+
+- Initial support for surrealDB 2.0-alpha ([ad2c6a8](https://github.com/sandros94/nuxt-surrealdb/commit/ad2c6a8))
+
+### 🩹 Fixes
+
+- **useSurrealWS:** ⚠️  Rename `define` to `set` (for using `let` method) ([8681939](https://github.com/sandros94/nuxt-surrealdb/commit/8681939))
+- Add compatibility check ([e7601e9](https://github.com/sandros94/nuxt-surrealdb/commit/e7601e9))
+- Export types directly from the module itself ([04db5ba](https://github.com/sandros94/nuxt-surrealdb/commit/04db5ba))
+- Server side auth token parsing ([d7280d3](https://github.com/sandros94/nuxt-surrealdb/commit/d7280d3))
+- Server-side query overrides ([78fdc9d](https://github.com/sandros94/nuxt-surrealdb/commit/78fdc9d))
+- **useSurrealWS:** IdCounter reset value ([3cfd15d](https://github.com/sandros94/nuxt-surrealdb/commit/3cfd15d))
+- Unwrap rpc responses even if nullish ([e43bccb](https://github.com/sandros94/nuxt-surrealdb/commit/e43bccb))
+- **useSurrealDB:** Update signin structure ([d98efa5](https://github.com/sandros94/nuxt-surrealdb/commit/d98efa5))
+
+### 💅 Refactors
+
+- ⚠️  Always unwrap rpc responses, simplified auth ([4bbb43d](https://github.com/sandros94/nuxt-surrealdb/commit/4bbb43d))
+
+### 🏡 Chore
+
+- Update readme ([a6d16a3](https://github.com/sandros94/nuxt-surrealdb/commit/a6d16a3))
+
+#### ⚠️ Breaking Changes
+
+- **useSurrealWS:** ⚠️  Rename `define` to `set` (for using `let` method) ([8681939](https://github.com/sandros94/nuxt-surrealdb/commit/8681939))
+- ⚠️  Always unwrap rpc responses, simplified auth ([4bbb43d](https://github.com/sandros94/nuxt-surrealdb/commit/4bbb43d))
+
+### ❤️ Contributors
+
+- Sandros94 ([@Sandros94](http://github.com/Sandros94))
+
 ## v0.0.10
 
 [compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.0.9...v0.0.10)
