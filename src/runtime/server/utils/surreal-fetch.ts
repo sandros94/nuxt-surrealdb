@@ -19,18 +19,7 @@ export type ServerOverrides = Omit<Overrides, 'database'> & {
 function authTokenFn(dbAuth: DatabasePreset['auth']) {
   if (!dbAuth) return undefined
   if (typeof dbAuth === 'string') {
-    if (dbAuth.startsWith('Bearer ')) {
-      return dbAuth
-    }
-    else {
-      const [user, pass] = dbAuth.split(':')
-      if (user && pass) {
-        return `Basic ${textToBase64(`${user}:${pass}`, { dataURL: false })}`
-      }
-      else {
-        return dbAuth
-      }
-    }
+    return `Bearer ${dbAuth}`
   }
   else {
     return `Basic ${textToBase64(`${dbAuth.user}:${dbAuth.pass}`, { dataURL: false })}`
