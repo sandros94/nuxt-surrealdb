@@ -13,10 +13,8 @@ A Nuxt module aimed to simplify the use of [SurrealDB](https://surrealdb.com).
 <!-- - [🏀 Online playground](https://stackblitz.com/github/sandros94/nuxt-surrealdb?file=playground%2Fapp.vue) -->
 <!-- - [📖 &nbsp;Documentation](https://example.com) -->
 
-## WIP
-
-This module is still under development and not suitable for production use, proceed at your own risk. Expect breaking changes!
-There are no docs atm, so please refer to the [playground](/playground/app.vue) or the [source code](/src/).
+> [!NOTE]
+> There are no docs atm, please refer to the [playground](/playground/) or the [source code](/src/).
 
 ## Quick Setup
 
