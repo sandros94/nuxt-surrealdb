@@ -129,7 +129,7 @@ export default defineNuxtPlugin(async ({ $config }) => {
             message: response._data.error.message,
           })
         }
-        else if (response.status === 200 && response._data.result) {
+        else if (response.status === 200) {
           response._data = response._data.result
         }
       },

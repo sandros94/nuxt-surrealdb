@@ -124,7 +124,7 @@ export function useSurrealWS(
 
   const data = computed(() => {
     const res = destr<RpcResponseWS<any> | null>(_data.value)
-    if (res && res.result && !res.error) {
+    if (res && !res.error) {
       return res.result
     }
     else {
