@@ -71,7 +71,7 @@ export function useSurrealWS(
     ws,
   } = useWebSocket<string>(joinURL(_database.value.ws!, 'rpc'), {
     onDisconnected(ws, event) {
-      idCounter.value = 0
+      idCounter.value = 2
       _onDisconnected?.(ws, event)
     },
     ...opts,
