@@ -1,3 +1,4 @@
+import type { PublicRuntimeConfig } from 'nuxt/schema'
 import type { AsyncData } from 'nuxt/app'
 import type { FetchError } from 'ofetch'
 import { hash } from 'ohash'
@@ -16,6 +17,7 @@ import type {
 import type { MaybeRefOrGetter } from '#imports'
 import {
   computed,
+  createError,
   toValue,
   useNuxtApp,
   useSurrealFetch,
@@ -32,7 +34,12 @@ export function useSurrealDB(overrides?: Overrides) {
     token: MROGParam<any, 'authenticate', 0>,
     options?: Overrides,
   ) {
-    return $surrealRPC<any>({ method: 'authenticate', params: [toValue(token)] }, options || overrides)
+    return $surrealRPC<any>({
+      method: 'authenticate', params: [toValue(token)],
+    }, {
+      database: options?.database || overrides?.database,
+      token: options?.token || overrides?.token,
+    })
   }
   async function authenticate(
     token: MROGParam<any, 'authenticate', 0>,
@@ -57,9 +64,14 @@ export function useSurrealDB(overrides?: Overrides) {
   async function $create<T = any>(
     thing: MROGParam<T, 'create', 0>,
     data?: MROGParam<T, 'create', 1>,
-    ovr?: Overrides,
+    options?: Overrides,
   ) {
-    return $surrealRPC<T>({ method: 'create', params: [toValue(thing), toValue(data)] }, ovr || overrides)
+    return $surrealRPC<T>({
+      method: 'create', params: [toValue(thing), toValue(data)],
+    }, {
+      database: options?.database || overrides?.database,
+      token: options?.token || overrides?.token,
+    })
   }
   async function create<T = any>(
     thing: MROGParam<T, 'create', 0>,
@@ -85,7 +97,12 @@ export function useSurrealDB(overrides?: Overrides) {
   async function $info<T = any>(
     options?: Overrides,
   ) {
-    return $surrealRPC<T>({ method: 'info' }, options || overrides)
+    return $surrealRPC<T>({
+      method: 'info',
+    }, {
+      database: options?.database || overrides?.database,
+      token: options?.token || overrides?.token,
+    })
   }
   async function info<T = any>(
     options?: UseSurrealRpcOptions<T>,
@@ -106,9 +123,14 @@ export function useSurrealDB(overrides?: Overrides) {
   async function $insert<T = any>(
     thing: MROGParam<T, 'insert', 0>,
     data?: MROGParam<T, 'insert', 1>,
-    ovr?: Overrides,
+    options?: Overrides,
   ) {
-    return $surrealRPC<T>({ method: 'insert', params: [toValue(thing), toValue(data)] }, ovr || overrides)
+    return $surrealRPC<T>({
+      method: 'insert', params: [toValue(thing), toValue(data)],
+    }, {
+      database: options?.database || overrides?.database,
+      token: options?.token || overrides?.token,
+    })
   }
   async function insert<T = any>(
     thing: MROGParam<T, 'insert', 0>,
@@ -134,7 +156,12 @@ export function useSurrealDB(overrides?: Overrides) {
   async function $invalidate(
     options?: Overrides,
   ) {
-    return $surrealRPC<any>({ method: 'invalidate' }, options || overrides)
+    return $surrealRPC<any>({
+      method: 'invalidate',
+    }, {
+      database: options?.database || overrides?.database,
+      token: options?.token || overrides?.token,
+    })
   }
   async function invalidate(
     options?: UseSurrealRpcOptions<any>,
@@ -157,9 +184,14 @@ export function useSurrealDB(overrides?: Overrides) {
   async function $merge<T = any>(
     thing: MROGParam<T, 'merge', 0>,
     data: MROGParam<T, 'merge', 1>,
-    ovr?: Overrides,
+    options?: Overrides,
   ) {
-    return $surrealRPC<T>({ method: 'merge', params: [toValue(thing), toValue(data)] }, ovr || overrides)
+    return $surrealRPC<T>({
+      method: 'merge', params: [toValue(thing), toValue(data)],
+    }, {
+      database: options?.database || overrides?.database,
+      token: options?.token || overrides?.token,
+    })
   }
   async function merge<T = any>(
     thing: MROGParam<T, 'merge', 0>,
@@ -186,9 +218,14 @@ export function useSurrealDB(overrides?: Overrides) {
     thing: MROGParam<T, 'patch', 0>,
     patches: MROGParam<T, 'patch', 1>,
     diff?: MROGParam<T, 'patch', 2>,
-    ovr?: Overrides,
+    options?: Overrides,
   ) {
-    return $surrealRPC<T>({ method: 'patch', params: [toValue(thing), toValue(patches), toValue(diff)] }, ovr || overrides)
+    return $surrealRPC<T>({
+      method: 'patch', params: [toValue(thing), toValue(patches), toValue(diff)],
+    }, {
+      database: options?.database || overrides?.database,
+      token: options?.token || overrides?.token,
+    })
   }
   async function patch<T = any>(
     thing: MROGParam<T, 'patch', 0>,
@@ -215,9 +252,14 @@ export function useSurrealDB(overrides?: Overrides) {
   async function $query<T = any>(
     sql: MROGParam<T, 'query', 0>,
     vars?: MROGParam<T, 'query', 1>,
-    ovr?: Overrides,
+    options?: Overrides,
   ) {
-    return $surrealRPC<T>({ method: 'query', params: [toValue(sql), toValue(vars)] }, ovr || overrides)
+    return $surrealRPC<T>({
+      method: 'query', params: [toValue(sql), toValue(vars)],
+    }, {
+      database: options?.database || overrides?.database,
+      token: options?.token || overrides?.token,
+    })
   }
   async function query<T = any>(
     sql: MROGParam<T, 'query', 0>,
@@ -243,7 +285,12 @@ export function useSurrealDB(overrides?: Overrides) {
     thing: MROGParam<any, 'delete', 0>,
     options?: Overrides,
   ) {
-    return $surrealRPC<any>({ method: 'delete', params: [toValue(thing)] }, options || overrides)
+    return $surrealRPC<any>({
+      method: 'delete', params: [toValue(thing)],
+    }, {
+      database: options?.database || overrides?.database,
+      token: options?.token || overrides?.token,
+    })
   }
   async function remove(
     thing: MROGParam<any, 'delete', 0>,
@@ -269,7 +316,12 @@ export function useSurrealDB(overrides?: Overrides) {
     thing: MROGParam<T, 'select', 0>,
     options?: Overrides,
   ) {
-    return $surrealRPC<T>({ method: 'select', params: [toValue(thing)] }, options || overrides)
+    return $surrealRPC<T>({
+      method: 'select', params: [toValue(thing)],
+    }, {
+      database: options?.database || overrides?.database,
+      token: options?.token || overrides?.token,
+    })
   }
   async function select<T = any>(
     thing: MROGParam<T, 'select', 0>,
@@ -290,22 +342,27 @@ export function useSurrealDB(overrides?: Overrides) {
   }
 
   // signin [ ... ]
-  async function $signin<T = any>(
+  async function $signin(
     auth: MROGParam<any, 'signin', 0>,
     options?: Overrides,
   ) {
-    return $surrealRPC<T>({ method: 'signin', params: [toValue(auth)] }, options || overrides)
+    return $surrealRPC<string | null>({
+      method: 'signin', params: [toValue(auth)],
+    }, {
+      database: options?.database || overrides?.database,
+      token: options?.token || overrides?.token,
+    })
   }
-  async function signin<T = any>(
+  async function signin(
     auth: MROGParam<any, 'signin', 0>,
-    options?: UseSurrealRpcOptions<T>,
-  ): Promise<AsyncData<PickFrom<T, KeysOf<T>> | null, FetchError<any> | RpcResponseError | null>> {
+    options?: UseSurrealRpcOptions<string | null>,
+  ): Promise<AsyncData<PickFrom<string | null, KeysOf<string | null>> | null, FetchError<any> | RpcResponseError | null>> {
     const { database, immediate, key, token, watch, ...opts } = options || {}
 
     const params = computed<RpcRequest<any, 'signin'>['params']>(() => ([toValue(auth)]))
     const _key = key ?? 'Sur_' + hash(['surreal', 'signin', toValue(params)])
 
-    return useSurrealRPC<T>({ method: 'signin', params }, {
+    return useSurrealRPC<string | null>({ method: 'signin', params }, {
       ...opts,
       database: database || overrides?.database,
       token: token || overrides?.token,
@@ -318,23 +375,50 @@ export function useSurrealDB(overrides?: Overrides) {
   // signup [ NS, DB, SC, ... ]
   async function $signup<T = any>(
     auth: MROGParam<any, 'signup', 0>,
-    options?: Overrides,
+    options?: {
+      database?: keyof PublicRuntimeConfig['surrealdb']['databases'] | { host?: string }
+    },
   ) {
-    return $surrealRPC<T>({ method: 'signup', params: [toValue(auth)] }, options || overrides)
+    const { NS, DB, SC } = toValue(auth)
+    if (!NS) throw createError({ statusCode: 500, message: 'Missing NS param' })
+    if (!DB) throw createError({ statusCode: 500, message: 'Missing DB param' })
+    if (!SC) throw createError({ statusCode: 500, message: 'Missing SC param' })
+    const { baseURL } = $surrealFetchOptionsOverride(options || overrides)
+    return $surrealRPC<T>({
+      method: 'signup', params: [toValue(auth)],
+    }, {
+      database: {
+        host: baseURL,
+        NS,
+        DB,
+        SC,
+      },
+    })
   }
   async function signup<T = any>(
     auth: MROGParam<any, 'signup', 0>,
-    options?: UseSurrealRpcOptions<T>,
+    options?: Omit<UseSurrealRpcOptions<T>, 'database'> & {
+      database?: keyof PublicRuntimeConfig['surrealdb']['databases'] | { host?: string }
+    },
   ): Promise<AsyncData<PickFrom<T, KeysOf<T>> | null, FetchError<any> | RpcResponseError | null>> {
+    const { NS, DB, SC } = toValue(auth)
+    if (!NS) throw createError({ statusCode: 500, message: 'Missing NS param' })
+    if (!DB) throw createError({ statusCode: 500, message: 'Missing DB param' })
+    if (!SC) throw createError({ statusCode: 500, message: 'Missing SC param' })
     const { database, immediate, key, token, watch, ...opts } = options || {}
+    const { baseURL } = $surrealFetchOptionsOverride({ database: database || overrides?.database })
 
     const params = computed<RpcRequest<any, 'signup'>['params']>(() => ([toValue(auth)]))
     const _key = key ?? 'Sur_' + hash(['surreal', 'signup', toValue(params)])
 
     return useSurrealRPC<T>({ method: 'signup', params }, {
       ...opts,
-      database: database || overrides?.database,
-      token: token || overrides?.token,
+      database: {
+        host: baseURL,
+        NS,
+        DB,
+        SC,
+      },
       immediate: immediate === undefined ? false : immediate,
       key: _key,
       watch: watch === undefined ? false : watch,
@@ -345,9 +429,14 @@ export function useSurrealDB(overrides?: Overrides) {
   async function $update<T = any>(
     thing: MROGParam<T, 'update', 0>,
     data?: MROGParam<T, 'update', 1>,
-    ovr?: Overrides,
+    options?: Overrides,
   ) {
-    return $surrealRPC<T>({ method: 'update', params: [toValue(thing), toValue(data)] }, ovr || overrides)
+    return $surrealRPC<T>({
+      method: 'update', params: [toValue(thing), toValue(data)],
+    }, {
+      database: options?.database || overrides?.database,
+      token: options?.token || overrides?.token,
+    })
   }
   async function update<T = any>(
     thing: MROGParam<T, 'update', 0>,
@@ -369,14 +458,20 @@ export function useSurrealDB(overrides?: Overrides) {
     })
   }
 
-  async function $version(ovr?: Overrides) {
+  async function $version(options?: Overrides) {
     return $surrealFetch('version', {
-      ...$surrealFetchOptionsOverride(ovr || overrides),
+      ...$surrealFetchOptionsOverride({
+        database: options?.database || overrides?.database,
+        token: options?.token || overrides?.token,
+      }),
     })
   }
-  async function version(ovr?: Overrides): Promise<AsyncData<any, FetchError<any> | null>> {
+  async function version(options?: Overrides): Promise<AsyncData<any, FetchError<any> | null>> {
     return useSurrealFetch('version', {
-      ...$surrealFetchOptionsOverride(ovr || overrides),
+      ...$surrealFetchOptionsOverride({
+        database: options?.database || overrides?.database,
+        token: options?.token || overrides?.token,
+      }),
     })
   }
 

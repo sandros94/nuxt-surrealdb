@@ -12,7 +12,6 @@ export default defineNuxtPlugin(async ({ $config }) => {
     databases,
     defaultDatabase,
     auth: { database: authDatabase },
-    unwrapRpcResponse,
   } = $config.public.surrealdb
   const defaultDB = databases[defaultDatabase as keyof PublicRuntimeConfig['surrealdb']['databases']]
   const { token: userAuth, session } = useSurrealAuth()
@@ -22,18 +21,7 @@ export default defineNuxtPlugin(async ({ $config }) => {
   function authTokenFn(dbAuth: DatabasePreset['auth']) {
     if (!dbAuth) return undefined
     if (typeof dbAuth === 'string') {
-      if (dbAuth.startsWith('Bearer ')) {
-        return dbAuth
-      }
-      else {
-        const [user, pass] = dbAuth.split(':')
-        if (user && pass) {
-          return `Basic ${textToBase64(`${user}:${pass}`, { dataURL: false })}`
-        }
-        else {
-          return dbAuth
-        }
-      }
+      return `Bearer ${dbAuth}`
     }
     else {
       return `Basic ${textToBase64(`${dbAuth.user}:${dbAuth.pass}`, { dataURL: false })}`
@@ -141,7 +129,7 @@ export default defineNuxtPlugin(async ({ $config }) => {
             message: response._data.error.message,
           })
         }
-        else if (response.status === 200 && response._data.result && unwrapRpcResponse) {
+        else if (response.status === 200 && response._data.result) {
           response._data = response._data.result
         }
       },

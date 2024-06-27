@@ -170,7 +170,6 @@ export function useSurrealFetchOptionsOverride<
 }
 
 export function useSurrealRPC<T = any>(event: H3Event, req: RpcRequest<T>, ovr?: ServerOverrides) {
-  const { unwrapRpcResponse } = useRuntimeConfig(event).public.surrealdb
   let id = 0
 
   return useSurrealFetch<RpcResponse<T>>(event, 'rpc', {
@@ -182,7 +181,7 @@ export function useSurrealRPC<T = any>(event: H3Event, req: RpcRequest<T>, ovr?:
           message: response._data.error.message,
         })
       }
-      else if (response.status === 200 && response._data.result && unwrapRpcResponse) {
+      else if (response.status === 200 && response._data.result) {
         response._data = response._data.result
       }
     },

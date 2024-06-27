@@ -28,7 +28,6 @@ export interface ModuleOptions {
       [key: string]: DatabasePreset | undefined
     }
   }
-  unwrapRpcResponse?: boolean
 }
 
 export default defineNuxtModule<ModuleOptions>({
@@ -61,7 +60,6 @@ export default defineNuxtModule<ModuleOptions>({
     server: {
       defaultDatabase: 'default',
     },
-    unwrapRpcResponse: true,
   },
   setup(options, nuxt) {
     const { resolve } = createResolver(import.meta.url)
@@ -82,7 +80,6 @@ export default defineNuxtModule<ModuleOptions>({
         auth: options.auth,
         databases: options.databases,
         defaultDatabase: options.defaultDatabase,
-        unwrapRpcResponse: options.unwrapRpcResponse,
       },
     )
     // Private RuntimeConfig

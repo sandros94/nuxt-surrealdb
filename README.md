@@ -53,10 +53,8 @@ NUXT_PUBLIC_SURREALDB_DATABASES_PRODUCTION_DB="docs"
 NUXT_PUBLIC_SURREALDB_DATABASES_PRODUCTION_SC="user"
 
 # For auth
-# user and pass separated by a colon
-NUXT_PUBLIC_SURREALDB_DATABASES_PRODUCTION_AUTH="root:root"
-# Or as a Bearer
-NUXT_PUBLIC_SURREALDB_DATABASES_PRODUCTION_AUTH="Bearer mySuperLongBearerToken"
+# As a Bearer
+NUXT_PUBLIC_SURREALDB_DATABASES_PRODUCTION_AUTH="mySuperLongBearerToken"
 # Or as an object
 NUXT_PUBLIC_SURREALDB_DATABASES_PRODUCTION_AUTH_USER="root"
 NUXT_PUBLIC_SURREALDB_DATABASES_PRODUCTION_AUTH_PASS="root"
@@ -74,8 +72,7 @@ export default defineNuxtConfig({
         DB: 'demo',
 
         // Auth examples
-        auth: 'root:root',
-        auth: 'Bearer mySuperLongBearerToken',
+        auth: 'mySuperLongBearerToken',
         auth: {
           user: 'root',
           pass: 'root'
@@ -91,7 +88,11 @@ export default defineNuxtConfig({
     server: {
       databases: {
         production: {
-          auth: '', // NUXT_SURREALDB_DATABASES_PRODUCTION_AUTH='root:root'
+          auth: '', // NUXT_SURREALDB_DATABASES_PRODUCTION_AUTH
+          auth: {
+            user: '', // NUXT_SURREALDB_DATABASES_PRODUCTION_AUTH_USER
+            pass: '' // NUXT_SURREALDB_DATABASES_PRODUCTION_AUTH_PASS
+          }
         }
       }
     }

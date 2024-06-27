@@ -20,7 +20,6 @@ import {
   toValue,
   useFetch,
   useNuxtApp,
-  useRuntimeConfig,
 } from '#imports'
 
 export function useSurrealFetch<DataT = any, ErrorT = any>(
@@ -56,7 +55,6 @@ export function useSurrealRPC<DataT = any>(
 ): AsyncData<PickFrom<DataT, KeysOf<DataT>> | null, FetchError<any> | RpcResponseError | null> {
   const id = ref(0)
   const { key, ...opts } = options || {}
-  const { unwrapRpcResponse } = useRuntimeConfig().public.surrealdb
 
   const _key = key ?? 'Sur_' + hash(['surreal', 'rpc', toValue(req.method), toValue(req.params)])
 
@@ -69,7 +67,7 @@ export function useSurrealRPC<DataT = any>(
           message: response._data.error.message,
         })
       }
-      else if (response.status === 200 && response._data.result && unwrapRpcResponse) {
+      else if (response.status === 200 && response._data.result) {
         response._data = response._data.result
       }
     },

@@ -1,54 +1,47 @@
 import type { PublicRuntimeConfig } from 'nuxt/schema'
 import { defu } from 'defu'
 
-import type { Overrides, RpcRequest, SurrealFetchOptions, UserSession } from '../types'
+import type { DatabasePreset, Overrides, UserSession } from '../types'
 
-import { computed, createError, ref, useCookie, useNuxtApp, useState } from '#imports'
+import { computed, createError, useCookie, useRuntimeConfig, useState, useSurrealDB } from '#imports'
 
-export function useSurrealAuth() {
+export function useSurrealAuth(database?: Overrides['database']) {
   const {
-    $config: {
-      public: {
-        surrealdb: {
-          databases,
-          auth: {
-            adminMaxAge,
-            database,
-            sessionName,
-            cookieName,
-            sameSite,
-          },
-        },
-      },
+    databases,
+    auth: {
+      adminMaxAge,
+      database: _database,
+      sessionName,
+      cookieName,
+      sameSite,
     },
-    $surrealFetch,
-    $surrealFetchOptionsOverride,
-  } = useNuxtApp()
-  const authDatabase = database as keyof PublicRuntimeConfig['surrealdb']['databases']
+  } = useRuntimeConfig().public.surrealdb
 
-  function _surrealRPC<T = any>(req: RpcRequest<T>, token: Overrides['token'] = false) {
-    const id = ref(0)
+  const authDatabase = _database as keyof PublicRuntimeConfig['surrealdb']['databases'] | false
 
-    return $surrealFetch<T, string, SurrealFetchOptions>('rpc', {
-      ...$surrealFetchOptionsOverride({
-        database: authDatabase,
-        token,
-      }),
-      onResponse({ response }) {
-        if (response.status === 200 && response._data.error) {
-          throw createError({
-            statusCode: response._data.error.code,
-            message: response._data.error.message,
-          })
-        }
-      },
-      method: 'POST',
-      body: {
-        id: id.value++,
-        ...req,
-      },
-    })
+  function _getDatabasePreset(database: Overrides['database']) {
+    if (typeof database !== 'string' && typeof database !== 'number' && typeof database !== 'symbol' && database !== undefined) {
+      return defu<DatabasePreset, DatabasePreset[]>(database, databases[authDatabase !== false ? authDatabase : 'default'])
+    }
+    else if (database !== undefined) {
+      return databases[database]
+    }
+    else if (authDatabase !== false) {
+      return databases[authDatabase]
+    }
+    else {
+      throw createError({ statusCode: 500, message: 'No auth database provided either via Nuxt Runtime Config nor as a useSurrealAuth param' })
+    }
   }
+
+  const {
+    $authenticate,
+    $info,
+    $invalidate,
+    $query,
+    $signin,
+    $signup,
+  } = useSurrealDB({ database: _getDatabasePreset(database) })
 
   const session = useState<UserSession>(sessionName, () => ({}))
 
@@ -63,30 +56,26 @@ export function useSurrealAuth() {
   // authenticate
   async function reAuthenticate() {
     if (!token.value) throw createError({ statusCode: 401, message: 'Unauthorized' })
-    await _surrealRPC({
-      method: 'authenticate',
-      params: [token.value],
-    })
+    await $authenticate(token.value)
     await refreshInfo()
   }
 
   async function getSessionExp(authToken?: string) {
     const _token = authToken || token.value
     if (!_token) throw createError({ statusCode: 401, message: 'Unauthorized' })
-    return (await _surrealRPC<{ result: [{ result: [{ exp: number | 'NONE' | null }] }] }>({
-      method: 'query',
-      params: ['SELECT exp FROM $session;'],
-    }, _token)).result[0].result[0]
+    return (
+      await $query<
+        [{ result: [{ exp: number | 'NONE' | null }] }]
+      >('SELECT exp FROM $session;', undefined, { token: _token })
+    )[0].result[0]
   }
 
   // info
   async function refreshInfo(authToken?: string) {
     const _token = authToken || token.value
     if (!_token) throw createError({ statusCode: 401, message: 'Unauthorized' })
-    const { result } = await _surrealRPC<{ result: UserSession['user'] }>({
-      method: 'info',
-    }, _token)
-    if (!result) return
+    const result = await $info<UserSession['user']>({ token: _token })
+    if (!result) return // Admin users don't have user info
     session.value.user = result
   }
 
@@ -94,39 +83,32 @@ export function useSurrealAuth() {
   async function invalidate(authToken?: string) {
     const _token = authToken || token.value
     if (!_token) throw createError({ statusCode: 401, message: 'Unauthorized' })
-    await _surrealRPC({
-      method: 'invalidate',
-    }, _token).then(() => {
-      token.value = null
-      session.value = {}
-    })
+    await $invalidate({ token: _token })
+      .then(() => {
+        token.value = null
+        session.value = {}
+      })
   }
 
   // signin
-  async function signin(credentials: Record<string, any>) {
-    const _credentials = defu(
-      credentials,
-      {
-        NS: databases[authDatabase].NS,
-        DB: databases[authDatabase].DB,
-        SC: databases[authDatabase].SC,
-      },
-    )
-    if (!_credentials.NS || !_credentials.DB || !_credentials.SC) throw createError({ statusCode: 500, message: 'Invalid database preset' })
-    const { result } = await _surrealRPC<{ result: string }>({
-      method: 'signin',
-      params: [_credentials],
+  async function signin(credentials: Record<string, any>, o: { admin?: boolean } = {}) {
+    const { NS, DB, SC } = _getDatabasePreset(database)
+    if ((!NS || !DB || !SC) && !o.admin) throw createError({ statusCode: 500, message: 'Invalid database preset' })
+
+    const result = await $signin({
+      ...credentials,
+      ...(!o.admin && { NS, DB, SC }),
     })
     if (result) {
-      await getSessionExp(`Bearer ${result}`).then(async ({ exp }) => {
+      await getSessionExp(result).then(async ({ exp }) => {
         if (!exp) throw createError({ statusCode: 401, message: 'User is not authenticated' })
         else if (exp === 'NONE') {
           setToken(adminMaxAge).value = result
-          await refreshInfo(`Bearer ${result}`)
+          await refreshInfo(result)
         }
         else {
           setToken(exp).value = result
-          await refreshInfo(`Bearer ${result}`)
+          await refreshInfo(result)
         }
       })
     }
@@ -134,26 +116,22 @@ export function useSurrealAuth() {
 
   // signup
   async function signup(credentials: Record<string, any>) {
-    const _credentials = defu(
-      credentials,
-      {
-        NS: databases[authDatabase].NS,
-        DB: databases[authDatabase].DB,
-        SC: databases[authDatabase].SC,
-      },
-    )
-    if (!_credentials.NS || !_credentials.DB || !_credentials.SC) throw createError({ statusCode: 500, message: 'Invalid database preset' })
-    const { result } = await _surrealRPC<{ result: string }>({
-      method: 'signup',
-      params: [_credentials],
+    const { NS, DB, SC } = _getDatabasePreset(database)
+    if (!NS || !DB || !SC) throw createError({ statusCode: 500, message: 'Invalid database preset' })
+
+    const result = await $signup({
+      ...credentials,
+      NS,
+      DB,
+      SC,
     })
     if (result) {
-      await getSessionExp(`Bearer ${result}`).then(async ({ exp }) => {
+      await getSessionExp(result).then(async ({ exp }) => {
         if (!exp) throw createError({ statusCode: 401, message: 'User is not authenticated' })
         else {
           // Signup users cannot be admins
           setToken(exp as number).value = result
-          await refreshInfo(`Bearer ${result}`)
+          await refreshInfo(result)
         }
       })
     }

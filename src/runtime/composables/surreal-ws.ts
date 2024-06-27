@@ -35,7 +35,6 @@ export function useSurrealWS(
     auth: { database: authDatabase },
     databases,
     defaultDatabase,
-    unwrapRpcResponse,
   } = useRuntimeConfig().public.surrealdb
   const { token: userAuth } = useSurrealAuth()
 
@@ -125,8 +124,8 @@ export function useSurrealWS(
 
   const data = computed(() => {
     const res = destr<RpcResponseWS<any> | null>(_data.value)
-    if (unwrapRpcResponse && !res?.error) {
-      return res?.result
+    if (res && res.result && !res.error) {
+      return res.result
     }
     else {
       return res
