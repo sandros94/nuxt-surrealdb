@@ -66,15 +66,20 @@ export function useSurrealFetch<
     onRequest({ options }) {
       options.headers = options.headers || {}
 
+      // @ts-expect-error KV header type missing
+      if (defaultDB.KV && options.headers['surreal-KV'] === undefined) {
+        // @ts-expect-error KV header type missing
+        options.headers['surreal-KV'] = defaultDB.KV
+      }
       // @ts-expect-error NS header type missing
-      if (defaultDB.NS && options.headers.NS === undefined) {
+      if (defaultDB.NS && options.headers['surreal-NS'] === undefined) {
         // @ts-expect-error NS header type missing
-        options.headers.NS = defaultDB.NS
+        options.headers['surreal-NS'] = defaultDB.NS
       }
       // @ts-expect-error DB header type missing
-      if (defaultDB.DB && options.headers.DB === undefined) {
+      if (defaultDB.DB && options.headers['surreal-DB'] === undefined) {
         // @ts-expect-error DB header type missing
-        options.headers.DB = defaultDB.DB
+        options.headers['surreal-DB'] = defaultDB.DB
       }
       // @ts-expect-error Authorization header type missing
       if (authToken && !userAuth && !options.headers.Authorization) {
@@ -123,11 +128,14 @@ export function useSurrealFetchOptionsOverride<
     if (db.host) {
       baseURL = db.host
     }
+    if (db.KV) {
+      headers['surreal-KV'] = db.KV
+    }
     if (db.NS) {
-      headers.NS = db.NS
+      headers['surreal-NS'] = db.NS
     }
     if (db.DB) {
-      headers.DB = db.DB
+      headers['surreal-DB'] = db.DB
     }
     if (db.auth && token !== false) {
       dbAuth = authTokenFn(db.auth)

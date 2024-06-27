@@ -19,9 +19,11 @@ export interface Overrides {
 export interface DatabasePreset {
   host?: string
   ws?: string
+  KV?: string
   NS?: string
   DB?: string
   SC?: string
+  AC?: string
   auth?: AuthToken
 }
 

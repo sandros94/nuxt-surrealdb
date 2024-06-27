@@ -97,7 +97,7 @@ export function useSurrealAuth(database?: Overrides['database']) {
 
     const result = await $signin({
       ...credentials,
-      ...(!o.admin && { NS, DB, SC }),
+      ...(!o.admin && { NS, DB, SC, AC: SC }),
     })
     if (result) {
       await getSessionExp(result).then(async ({ exp }) => {
@@ -124,6 +124,7 @@ export function useSurrealAuth(database?: Overrides['database']) {
       NS,
       DB,
       SC,
+      AC: SC,
     })
     if (result) {
       await getSessionExp(result).then(async ({ exp }) => {

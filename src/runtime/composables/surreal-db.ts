@@ -359,6 +359,7 @@ export function useSurrealDB(overrides?: Overrides) {
         NS,
         DB,
         SC,
+        AC: SC,
       },
     })
   }
@@ -381,6 +382,7 @@ export function useSurrealDB(overrides?: Overrides) {
         NS,
         DB,
         SC,
+        AC: SC,
       },
       immediate: immediate === undefined ? false : immediate,
       key: _key,
@@ -408,6 +410,7 @@ export function useSurrealDB(overrides?: Overrides) {
         NS,
         DB,
         SC,
+        AC: SC,
       },
     })
   }
@@ -434,6 +437,7 @@ export function useSurrealDB(overrides?: Overrides) {
         NS,
         DB,
         SC,
+        AC: SC,
       },
       immediate: immediate === undefined ? false : immediate,
       key: _key,
