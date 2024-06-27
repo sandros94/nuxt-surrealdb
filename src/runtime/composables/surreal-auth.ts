@@ -1,9 +1,8 @@
 import type { PublicRuntimeConfig } from 'nuxt/schema'
 import { defu } from 'defu'
 
-import type { Overrides, RpcRequest, SurrealFetchOptions } from '../types'
+import type { Overrides, RpcRequest, SurrealFetchOptions, UserSession } from '../types'
 
-import type { UserSession } from '#surreal-auth'
 import { computed, createError, ref, useCookie, useNuxtApp, useState } from '#imports'
 
 export function useSurrealAuth() {

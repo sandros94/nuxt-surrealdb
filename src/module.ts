@@ -4,6 +4,8 @@ import { defu } from 'defu'
 
 import type { DatabasePreset } from './runtime/types'
 
+export type * from './runtime/types'
+
 type PublicDatabases = PublicRuntimeConfig['surrealdb']['databases']
 
 // Module options TypeScript interface definition
@@ -94,8 +96,6 @@ export default defineNuxtModule<ModuleOptions>({
         defaultDatabase: options.server?.defaultDatabase,
       },
     )
-
-    nuxt.options.alias['#surreal-auth'] = resolve(runtimeDir, 'types', 'auth')
 
     addPlugin(resolve(runtimeDir, 'plugin'))
     addImportsDir(resolve(runtimeDir, 'composables'))
