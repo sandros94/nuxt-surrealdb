@@ -344,28 +344,44 @@ export function useSurrealDB(overrides?: Overrides) {
   // signin [ ... ]
   async function $signin(
     auth: MROGParam<any, 'signin', 0>,
-    options?: Overrides,
+    options?: {
+      database?: keyof PublicRuntimeConfig['surrealdb']['databases'] | { host?: string }
+    },
   ) {
+    const { NS, DB, SC } = toValue(auth)
+    if (!SC && !toValue(auth).user && !toValue(auth).pass) throw createError({ statusCode: 400, message: 'Wrong admin credentials' })
+    const { baseURL } = $surrealFetchOptionsOverride(options || overrides)
     return $surrealRPC<string | null>({
       method: 'signin', params: [toValue(auth)],
     }, {
-      database: options?.database || overrides?.database,
-      token: options?.token || overrides?.token,
+      database: {
+        host: baseURL,
+        NS,
+        DB,
+        SC,
+      },
     })
   }
   async function signin(
     auth: MROGParam<any, 'signin', 0>,
     options?: UseSurrealRpcOptions<string | null>,
   ): Promise<AsyncData<PickFrom<string | null, KeysOf<string | null>> | null, FetchError<any> | RpcResponseError | null>> {
+    const { NS, DB, SC } = toValue(auth)
+    if (!SC && !toValue(auth).user && !toValue(auth).pass) throw createError({ statusCode: 400, message: 'Wrong admin credentials' })
     const { database, immediate, key, token, watch, ...opts } = options || {}
+    const { baseURL } = $surrealFetchOptionsOverride({ database: database || overrides?.database })
 
     const params = computed<RpcRequest<any, 'signin'>['params']>(() => ([toValue(auth)]))
     const _key = key ?? 'Sur_' + hash(['surreal', 'signin', toValue(params)])
 
     return useSurrealRPC<string | null>({ method: 'signin', params }, {
       ...opts,
-      database: database || overrides?.database,
-      token: token || overrides?.token,
+      database: {
+        host: baseURL,
+        NS,
+        DB,
+        SC,
+      },
       immediate: immediate === undefined ? false : immediate,
       key: _key,
       watch: watch === undefined ? false : watch,
@@ -380,9 +396,9 @@ export function useSurrealDB(overrides?: Overrides) {
     },
   ) {
     const { NS, DB, SC } = toValue(auth)
-    if (!NS) throw createError({ statusCode: 500, message: 'Missing NS param' })
-    if (!DB) throw createError({ statusCode: 500, message: 'Missing DB param' })
-    if (!SC) throw createError({ statusCode: 500, message: 'Missing SC param' })
+    if (!NS) throw createError({ statusCode: 400, message: 'Missing NS param' })
+    if (!DB) throw createError({ statusCode: 400, message: 'Missing DB param' })
+    if (!SC) throw createError({ statusCode: 400, message: 'Missing SC param' })
     const { baseURL } = $surrealFetchOptionsOverride(options || overrides)
     return $surrealRPC<T>({
       method: 'signup', params: [toValue(auth)],
@@ -402,9 +418,9 @@ export function useSurrealDB(overrides?: Overrides) {
     },
   ): Promise<AsyncData<PickFrom<T, KeysOf<T>> | null, FetchError<any> | RpcResponseError | null>> {
     const { NS, DB, SC } = toValue(auth)
-    if (!NS) throw createError({ statusCode: 500, message: 'Missing NS param' })
-    if (!DB) throw createError({ statusCode: 500, message: 'Missing DB param' })
-    if (!SC) throw createError({ statusCode: 500, message: 'Missing SC param' })
+    if (!NS) throw createError({ statusCode: 400, message: 'Missing NS param' })
+    if (!DB) throw createError({ statusCode: 400, message: 'Missing DB param' })
+    if (!SC) throw createError({ statusCode: 400, message: 'Missing SC param' })
     const { database, immediate, key, token, watch, ...opts } = options || {}
     const { baseURL } = $surrealFetchOptionsOverride({ database: database || overrides?.database })
 

@@ -51,7 +51,7 @@
           <h2>Login</h2>
           <form @submit.prevent="signin(credentials)">
             <input v-model="credentials.username" placeholder="Username">
-            <input v-model="credentials.password" placeholder="Password">
+            <input v-model="credentials.password" placeholder="Password" type="password">
             <button type="submit">
               Sign in
             </button>
