@@ -9,7 +9,7 @@ export function useSurrealDB(event: H3Event, overrides?: ServerOverrides) {
     sql: RpcParams<T, 'query'>[0],
     vars?: RpcParams<T, 'query'>[1],
     options?: ServerOverrides,
-  ) {
+  ): Promise<T> {
     return useSurrealRPC<T>(event, {
       method: 'query', params: [sql, vars],
     }, {

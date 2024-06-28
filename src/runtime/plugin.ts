@@ -2,9 +2,10 @@
 import type {} from 'nitropack'
 import type { PublicRuntimeConfig } from 'nuxt/schema'
 import type { FetchOptions, ResponseType } from 'ofetch'
+import { ofetch } from 'ofetch'
 import { textToBase64 } from 'undio'
 
-import type { DatabasePreset, Overrides, RpcRequest, SurrealFetchOptions } from './types'
+import type { DatabasePreset, Overrides, RpcRequest } from './types'
 import { createError, defineNuxtPlugin, useSurrealAuth } from '#imports'
 
 export default defineNuxtPlugin(async ({ $config }) => {
@@ -28,7 +29,7 @@ export default defineNuxtPlugin(async ({ $config }) => {
     }
   }
 
-  const surrealFetch = $fetch.create({
+  const surrealFetch = ofetch.create({
     baseURL: defaultDB.host,
     onRequest({ options }) {
       options.headers = options.headers || {}
@@ -125,10 +126,10 @@ export default defineNuxtPlugin(async ({ $config }) => {
     }
   }
 
-  function surrealRPC<T = any>(req: RpcRequest<T>, ovr?: Overrides) {
+  function surrealRPC<T = any>(req: RpcRequest<T>, ovr?: Overrides): Promise<T> {
     let id = 0
 
-    return surrealFetch<T, string, SurrealFetchOptions>('rpc', {
+    return surrealFetch<T>('rpc', {
       ...surrealFetchOptionsOverride(ovr),
       onResponse({ response }) {
         if (response.status === 200 && response._data.error) {

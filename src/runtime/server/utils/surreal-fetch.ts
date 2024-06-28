@@ -4,10 +4,11 @@ import type { PublicRuntimeConfig, RuntimeConfig } from 'nuxt/schema'
 import type { FetchOptions, ResponseType } from 'ofetch'
 import { textToBase64 } from 'undio'
 import type { H3Event } from 'h3'
+import { ofetch } from 'ofetch'
 import { getCookie } from 'h3'
 import { defu } from 'defu'
 
-import type { DatabasePreset, Overrides, RpcRequest, RpcResponse, SurrealFetchOptions } from '../../types'
+import type { DatabasePreset, Overrides, RpcRequest, SurrealFetchOptions } from '../../types'
 import { createError, useRuntimeConfig } from '#imports'
 
 export type SurrealDatabasesKeys = keyof ReturnType<typeof useSurrealDatabases>
@@ -55,13 +56,13 @@ export function useSurrealFetch<
   event: H3Event,
   req: R,
   options: SurrealFetchOptions,
-) {
+): Promise<T> {
   const { surrealdb: { defaultDatabase }, public: { surrealdb: { auth: { cookieName } } } } = useRuntimeConfig(event)
   const defaultDB = useSurrealDatabases(event)[defaultDatabase as SurrealDatabasesKeys]
   const authToken = authTokenFn(defaultDB.auth)
   const userAuth = getCookie(event, cookieName)
 
-  const surrealFetch = $fetch.create({
+  const surrealFetch = ofetch.create({
     baseURL: defaultDB.host,
     onRequest({ options }) {
       options.headers = options.headers || {}
@@ -169,7 +170,7 @@ export function useSurrealFetchOptionsOverride<
 export function useSurrealRPC<T = any>(event: H3Event, req: RpcRequest<T>, ovr?: ServerOverrides) {
   let id = 0
 
-  return useSurrealFetch<RpcResponse<T>>(event, 'rpc', {
+  return useSurrealFetch<T>(event, 'rpc', {
     ...useSurrealFetchOptionsOverride(event, ovr),
     onResponse({ response }) {
       if (response.status === 200 && response._data.error) {

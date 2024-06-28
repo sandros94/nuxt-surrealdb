@@ -33,7 +33,7 @@ export type SurrealAsyncDataOptions<T> = AsyncDataOptions<T> & Overrides & {
   key?: string
 }
 export type SurrealFetchOptions<
-  T extends ResponseType = ResponseType,
+  T extends ResponseType = 'json',
 > = Omit<FetchOptions<T>, 'method'> & {
   method?: Uppercase<SurrealMethods> | SurrealMethods
 }
