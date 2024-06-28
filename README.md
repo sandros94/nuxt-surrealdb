@@ -143,7 +143,7 @@ const {
   close,
   create,
   data,
-  define,  // Surreal's `let`
+  set,  // Surreal's `let`
   info,
   insert,
   invalidate,
