@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v0.1.2
+
+[compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.1.1...v0.1.2)
+
+### 🚀 Enhancements
+
+- Default types for query functions ([f7beaa0](https://github.com/sandros94/nuxt-surrealdb/commit/f7beaa0))
+
+### ❤️ Contributors
+
+- Sandros94 ([@Sandros94](http://github.com/Sandros94))
+
 ## v0.1.1
 
 [compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.1.0...v0.1.1)
