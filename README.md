@@ -169,7 +169,7 @@ const {
 ```
 
 > [!WARNING]
-> Currently while the `signin` and `signup` functions are avaible, they are limited to that Websocket connection. Therefore if auth is required outside of that websocket connection it is advised to use the main `useSurrealAuth` composable for `SCOPE` user authentication.
+> Currently while the `signin` and `signup` functions are avaible, they are limited to the current Websocket connection. Therefore if auth is required outside of that websocket connection it is advised to use the main `useSurrealAuth` composable for `SCOPE` user authentication.
 
 ---
 
