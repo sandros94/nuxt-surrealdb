@@ -72,7 +72,7 @@
       </div>
     </div>
     <hr>
-    <div v-if="forcedError">
+    <div v-if="!queryData && forcedError">
       This is a forced error, cought by <b>
         useSurrealRPC:
       </b>
@@ -80,12 +80,15 @@
         {{ forcedError }}
       </div>
     </div>
+    <div v-else>
+      <pre>
+        {{ queryData?.[0].result }}
+      </pre>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import type { RpcResponse } from '#surrealdb/types'
-
 interface Product {
   id: string
   brand: string
@@ -110,7 +113,7 @@ const { data: dataCreate, execute: executeCreate } = await create<Product>('prod
 const removeProduct = ref('')
 const { execute: executeRemove } = await remove(removeProduct)
 
-const { error: forcedError } = await sql<RpcResponse<Product[]>[]>(
+const { data: queryData, error: forcedError } = await sql<[Product[]]>(
   'SELECT * ROM products;',
   undefined,
   { server: false },

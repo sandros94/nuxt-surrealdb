@@ -7,6 +7,7 @@ import type {
   KeysOf,
   PickFrom,
   Overrides,
+  QueryRpcResponse,
   RpcMethods,
   RpcParams,
   RpcRequest,
@@ -249,29 +250,29 @@ export function useSurrealDB(overrides?: Overrides) {
   }
 
   // query [ sql, vars? ]
-  async function $query<T = any>(
-    sql: MROGParam<T, 'query', 0>,
-    vars?: MROGParam<T, 'query', 1>,
+  async function $query<T = any, R = QueryRpcResponse<T>>(
+    sql: MROGParam<any, 'query', 0>,
+    vars?: MROGParam<any, 'query', 1>,
     options?: Overrides,
-  ): Promise<T> {
-    return $surrealRPC<T>({
+  ): Promise<R> {
+    return $surrealRPC<R>({
       method: 'query', params: [toValue(sql), toValue(vars)],
     }, {
       database: options?.database || overrides?.database,
       token: options?.token || overrides?.token,
     })
   }
-  async function query<T = any>(
-    sql: MROGParam<T, 'query', 0>,
-    vars?: MROGParam<T, 'query', 1>,
-    options?: UseSurrealRpcOptions<T>,
-  ): Promise<AsyncData<PickFrom<T, KeysOf<T>> | null, FetchError<any> | RpcResponseError | null>> {
+  async function query<T = any, R = QueryRpcResponse<T>>(
+    sql: MROGParam<any, 'query', 0>,
+    vars?: MROGParam<any, 'query', 1>,
+    options?: UseSurrealRpcOptions<R>,
+  ): Promise<AsyncData<PickFrom<R, KeysOf<R>> | null, FetchError<any> | RpcResponseError | null>> {
     const { database, key, token, watch, ...opts } = options || {}
 
-    const params = computed<RpcRequest<T, 'query'>['params']>(() => ([toValue(sql), toValue(vars)]))
+    const params = computed<RpcRequest<R, 'query'>['params']>(() => ([toValue(sql), toValue(vars)]))
     const _key = key ?? 'Sur_' + hash(['surreal', 'query', toValue(params)])
 
-    return useSurrealRPC<T>({ method: 'query', params }, {
+    return useSurrealRPC<R>({ method: 'query', params }, {
       ...opts,
       database: database || overrides?.database,
       token: token || overrides?.token,

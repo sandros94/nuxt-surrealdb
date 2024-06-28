@@ -29,7 +29,7 @@ export interface DatabasePreset {
 
 /* useAsyncData and useFetch custom options */
 
-export type SurrealAsyncDataOptions<T> = AsyncDataOptions<T> & Overrides & {
+export type SurrealAsyncDataOptions<T, R = T> = AsyncDataOptions<T, R> & Overrides & {
   key?: string
 }
 export type SurrealFetchOptions<
@@ -37,8 +37,8 @@ export type SurrealFetchOptions<
 > = Omit<FetchOptions<T>, 'method'> & {
   method?: Uppercase<SurrealMethods> | SurrealMethods
 }
-export type UseSurrealFetchOptions<T> = UseFetchOptions<T> & Overrides
-export type UseSurrealRpcOptions<T> = Omit<UseSurrealFetchOptions<T>, 'method' | 'body' | 'onResponse'>
+export type UseSurrealFetchOptions<T, R = T> = UseFetchOptions<T, R> & Overrides
+export type UseSurrealRpcOptions<T, R = T> = Omit<UseSurrealFetchOptions<T, R>, 'method' | 'body' | 'onResponse'>
 
 /* Utils */
 
@@ -229,3 +229,8 @@ export interface HttpResponseError {
 
 export type HttpResponse<R> = Array<(HttpResponseOk<R> | HttpResponseError)>
 export type HttpRes<R> = HttpResponse<R>
+
+/* Utility Types */
+export type QueryRpcResponse<T> = T extends [infer First, ...infer Rest]
+  ? [RpcResponse<First>, ...QueryRpcResponse<Rest>]
+  : []
