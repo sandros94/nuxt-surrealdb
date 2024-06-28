@@ -1,6 +1,23 @@
 # Changelog
 
 
+## v0.1.1
+
+[compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.1.0...v0.1.1)
+
+### 🩹 Fixes
+
+- Return types closes #7 ([#7](https://github.com/sandros94/nuxt-surrealdb/issues/7))
+
+### 🏡 Chore
+
+- Fix readme ([81792a1](https://github.com/sandros94/nuxt-surrealdb/commit/81792a1))
+- Update readme ([8917ca8](https://github.com/sandros94/nuxt-surrealdb/commit/8917ca8))
+
+### ❤️ Contributors
+
+- Sandros94 ([@Sandros94](http://github.com/Sandros94))
+
 ## v0.1.0
 
 [compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.0.10...v0.1.0)
