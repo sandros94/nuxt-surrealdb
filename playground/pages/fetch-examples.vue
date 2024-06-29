@@ -82,13 +82,15 @@
     </div>
     <div v-else>
       <pre>
-        {{ queryData?.[0].result }}
+        {{ queryData }}
       </pre>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import type { QueryResponse } from '../../src/runtime/types'
+
 interface Product {
   id: string
   brand: string
@@ -113,10 +115,13 @@ const { data: dataCreate, execute: executeCreate } = await create<Product>('prod
 const removeProduct = ref('')
 const { execute: executeRemove } = await remove(removeProduct)
 
-const { data: queryData, error: forcedError } = await sql<[Product[]]>(
-  'SELECT * ROM products;',
+const { data: queryData, error: forcedError } = await sql(
+  'SELECT * ROM products;', // intentional typo
   undefined,
-  { server: false },
+  {
+    server: false,
+    transform: ([{ result }]: QueryResponse<[Product[]]>) => result,
+  },
 )
 
 const { signin, signout, session, refreshInfo } = useSurrealAuth()

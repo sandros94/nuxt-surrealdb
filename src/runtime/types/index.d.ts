@@ -241,6 +241,6 @@ export type HttpResponse<R> = Array<(HttpResponseOk<R> | HttpResponseError)>
 export type HttpRes<R> = HttpResponse<R>
 
 /* Utility Types */
-export type QueryRpcResponse<T> = T extends [infer First, ...infer Rest]
-  ? [RpcResponse<First>, ...QueryRpcResponse<Rest>]
-  : []
+export type QueryResponse<T> = T extends [infer First, ...infer Rest]
+  ? [RpcResponse<First>, ...QueryResponse<Rest>]
+  : RpcResponse<any>[]
