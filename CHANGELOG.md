@@ -1,6 +1,23 @@
 # Changelog
 
 
+## v0.1.3
+
+[compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.1.2...v0.1.3)
+
+### 🩹 Fixes
+
+- UseSurrealFetch and useSurrealRpc types ([7ddac33](https://github.com/sandros94/nuxt-surrealdb/commit/7ddac33))
+- **useSurrealDB:** Transforms for useSurrealRPC-based functions ([40bcab5](https://github.com/sandros94/nuxt-surrealdb/commit/40bcab5))
+
+### 🏡 Chore
+
+- **release:** V0.1.2 ([297b5b3](https://github.com/sandros94/nuxt-surrealdb/commit/297b5b3))
+
+### ❤️ Contributors
+
+- Sandros94 ([@Sandros94](http://github.com/Sandros94))
+
 ## v0.1.2
 
 [compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.1.1...v0.1.2)
