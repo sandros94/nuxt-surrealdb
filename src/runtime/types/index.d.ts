@@ -37,8 +37,18 @@ export type SurrealFetchOptions<
 > = Omit<FetchOptions<T>, 'method'> & {
   method?: Uppercase<SurrealMethods> | SurrealMethods
 }
-export type UseSurrealFetchOptions<T, R = T> = UseFetchOptions<T, R> & Overrides
-export type UseSurrealRpcOptions<T, R = T> = Omit<UseSurrealFetchOptions<T, R>, 'method' | 'body' | 'onResponse'>
+export type UseSurrealFetchOptions<
+  ResT,
+  DataT = ResT,
+  PickKeys extends KeysOf<DataT> = KeysOf<DataT>,
+  DefaultT = undefined,
+> = UseFetchOptions<ResT, DataT, PickKeys, DefaultT> & Overrides
+export type UseSurrealRpcOptions<
+  ResT,
+  DataT = ResT,
+  PickKeys extends KeysOf<DataT> = KeysOf<DataT>,
+  DefaultT = undefined,
+> = Omit<UseSurrealFetchOptions<ResT, DataT, PickKeys, DefaultT>, 'method' | 'body' | 'onResponse'>
 
 /* Utils */
 

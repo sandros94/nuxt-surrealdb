@@ -9,6 +9,7 @@ import type {
   UseSurrealRpcOptions,
   RpcRequest,
   RpcResponseError,
+  HttpResponseError,
 } from '../types'
 import type {
   ComputedRef,
@@ -22,10 +23,16 @@ import {
   useNuxtApp,
 } from '#imports'
 
-export function useSurrealFetch<DataT = any, ErrorT = any>(
+export function useSurrealFetch<
+  ResT,
+  ErrorT = HttpResponseError,
+  DataT = ResT,
+  PickKeys extends KeysOf<DataT> = KeysOf<DataT>,
+  DefaultT = undefined,
+>(
   endpoint: MaybeRefOrGetter<string>,
-  options: UseSurrealFetchOptions<DataT> = {},
-): AsyncData<PickFrom<DataT, KeysOf<DataT>> | null, ErrorT | FetchError<any> | null> {
+  options: UseSurrealFetchOptions<ResT, DataT, PickKeys, DefaultT> = {},
+): AsyncData<DefaultT | PickFrom<DataT, PickKeys>, FetchError<ErrorT> | null> {
   const {
     database,
     token,
@@ -46,19 +53,25 @@ export function useSurrealFetch<DataT = any, ErrorT = any>(
   })
 }
 
-export function useSurrealRPC<DataT = any>(
+export function useSurrealRPC<
+  ResT,
+  ErrorT = RpcResponseError,
+  DataT = ResT,
+  PickKeys extends KeysOf<DataT> = KeysOf<DataT>,
+  DefaultT = undefined,
+>(
   req: {
     method: MaybeRefOrGetter<RpcRequest<DataT>['method']>
     params?: MaybeRefOrGetter<RpcRequest<DataT>['params']> | ComputedRef<RpcRequest<DataT>['params']>
   },
-  options?: UseSurrealRpcOptions<DataT>,
-): AsyncData<PickFrom<DataT, KeysOf<DataT>> | null, FetchError<any> | RpcResponseError | null> {
+  options?: UseSurrealRpcOptions<ResT, DataT, PickKeys, DefaultT>,
+) {
   const id = ref(0)
   const { key, ...opts } = options || {}
 
   const _key = key ?? 'Sur_' + hash(['surreal', 'rpc', toValue(req.method), toValue(req.params)])
 
-  return useSurrealFetch<DataT, RpcResponseError>('rpc', {
+  return useSurrealFetch<ResT, ErrorT, DataT, PickKeys, DefaultT>('rpc', {
     ...opts,
     onResponse({ response }) {
       if (response.status === 200 && response._data.error) {
