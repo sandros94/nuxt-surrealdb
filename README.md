@@ -50,12 +50,12 @@ NUXT_PUBLIC_SURREALDB_DATABASES_PRODUCTION_NS="surrealdb"
 NUXT_PUBLIC_SURREALDB_DATABASES_PRODUCTION_DB="docs"
 NUXT_PUBLIC_SURREALDB_DATABASES_PRODUCTION_SC="user"
 
-# For auth
+# To add authentication server side (this does not override the client's token)
 # As a Bearer
-NUXT_PUBLIC_SURREALDB_DATABASES_PRODUCTION_AUTH="mySuperLongBearerToken"
+NUXT_SURREALDB_DATABASES_PRODUCTION_AUTH="mySuperLongBearerToken"
 # Or as an object
-NUXT_PUBLIC_SURREALDB_DATABASES_PRODUCTION_AUTH_USER="root"
-NUXT_PUBLIC_SURREALDB_DATABASES_PRODUCTION_AUTH_PASS="root"
+NUXT_SURREALDB_DATABASES_PRODUCTION_AUTH_USER="root"
+NUXT_SURREALDB_DATABASES_PRODUCTION_AUTH_PASS="root"
 ```
 
 ```ts
@@ -69,7 +69,7 @@ export default defineNuxtConfig({
         NS: 'staging',
         DB: 'demo',
 
-        // Auth examples
+        // Auth examples exposed to client side
         auth: 'mySuperLongBearerToken',
         auth: {
           user: 'root',
@@ -83,7 +83,7 @@ export default defineNuxtConfig({
         DB: ''
       },
     },
-    server: {
+    server: { // the following add auth only server side
       databases: {
         production: {
           auth: '', // NUXT_SURREALDB_DATABASES_PRODUCTION_AUTH
