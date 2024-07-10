@@ -128,6 +128,9 @@ const { data } = await sql(
 )
 ```
 
+> [!NOTE]
+> If you are looking for using a particular db preset during development while another one for production, please use [`$development` and `$production` properties](https://nuxt.com/docs/getting-started/configuration#environment-overrides) within your `nuxt.config.ts`.
+
 ### RPC functions
 
 The main `useSurrealDB` exports a number of functions that directly communicate with the RPC endpoint. Each function has two variants, one starts with `$` and one without. The first is based on `$surrealRPC`, that provides the plain function, while the latter uses `useSurrealRPC`, taking advantage of `useSurrealFetch` (and thus, [`useFetch`](https://nuxt.com/docs/api/composables/use-fetch)).
