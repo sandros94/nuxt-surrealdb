@@ -57,12 +57,13 @@ export function useSurrealFetch<
 >(
   event: H3Event,
   req: R,
-  options: SurrealFetchOptions,
+  options: SurrealFetchOptions & ServerOverrides,
 ): Promise<T> {
   const { surrealdb: { defaultDatabase }, public: { surrealdb: { auth: { cookieName } } } } = useRuntimeConfig(event)
   const defaultDB = useSurrealDatabases(event)[defaultDatabase as DatabasePresetServerKeys]
   const authToken = authTokenFn(defaultDB.auth)
   const userAuth = getCookie(event, cookieName)
+  const { database, token, ...opts } = options
 
   const surrealFetch = ofetch.create({
     baseURL: defaultDB.host,
@@ -97,7 +98,17 @@ export function useSurrealFetch<
     },
   })
 
-  return surrealFetch<T>(req, options)
+  return surrealFetch<T>(req, {
+    ...opts,
+    ...useSurrealFetchOptionsOverride(
+      event,
+      {
+        database,
+        token,
+      },
+      opts,
+    ),
+  })
 }
 
 export function useSurrealFetchOptionsOverride<
