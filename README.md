@@ -99,7 +99,34 @@ export default defineNuxtConfig({
 })
 ```
 
-It is also possible to expand or change database properties (like `server.databases.production.auth` above) to be available only on Nuxt server-side. This becomes particularly useful for a more traditional database auth approach without exposing credentials client-side or to use a different `host` address in a private network.
+It is also possible to expand or change database properties server-side (like `server.databases.production.auth` above). This becomes particularly useful for a more traditional database auth approach without exposing credentials client-side or to use a different `host` address in a private network.
+
+Then, to use a database preset, you just have to set it within the last parameter of each main composable (functions destructured from `useSurrealDB` also support this override).
+
+```ts
+// all the functions destructured will be executed against the CRM database
+const { query, select } = useSurrealDB({
+  database: 'crm',
+})
+
+// only the following select will be made against the default database
+const { data } = await select('products', {
+  database: 'default',
+})
+
+// you could also define a one-time only preset
+const { data } = await sql(
+  'SELECT * FROM products WHERE price < $maxPrice;',
+  { maxPrice: 500 },
+  {
+    database: {
+      host: 'https://surrealdb.example.com',
+      NS: 'demo',
+      DB: 'shop',
+    },
+  },
+)
+```
 
 ### RPC functions
 
