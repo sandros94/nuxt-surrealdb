@@ -31,7 +31,6 @@ export default defineNuxtConfig({
     },
   },
   devtools: { enabled: true },
-  imports: {
-    autoImport: true,
-  },
+  imports: { autoImport: true },
+  compatibilityDate: '2024-07-10',
 })
