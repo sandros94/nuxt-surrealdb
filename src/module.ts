@@ -7,6 +7,7 @@ import type { DatabasePreset } from './runtime/types'
 export type * from './runtime/types'
 
 type PublicDatabases = PublicRuntimeConfig['surrealdb']['databases']
+type PrivateDatabases = RuntimeConfig['surrealdb']['databases']
 
 // Module options TypeScript interface definition
 export interface ModuleOptions {
@@ -23,7 +24,7 @@ export interface ModuleOptions {
     [key: string]: DatabasePreset | undefined
   }
   server?: {
-    defaultDatabase?: keyof PublicDatabases | keyof RuntimeConfig['surrealdb']['databases']
+    defaultDatabase?: keyof PublicDatabases | keyof PrivateDatabases
     databases?: {
       [key: string]: DatabasePreset | undefined
     }
@@ -54,7 +55,7 @@ export default defineNuxtModule<ModuleOptions>({
         NS: '',
         DB: '',
         SC: '',
-        auth: '',
+        KV: '',
       },
     },
     server: {
@@ -72,7 +73,7 @@ export default defineNuxtModule<ModuleOptions>({
 
     // Public RuntimeConfig
     nuxt.options.runtimeConfig.public.surrealdb = defu<
-      PublicRuntimeConfig['surrealdb'],
+      Omit<ModuleOptions, 'server'>,
       Omit<ModuleOptions, 'server'>[]
     >(
       nuxt.options.runtimeConfig.public.surrealdb,
@@ -99,3 +100,27 @@ export default defineNuxtModule<ModuleOptions>({
     addServerImportsDir(resolve(runtimeDir, 'server', 'utils'))
   },
 })
+
+declare module '@nuxt/schema' {
+  interface NuxtOptions {
+    surrealdb?: ModuleOptions
+    runtimeConfig: {
+      surrealdb: ModuleOptions['server']
+      public: {
+        surrealdb: Omit<ModuleOptions, 'server'>
+      }
+    }
+  }
+}
+
+declare module 'nuxt/schema' {
+  interface NuxtOptions {
+    surrealdb?: ModuleOptions
+    runtimeConfig: {
+      surrealdb: ModuleOptions['server']
+      public: {
+        surrealdb: Omit<ModuleOptions, 'server'>
+      }
+    }
+  }
+}

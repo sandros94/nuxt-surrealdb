@@ -1,4 +1,4 @@
-import type { PublicRuntimeConfig } from 'nuxt/schema'
+import type { PublicRuntimeConfig, RuntimeConfig } from 'nuxt/schema'
 import type { AsyncDataOptions, UseFetchOptions } from 'nuxt/app'
 import type { FetchOptions, ResponseType } from 'ofetch'
 
@@ -6,13 +6,23 @@ export type * from './auth'
 
 /* Database Overrides */
 
+export type DatabasePresetKeys = keyof PublicRuntimeConfig['surrealdb']['databases']
+export type DatabasePresetServerKeys =
+  | keyof PublicRuntimeConfig['surrealdb']['databases']
+  | keyof RuntimeConfig['surrealdb']['databases']
+
 export type AuthToken = string | {
   user: string
   pass: string
 }
 
 export interface Overrides {
-  database?: keyof PublicRuntimeConfig['surrealdb']['databases'] | DatabasePreset
+  database?: DatabasePresetKeys | DatabasePreset
+  token?: AuthToken | boolean
+}
+
+export interface ServerOverrides {
+  database?: DatabasePresetServerKeys | DatabasePreset
   token?: AuthToken | boolean
 }
 

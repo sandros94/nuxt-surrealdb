@@ -8,14 +8,14 @@ import { ofetch } from 'ofetch'
 import { getCookie } from 'h3'
 import { defu } from 'defu'
 
-import type { DatabasePreset, Overrides, RpcRequest, SurrealFetchOptions } from '../../types'
+import type {
+  DatabasePreset,
+  DatabasePresetServerKeys,
+  RpcRequest,
+  ServerOverrides,
+  SurrealFetchOptions,
+} from '../../types'
 import { createError, useRuntimeConfig } from '#imports'
-
-export type SurrealDatabasesKeys = keyof ReturnType<typeof useSurrealDatabases>
-
-export type ServerOverrides = Omit<Overrides, 'database'> & {
-  database?: SurrealDatabasesKeys | DatabasePreset
-}
 
 function authTokenFn(dbAuth: DatabasePreset['auth']) {
   if (!dbAuth) return undefined
@@ -27,7 +27,9 @@ function authTokenFn(dbAuth: DatabasePreset['auth']) {
   }
 }
 
-export function useSurrealDatabases(event?: H3Event) {
+export function useSurrealDatabases(event?: H3Event): {
+  [key in DatabasePresetServerKeys]: DatabasePreset
+} {
   const {
     surrealdb: {
       databases: privateDatabases,
@@ -40,9 +42,9 @@ export function useSurrealDatabases(event?: H3Event) {
   } = useRuntimeConfig(event)
 
   const databases = defu<
-    PublicRuntimeConfig['surrealdb']['databases'],
-    RuntimeConfig['surrealdb']['databases'][]
-  >(publicDatabases, privateDatabases)
+    RuntimeConfig['surrealdb']['databases'],
+    PublicRuntimeConfig['surrealdb']['databases'][]
+  >(privateDatabases, publicDatabases)
 
   return {
     ...databases,
@@ -58,7 +60,7 @@ export function useSurrealFetch<
   options: SurrealFetchOptions,
 ): Promise<T> {
   const { surrealdb: { defaultDatabase }, public: { surrealdb: { auth: { cookieName } } } } = useRuntimeConfig(event)
-  const defaultDB = useSurrealDatabases(event)[defaultDatabase as SurrealDatabasesKeys]
+  const defaultDB = useSurrealDatabases(event)[defaultDatabase as DatabasePresetServerKeys]
   const authToken = authTokenFn(defaultDB.auth)
   const userAuth = getCookie(event, cookieName)
 
@@ -111,11 +113,11 @@ export function useSurrealFetchOptionsOverride<
   } = overrides
   const { surrealdb: { defaultDatabase }, public: { surrealdb: { auth: { cookieName } } } } = useRuntimeConfig(event)
   const databases = useSurrealDatabases(event)
-  const authToken = authTokenFn(databases[defaultDatabase as SurrealDatabasesKeys].auth)
+  const authToken = authTokenFn(databases[defaultDatabase as DatabasePresetServerKeys].auth)
   const userAuth = getCookie(event, cookieName)
 
   const headers = defaults?.headers as Record<string, string> || {}
-  let db: DatabasePreset | undefined = undefined
+  let db: DatabasePreset = {}
   let baseURL: string | undefined = undefined
   let dbAuth = authToken
 

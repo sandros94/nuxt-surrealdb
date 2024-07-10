@@ -25,7 +25,10 @@ export default defineNuxtConfig({
     server: {
       databases: {
         staging: {
-          auth: '',
+          auth: {
+            user: '',
+            pass: '',
+          },
         },
       },
     },
