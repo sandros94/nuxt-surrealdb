@@ -3,11 +3,34 @@
 
 ## v0.2.0
 
-[compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.1.4...v0.2.0)
+[compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.1.3...v0.2.0)
+
+### 🚀 Enhancements
+
+- Handle default database param merging ([bf9a6c6](https://github.com/sandros94/nuxt-surrealdb/commit/bf9a6c6))
+- Use database merges client side ([beb37c2](https://github.com/sandros94/nuxt-surrealdb/commit/beb37c2))
+
+### 🩹 Fixes
+
+- Query server util types ([5914442](https://github.com/sandros94/nuxt-surrealdb/commit/5914442))
+- Server-side database preset overrides ([a0cff31](https://github.com/sandros94/nuxt-surrealdb/commit/a0cff31))
+- Server-side useSurrealFetch database preset override ([2faf8e3](https://github.com/sandros94/nuxt-surrealdb/commit/2faf8e3)) 
+- Database presets merge types ([2630b6b](https://github.com/sandros94/nuxt-surrealdb/commit/2630b6b))
+- Database presets merge types" ([451052b](https://github.com/sandros94/nuxt-surrealdb/commit/451052b))
+- Database presets merge types ([fb259f1](https://github.com/sandros94/nuxt-surrealdb/commit/fb259f1))
+
+### 📖 Documentation
+
+- Better document server and client auth ([57688d7](https://github.com/sandros94/nuxt-surrealdb/commit/57688d7))
+- Add database preset usage example ([551287f](https://github.com/sandros94/nuxt-surrealdb/commit/551287f))
+- Development preset good practice ([59eb72d](https://github.com/sandros94/nuxt-surrealdb/commit/59eb72d))
 
 ### 🏡 Chore
 
-- **release:** V0.1.4" ([2632ac5](https://github.com/sandros94/nuxt-surrealdb/commit/2632ac5))
+- Update vscode settings ([a081dc3](https://github.com/sandros94/nuxt-surrealdb/commit/a081dc3))
+- Update all deps ([a1729a2](https://github.com/sandros94/nuxt-surrealdb/commit/a1729a2))
+- Update playground ([17ed7b2](https://github.com/sandros94/nuxt-surrealdb/commit/17ed7b2))
+- **release:** V0.1.4 ([a7cdedd](https://github.com/sandros94/nuxt-surrealdb/commit/a7cdedd))
 
 ### ❤️ Contributors
 
