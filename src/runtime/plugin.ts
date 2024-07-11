@@ -14,7 +14,7 @@ export default defineNuxtPlugin(async ({ $config }) => {
     defaultDatabase,
     auth: { database: authDatabase },
   } = $config.public.surrealdb
-  const defaultDB = databases[defaultDatabase as keyof PublicRuntimeConfig['surrealdb']['databases']]
+  const defaultDB = databases[defaultDatabase as keyof PublicRuntimeConfig['surrealdb']['databases']] as DatabasePreset
   const { token: userAuth, session } = useSurrealAuth()
 
   const authToken = authTokenFn(defaultDB.auth)
