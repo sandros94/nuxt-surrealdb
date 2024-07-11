@@ -6,10 +6,11 @@ import { textToBase64 } from 'undio'
 import type { H3Event } from 'h3'
 import { ofetch } from 'ofetch'
 import { getCookie } from 'h3'
-import { defu } from 'defu'
+import { createDefu, defu } from 'defu'
 
 import type {
   DatabasePreset,
+  DatabasePresetKeys,
   DatabasePresetServerKeys,
   RpcRequest,
   ServerOverrides,
@@ -33,22 +34,36 @@ export function useSurrealDatabases(event?: H3Event): {
   const {
     surrealdb: {
       databases: privateDatabases,
+      defaultDatabase: defaultPrivateDatabase,
     },
     public: {
       surrealdb: {
-        databases: publicDatabases,
+        databases: _publicDatabases,
+        defaultDatabase: defaultPublicDatabase,
       },
     },
   } = useRuntimeConfig(event)
+  const defaultPrivateDB = privateDatabases[defaultPrivateDatabase as DatabasePresetKeys]
+  const defaultPublicDB = _publicDatabases[defaultPublicDatabase as DatabasePresetKeys]
 
-  const databases = defu<
+  const defuPublicDatabases = createDefu((obj, key, value) => {
+    obj[key] = defu(value, obj[key], defaultPublicDB)
+    return true
+  })
+  const publicDatabases = defuPublicDatabases(_publicDatabases, {
+    [defaultPublicDatabase]: defaultPublicDB,
+  })
+  const defuDatabases = createDefu((obj, key, value) => {
+    obj[key] = defu(value, obj[key], defaultPrivateDB)
+    return true
+  })
+
+  const databases = defuDatabases<
     RuntimeConfig['surrealdb']['databases'],
     PublicRuntimeConfig['surrealdb']['databases'][]
   >(privateDatabases, publicDatabases)
 
-  return {
-    ...databases,
-  }
+  return databases
 }
 
 export function useSurrealFetch<

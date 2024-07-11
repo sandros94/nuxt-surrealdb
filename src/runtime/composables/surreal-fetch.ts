@@ -1,8 +1,11 @@
 import type { AsyncData } from 'nuxt/app'
 import type { FetchError } from 'ofetch'
 import { hash } from 'ohash'
+import { createDefu, defu } from 'defu'
 
 import type {
+  DatabasePreset,
+  DatabasePresetKeys,
   KeysOf,
   PickFrom,
   UseSurrealFetchOptions,
@@ -21,6 +24,7 @@ import {
   toValue,
   useFetch,
   useNuxtApp,
+  useRuntimeConfig,
 } from '#imports'
 
 export function useSurrealFetch<
@@ -91,4 +95,25 @@ export function useSurrealRPC<
     },
     key: _key,
   })
+}
+
+export function useSurrealDatabases(): {
+  [key in DatabasePresetKeys]: DatabasePreset
+} {
+  const {
+    databases: publicDatabases,
+    defaultDatabase,
+  } = useRuntimeConfig().public.surrealdb
+  const defaultDB = publicDatabases[defaultDatabase as DatabasePresetKeys]
+
+  const defuDatabases = createDefu((obj, key, value) => {
+    obj[key] = defu(value, obj[key], defaultDB)
+    return true
+  })
+
+  const databases = defuDatabases(publicDatabases, {
+    [defaultDatabase]: defaultDB,
+  })
+
+  return databases
 }
