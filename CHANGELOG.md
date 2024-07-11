@@ -30,7 +30,6 @@
 - Update vscode settings ([a081dc3](https://github.com/sandros94/nuxt-surrealdb/commit/a081dc3))
 - Update all deps ([a1729a2](https://github.com/sandros94/nuxt-surrealdb/commit/a1729a2))
 - Update playground ([17ed7b2](https://github.com/sandros94/nuxt-surrealdb/commit/17ed7b2))
-- **release:** V0.1.4 ([a7cdedd](https://github.com/sandros94/nuxt-surrealdb/commit/a7cdedd))
 
 ### ❤️ Contributors
 
