@@ -4,7 +4,6 @@ import { hash } from 'ohash'
 import { createDefu, defu } from 'defu'
 
 import type {
-  DatabasePreset,
   DatabasePresetKeys,
   KeysOf,
   PickFrom,
@@ -97,9 +96,7 @@ export function useSurrealRPC<
   })
 }
 
-export function useSurrealDatabases(): {
-  [key in DatabasePresetKeys]: DatabasePreset
-} {
+export function useSurrealDatabases() {
   const {
     databases: publicDatabases,
     defaultDatabase,
