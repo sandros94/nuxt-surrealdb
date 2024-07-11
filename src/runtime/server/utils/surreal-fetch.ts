@@ -1,5 +1,6 @@
 // The following nitropack import is from https://github.com/nuxt/module-builder/issues/141#issuecomment-2078248248
 import type {} from 'nitropack'
+import type { PublicRuntimeConfig, RuntimeConfig } from 'nuxt/schema'
 import type { FetchOptions, ResponseType } from 'ofetch'
 import { textToBase64 } from 'undio'
 import type { H3Event } from 'h3'
@@ -57,7 +58,10 @@ export function useSurrealDatabases(event?: H3Event): {
     return true
   })
 
-  const databases = defuDatabases(privateDatabases, publicDatabases)
+  const databases = defuDatabases<
+    RuntimeConfig['surrealdb']['databases'],
+    PublicRuntimeConfig['surrealdb']['databases'][]
+  >(privateDatabases, publicDatabases)
 
   return databases
 }

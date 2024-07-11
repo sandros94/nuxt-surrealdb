@@ -54,10 +54,6 @@ export default defineNuxtModule<ModuleOptions>({
         ws: '',
         NS: '',
         DB: '',
-        KV: undefined,
-        SC: undefined,
-        AC: undefined,
-        auth: undefined,
       },
     },
     server: {
