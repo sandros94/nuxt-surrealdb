@@ -14,17 +14,17 @@ A Nuxt module aimed to simplify the use of [SurrealDB](https://surrealdb.com).
 <!-- - [📖 &nbsp;Documentation](https://example.com) -->
 
 > [!NOTE]
-> There are no docs atm, please refer to the [playground](/playground/) or the [source code](/src/).
+> There are no docs atm, please refer to the [playground](/playground/) or checkout directly the [source code](/src/).
 
 ## Quick Setup
 
-Install the module to your Nuxt application with one command:
+Install the module to your Nuxt application:
 
 ```bash
 npx nuxi module add nuxt-surrealdb
 ```
 
-That's it! You can now edit your [default Database Preset](https://github.com/Sandros94/nuxt-surrealdb?tab=readme-ov-file#database-presets) and use Nuxt SurrealDB in your Nuxt app ✨
+Then edit your [default Database Preset](https://github.com/Sandros94/nuxt-surrealdb?tab=readme-ov-file#database-presets) and use Nuxt SurrealDB in your Nuxt app ✨
 
 ## Features
 
@@ -63,19 +63,22 @@ export default defineNuxtConfig({
   modules: ['nuxt-surrealdb'],
   surrealdb: {
     databases: {
+      default: {
+        host: 'https://example.com',
+        ws: 'wss://example.com',
+        NS: 'production',
+        DB: 'website'
+      },
+
       crm: {
         host: 'https://crm.example.com',
         ws: 'wss://crm.example.com',
         NS: 'demo',
         DB: 'crm',
-
-        // Auth examples exposed client side
-        auth: 'mySuperLongBearerToken',
-        auth: {
-          user: 'root',
-          pass: 'root'
-        }
+        // The following auth example is exposed client side!
+        auth: 'mySuperLongBearerToken'
       },
+
       shop: {
         host: '', // initialize any property that will be set via `.env`
         ws: '',
@@ -85,11 +88,11 @@ export default defineNuxtConfig({
     },
     server: { // the following add auth only server side
       databases: {
-        shop: {
-          auth: '', // NUXT_SURREALDB_DATABASES_SHOP_AUTH
+        default: {
+          auth: '', // then edit it via NUXT_SURREALDB_DATABASES_DEFAULT_AUTH
           auth: {
-            user: '', // NUXT_SURREALDB_DATABASES_SHOP_AUTH_USER
-            pass: '' // NUXT_SURREALDB_DATABASES_SHOP_AUTH_PASS
+            user: '', // then edit it via NUXT_SURREALDB_DATABASES_DEFAULT_AUTH_USER
+            pass: '' // then edit it via NUXT_SURREALDB_DATABASES_DEFAULT_AUTH_PASS
           }
         }
       }
@@ -99,7 +102,7 @@ export default defineNuxtConfig({
 })
 ```
 
-It is also possible to expand or change database properties server-side (like `server.databases.shop.auth` above). This becomes particularly useful for a more traditional database auth approach without exposing credentials client-side or to use a different `host` address in a private network.
+It is also possible to expand or change database properties server-side (like `server.databases.default.auth` above). This becomes particularly useful for a more traditional database auth approach without exposing credentials client-side or to use a different `host` address in a private network.
 
 Then, to use a database preset, you just have to set it within the last parameter of each main composable (functions destructured from `useSurrealDB` also support this override).
 
