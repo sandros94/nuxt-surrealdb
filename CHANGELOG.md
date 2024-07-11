@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v0.2.0
+
+[compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.1.4...v0.2.0)
+
+### 🏡 Chore
+
+- **release:** V0.1.4" ([2632ac5](https://github.com/sandros94/nuxt-surrealdb/commit/2632ac5))
+
+### ❤️ Contributors
+
+- Sandros94 ([@Sandros94](http://github.com/Sandros94))
+
 ## v0.1.3
 
 [compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.1.2...v0.1.3)
