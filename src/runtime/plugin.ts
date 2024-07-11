@@ -5,16 +5,16 @@ import type { FetchOptions, ResponseType } from 'ofetch'
 import { ofetch } from 'ofetch'
 import { textToBase64 } from 'undio'
 
-import type { DatabasePreset, Overrides, RpcRequest } from './types'
-import { createError, defineNuxtPlugin, useSurrealAuth } from '#imports'
+import type { DatabasePreset, DatabasePresetKeys, Overrides, RpcRequest } from './types'
+import { createError, defineNuxtPlugin, useSurrealAuth, useSurrealDatabases } from '#imports'
 
 export default defineNuxtPlugin(async ({ $config }) => {
   const {
-    databases,
     defaultDatabase,
     auth: { database: authDatabase },
   } = $config.public.surrealdb
-  const defaultDB = databases[defaultDatabase as keyof PublicRuntimeConfig['surrealdb']['databases']] as DatabasePreset
+  const databases = useSurrealDatabases()
+  const defaultDB = databases[defaultDatabase as DatabasePresetKeys] as DatabasePreset
   const { token: userAuth, session } = useSurrealAuth()
 
   const authToken = authTokenFn(defaultDB.auth)
