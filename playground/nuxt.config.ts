@@ -21,6 +21,9 @@ export default defineNuxtConfig({
         NS: 'demo',
         DB: 'nasa',
       },
+      example: {
+        DB: '',
+      },
     },
     server: {
       databases: {
@@ -29,6 +32,10 @@ export default defineNuxtConfig({
             user: '',
             pass: '',
           },
+        },
+        example: {
+          host: 'http://localhost:8000',
+          ws: 'http://localhost:8000',
         },
       },
     },
