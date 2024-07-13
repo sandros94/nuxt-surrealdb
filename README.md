@@ -98,9 +98,23 @@ export default defineNuxtConfig({
       }
     }
   },
+  // To change a db preset during development it is best to do the following
+  $development: {
+    surrealdb: {
+      databases: {
+        default: {
+          host: 'http://localhost:8000',
+          ws: 'ws://localhost:8000'
+        }
+      }
+    }
+  },
   // ...
 })
 ```
+
+> [!NOTE]
+> If you want to use different db preset between development and production, please use Nuxt's native [`$development` and `$production` properties](https://nuxt.com/docs/getting-started/configuration#environment-overrides) within your `nuxt.config.ts` like in the example above.
 
 It is also possible to expand or change database properties server-side (like `server.databases.default.auth` above). This becomes particularly useful for a more traditional database auth approach without exposing credentials client-side or to use a different `host` address in a private network.
 
@@ -130,9 +144,6 @@ const { data } = await sql(
   },
 )
 ```
-
-> [!NOTE]
-> If you are looking for using a particular db preset during development while another one for production, please use [`$development` and `$production` properties](https://nuxt.com/docs/getting-started/configuration#environment-overrides) within your `nuxt.config.ts`.
 
 ### RPC functions
 
