@@ -1,7 +1,7 @@
 import type { H3Event } from 'h3'
 
-import type { QueryResponse, RpcParams } from '../../types'
-import { type ServerOverrides, useSurrealRPC } from './surreal-fetch'
+import type { QueryResponse, RpcParams, ServerOverrides } from '../../types'
+import { useSurrealRPC } from './surreal-fetch'
 
 export function useSurrealDB(event: H3Event, overrides?: ServerOverrides) {
   // query [ sql, vars ]
