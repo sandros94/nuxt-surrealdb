@@ -1,6 +1,31 @@
 # Changelog
 
 
+## v0.2.1
+
+[compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.2.0...v0.2.1)
+
+### 🩹 Fixes
+
+- **useSurrealAuth:** GetSessionExp type ([d727799](https://github.com/sandros94/nuxt-surrealdb/commit/d727799))
+- **useSurrealAuth:** Internal function type ([213f79a](https://github.com/sandros94/nuxt-surrealdb/commit/213f79a))
+- **useSurrealDB:** Server util type ([c558066](https://github.com/sandros94/nuxt-surrealdb/commit/c558066))
+
+### 📖 Documentation
+
+- Update database preset example to be less misleading ([dad8141](https://github.com/sandros94/nuxt-surrealdb/commit/dad8141))
+- Use `default` db preset as the main example ([3e3a06d](https://github.com/sandros94/nuxt-surrealdb/commit/3e3a06d))
+- Readme showcase how to use different db presets in dev/prod ([e47a5e2](https://github.com/sandros94/nuxt-surrealdb/commit/e47a5e2))
+
+### 🏡 Chore
+
+- Fix CHANGELOG ([24c6d2b](https://github.com/sandros94/nuxt-surrealdb/commit/24c6d2b))
+- Fix CHANGELOG ([56a1fbb](https://github.com/sandros94/nuxt-surrealdb/commit/56a1fbb))
+
+### ❤️ Contributors
+
+- Sandros94 ([@Sandros94](http://github.com/Sandros94))
+
 ## v0.2.0
 
 [compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.1.3...v0.2.0)
