@@ -65,7 +65,7 @@ export function useSurrealAuth(database?: Overrides['database']) {
     if (!_token) throw createError({ statusCode: 401, message: 'Unauthorized' })
     return (
       await $query<
-        [{ result: [{ exp: number | 'NONE' | null }] }]
+        { exp: number | 'NONE' | null }
       >('SELECT exp FROM $session;', undefined, { token: _token })
     )[0].result[0]
   }
