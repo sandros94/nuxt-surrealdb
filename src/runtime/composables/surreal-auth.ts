@@ -19,7 +19,7 @@ export function useSurrealAuth(database?: Overrides['database']) {
 
   const authDatabase = _database as keyof PublicRuntimeConfig['surrealdb']['databases'] | false
 
-  function _getDatabasePreset(database: Overrides['database']) {
+  function _getDatabasePreset(database: Overrides['database']): DatabasePreset {
     if (typeof database !== 'string' && typeof database !== 'number' && typeof database !== 'symbol' && database !== undefined) {
       return defu<DatabasePreset, DatabasePreset[]>(database, databases[authDatabase !== false ? authDatabase : 'default'])
     }
