@@ -10,8 +10,8 @@
 A Nuxt module aimed to simplify the use of [SurrealDB](https://surrealdb.com).
 
 - [✨ &nbsp;Release Notes](/CHANGELOG.md)
-<!-- - [🏀 Online playground](https://stackblitz.com/github/sandros94/nuxt-surrealdb?file=playground%2Fapp.vue) -->
 <!-- - [📖 &nbsp;Documentation](https://example.com) -->
+<!-- - [🏀 Online playground](https://stackblitz.com/github/sandros94/nuxt-surrealdb?file=playground%2Fapp.vue) -->
 
 > [!NOTE]
 > There are no docs atm, please refer to the [playground](/playground/) or checkout directly the [source code](/src/).
@@ -30,11 +30,11 @@ Then edit your [default Database Preset](https://github.com/Sandros94/nuxt-surre
 
 <!-- Highlight some of the features your module provide here -->
 - 📦&nbsp;Custom Database Presets, to be able to use multiple Databases on a composable/per-function basis.
-- 🚀&nbsp;Custom built-in `$surrealFetch` and `useSurrealFetch` (based on `$fetch` and `useFetch` respectively).
+- 🚀&nbsp;Custom built-in `$surrealFetch` and `useSurrealFetch`, based on `$fetch` and `useFetch` respectively.
 - ⚡️&nbsp;Built-in support for [RPC endpoint](https://surrealdb.com/docs/surrealdb/integration/rpc) via `$surrealRPC` and `useSurrealRPC`.
 - 🏗️&nbsp;Built-in Nuxt server `useSurrealRPC` util with server-side private DB Presets for a private network communication with SurrealDB.
 - 💡&nbsp;Each RPC method is mapped to a `useSurrealDB` exported function.
-- 🌟&nbsp;Built-in support for Websocket communication with RPC methods using the `useSurrealWS` composable.
+- 🌟&nbsp;Built-in support for Websockets communication with RPC methods using the `useSurrealWS` composable.
 
 ### Database Presets
 
@@ -116,7 +116,7 @@ export default defineNuxtConfig({
 > [!NOTE]
 > If you want to use different db preset between development and production, please use Nuxt's native [`$development` and `$production` properties](https://nuxt.com/docs/getting-started/configuration#environment-overrides) within your `nuxt.config.ts` like in the example above.
 
-It is also possible to expand or change database properties server-side (like `server.databases.default.auth` above). This becomes particularly useful for a more traditional database auth approach without exposing credentials client-side or to use a different `host` address in a private network.
+It is also possible to expand or change database properties server-side (like `surrealdb.server.databases.default.auth` above). This becomes particularly useful for a more traditional database auth approach without exposing credentials client-side or to use a different `host` address in a private network.
 
 Then, to use a database preset, you just have to set it within the last parameter of each main composable (functions destructured from `useSurrealDB` also support this override).
 
