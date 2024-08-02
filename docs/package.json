@@ -1,0 +1,15 @@
+{
+  "name": "nuxt-surrealdb-docs",
+  "version": "0.0.0",
+  "private": "true",
+  "type": "module",
+  "scripts": {
+    "dev": "vitepress dev",
+    "build": "vitepress build",
+    "preview": "vitepress preview",
+    "serve": "pnpm run build && serve .vitepress/dist"
+  },
+  "devDependencies": {
+    "vitepress": "latest"
+  }
+}
