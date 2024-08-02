@@ -145,7 +145,7 @@ const { data } = await sql(
 )
 ```
 
-### RPC functions
+### RPC Methods
 
 The main `useSurrealDB` exports a number of functions that directly communicate with the RPC endpoint. Each function has two variants, one starts with `$` and one without. The first is based on `$surrealRPC`, that provides the plain function, while the latter uses `useSurrealRPC`, taking advantage of `useSurrealFetch` (and thus, [`useFetch`](https://nuxt.com/docs/api/composables/use-fetch)).
 
@@ -172,14 +172,14 @@ const {
 ```
 
 > [!NOTE]
-> `sql` function is an alias for `query` while `version` uses its [HTTP endpoint](https://surrealdb.com/docs/surrealdb/integration/http#version).
+> `sql` method is an alias for `query` while `version` uses its [HTTP endpoint](https://surrealdb.com/docs/surrealdb/integration/http#version).
 
 ### RPC Websocket
 
 The `useSurrealWS` composable exposes a Websocket connection to handle live communication with SurrealDB. It uses `useWebsocket` from `@vueuse/core` under the hood, this means that SSR, auto-connect and auto-disconnect are handled automatically by default. Data is Automatically parsed from `JSON` to `string` both in input as well in `data` return.
 If available, upon Websocket connection, it will any Auth token from a prior user login. Database Presets and Websocket options are available as main arguments of the composable.
 
-Below a list of the main functions available from the Websocket composable:
+Below a list of the main methods available from the Websocket composable:
 
 ```ts
 const {
@@ -213,7 +213,7 @@ const {
 ```
 
 > [!WARNING]
-> Currently while the `signin` and `signup` functions are avaible, they are limited to the current Websocket connection. Therefore if auth is required outside of that websocket connection it is advised to use the main `useSurrealAuth` composable for `SCOPE` user authentication.
+> Currently while the `signin` and `signup` methods are avaible, they are limited to the current Websocket connection. Therefore if auth is required outside of that websocket connection it is advised to use the main `useSurrealAuth` composable for `SCOPE` user authentication.
 
 ---
 
