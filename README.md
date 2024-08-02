@@ -29,8 +29,8 @@ Then edit your [default Database Preset](https://github.com/Sandros94/nuxt-surre
 ## Features
 
 <!-- Highlight some of the features your module provide here -->
-- 🚀&nbsp;Custom built-in `$surrealFetch` and `useSurrealFetch` (based on `$fetch` and `useFetch` respectively).
 - 📦&nbsp;Custom Database Presets, to be able to use multiple Databases on a composable/per-function basis.
+- 🚀&nbsp;Custom built-in `$surrealFetch` and `useSurrealFetch` (based on `$fetch` and `useFetch` respectively).
 - ⚡️&nbsp;Built-in support for [RPC endpoint](https://surrealdb.com/docs/surrealdb/integration/rpc) via `$surrealRPC` and `useSurrealRPC`.
 - 🏗️&nbsp;Built-in Nuxt server `useSurrealRPC` util with server-side private DB Presets for a private network communication with SurrealDB.
 - 💡&nbsp;Each RPC method is mapped to a `useSurrealDB` exported function.
