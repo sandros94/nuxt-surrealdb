@@ -1,6 +1,36 @@
 # Changelog
 
 
+## v0.2.2
+
+[compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.2.1...v0.2.2)
+
+### 🩹 Fixes
+
+- Update to latest `@nuxt/module-builder` ([c6b2011](https://github.com/sandros94/nuxt-surrealdb/commit/c6b2011))
+- Suffix all type imports ([472971c](https://github.com/sandros94/nuxt-surrealdb/commit/472971c))
+- Workspace module resolution ([a7dcea0](https://github.com/sandros94/nuxt-surrealdb/commit/a7dcea0))
+
+### 🏡 Chore
+
+- **release:** V0.2.1 ([bc4fdd9](https://github.com/sandros94/nuxt-surrealdb/commit/bc4fdd9))
+- Update readme ([cc29633](https://github.com/sandros94/nuxt-surrealdb/commit/cc29633))
+- Update readme ([81b129a](https://github.com/sandros94/nuxt-surrealdb/commit/81b129a))
+- Fix naming in readme ([8342493](https://github.com/sandros94/nuxt-surrealdb/commit/8342493))
+- Init docs ([a6daf2e](https://github.com/sandros94/nuxt-surrealdb/commit/a6daf2e))
+- Install vitepress dep ([bf498f8](https://github.com/sandros94/nuxt-surrealdb/commit/bf498f8))
+- **docs:** Gh pages deploy action ([c324cce](https://github.com/sandros94/nuxt-surrealdb/commit/c324cce))
+- Update gh action name ([81d576b](https://github.com/sandros94/nuxt-surrealdb/commit/81d576b))
+- Fix gh action pnpm version ([4239d6d](https://github.com/sandros94/nuxt-surrealdb/commit/4239d6d))
+- Gh action step name ([bc39812](https://github.com/sandros94/nuxt-surrealdb/commit/bc39812))
+- Update deps ([7160aa7](https://github.com/sandros94/nuxt-surrealdb/commit/7160aa7))
+- Add vite as dep and regenerate lockfile ([d580afe](https://github.com/sandros94/nuxt-surrealdb/commit/d580afe))
+
+### ❤️ Contributors
+
+- Sandros94 ([@Sandros94](http://github.com/Sandros94))
+- Daniel Roe ([@danielroe](http://github.com/danielroe))
+
 ## v0.2.1
 
 [compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.2.0...v0.2.1)
