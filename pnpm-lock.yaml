@@ -4,6 +4,9 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+overrides:
+  nuxt-surrealdb: workspace:*
+
 importers:
 
   .:
@@ -69,6 +72,9 @@ importers:
       nuxt:
         specifier: ^3.11.2
         version: 3.13.0(@parcel/watcher@2.4.1)(@types/node@20.16.1)(eslint@9.9.1(jiti@1.21.6))(ioredis@5.4.1)(magicast@0.3.4)(optionator@0.9.4)(rollup@4.21.0)(terser@5.31.6)(typescript@5.5.4)(vite@5.4.2(@types/node@20.16.1)(terser@5.31.6))(vue-tsc@2.0.29(typescript@5.5.4))
+      nuxt-surrealdb:
+        specifier: workspace:*
+        version: link:..
 
 packages:
 

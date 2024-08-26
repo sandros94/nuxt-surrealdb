@@ -66,5 +66,8 @@
     "vitepress": "^1.3.4",
     "vitest": "^1.6.0",
     "vue-tsc": "^2.0.29"
+  },
+  "resolutions": {
+    "nuxt-surrealdb": "workspace:*"
   }
 }

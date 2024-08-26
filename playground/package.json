@@ -8,6 +8,7 @@
     "generate": "nuxi generate"
   },
   "dependencies": {
+    "nuxt-surrealdb": "latest",
     "nuxt": "^3.11.2"
   }
 }

@@ -89,7 +89,7 @@
 </template>
 
 <script setup lang="ts">
-import type { QueryResponse } from '../../src/runtime/types'
+import type { QueryResponse } from 'nuxt-surrealdb'
 
 interface Product {
   id: string
