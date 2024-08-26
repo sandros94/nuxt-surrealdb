@@ -1,7 +1,7 @@
 import type { PublicRuntimeConfig } from 'nuxt/schema'
 import { defu } from 'defu'
 
-import type { DatabasePreset, Overrides, UserSession } from '../types'
+import type { DatabasePreset, Overrides, UserSession } from '../types/index'
 
 import { computed, createError, useCookie, useRuntimeConfig, useState, useSurrealDB } from '#imports'
 

@@ -5,7 +5,7 @@ import type { FetchOptions, ResponseType } from 'ofetch'
 import { ofetch } from 'ofetch'
 import { textToBase64 } from 'undio'
 
-import type { DatabasePreset, DatabasePresetKeys, Overrides, RpcRequest } from './types'
+import type { DatabasePreset, DatabasePresetKeys, Overrides, RpcRequest } from './types/index'
 import { createError, defineNuxtPlugin, useSurrealAuth, useSurrealDatabases } from '#imports'
 
 export default defineNuxtPlugin(async ({ $config }) => {

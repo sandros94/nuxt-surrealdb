@@ -14,7 +14,7 @@ import type {
   RpcRequest,
   ServerOverrides,
   SurrealFetchOptions,
-} from '../../types'
+} from '../../types/index'
 import { createError, useRuntimeConfig } from '#imports'
 
 function authTokenFn(dbAuth: DatabasePreset['auth']) {

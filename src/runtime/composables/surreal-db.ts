@@ -13,7 +13,7 @@ import type {
   RpcRequest,
   RpcResponseError,
   UseSurrealRpcOptions,
-} from '../types'
+} from '../types/index'
 
 import type { MaybeRefOrGetter } from '#imports'
 import {

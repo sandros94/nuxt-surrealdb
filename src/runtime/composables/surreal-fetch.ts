@@ -12,7 +12,7 @@ import type {
   RpcRequest,
   RpcResponseError,
   HttpResponseError,
-} from '../types'
+} from '../types/index'
 import type {
   ComputedRef,
   MaybeRefOrGetter,

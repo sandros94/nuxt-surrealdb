@@ -9,7 +9,7 @@ import type {
   RpcParamsWS,
   RpcRequestWS,
   RpcResponseWS,
-} from '../types'
+} from '../types/index'
 import type {
   MaybeRefOrGetter,
 } from '#imports'
