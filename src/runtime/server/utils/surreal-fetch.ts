@@ -81,11 +81,6 @@ export function useSurrealFetch<
     onRequest({ options }) {
       options.headers = options.headers || {}
 
-      // @ts-expect-error KV header type missing
-      if (defaultDB.KV && options.headers['surreal-KV'] === undefined) {
-        // @ts-expect-error KV header type missing
-        options.headers['surreal-KV'] = defaultDB.KV
-      }
       // @ts-expect-error NS header type missing
       if (defaultDB.NS && options.headers['surreal-NS'] === undefined) {
         // @ts-expect-error NS header type missing
@@ -152,9 +147,6 @@ export function useSurrealFetchOptionsOverride<
     }
     if (db.host) {
       baseURL = db.host
-    }
-    if (db.KV) {
-      headers['surreal-KV'] = db.KV
     }
     if (db.NS) {
       headers['surreal-NS'] = db.NS

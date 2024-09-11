@@ -29,7 +29,6 @@ export interface ServerOverrides {
 export interface DatabasePreset {
   host?: string
   ws?: string
-  KV?: string
   NS?: string
   DB?: string
   SC?: string
