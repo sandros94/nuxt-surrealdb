@@ -1,5 +1,5 @@
 export default defineNuxtConfig({
-  modules: ['nuxt-surrealdb'],
+  modules: ['../src/module'],
   surrealdb: {
     auth: {
       database: 'staging',
