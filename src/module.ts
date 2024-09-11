@@ -1,4 +1,4 @@
-import type { PublicRuntimeConfig, RuntimeConfig } from 'nuxt/schema'
+import type { PublicRuntimeConfig, RuntimeConfig } from '@nuxt/schema'
 import { defineNuxtModule, addPlugin, addImportsDir, addServerImportsDir, createResolver } from '@nuxt/kit'
 import { defu } from 'defu'
 
@@ -57,6 +57,14 @@ export default defineNuxtModule<ModuleOptions>({
       },
     },
     server: {
+      databases: {
+        default: {
+          host: '',
+          ws: '',
+          NS: '',
+          DB: '',
+        },
+      },
       defaultDatabase: 'default',
     },
   },
@@ -71,7 +79,7 @@ export default defineNuxtModule<ModuleOptions>({
 
     // Public RuntimeConfig
     nuxt.options.runtimeConfig.public.surrealdb = defu<
-      Omit<ModuleOptions, 'server'>,
+      PublicRuntimeConfig['surrealdb'],
       Omit<ModuleOptions, 'server'>[]
     >(
       nuxt.options.runtimeConfig.public.surrealdb,
@@ -99,13 +107,13 @@ export default defineNuxtModule<ModuleOptions>({
   },
 })
 
+interface SurrealServerOptions {
+  surrealdb?: ModuleOptions['server']
+}
+interface SurrealOptions {
+  surrealdb?: Omit<ModuleOptions, 'server'>
+}
 declare module '@nuxt/schema' {
-  interface NuxtOptions {
-    runtimeConfig: {
-      surrealdb: ModuleOptions['server']
-      public: {
-        surrealdb: Omit<ModuleOptions, 'server'>
-      }
-    }
-  }
+  interface RuntimeConfig extends SurrealServerOptions {}
+  interface PublicRuntimeConfig extends SurrealOptions {}
 }

@@ -1,5 +1,6 @@
 // The following nitropack import is from https://github.com/nuxt/module-builder/issues/141#issuecomment-2078248248
 import type {} from 'nitropack'
+import type { PublicRuntimeConfig, RuntimeConfig } from '@nuxt/schema'
 import type { FetchOptions, ResponseType } from 'ofetch'
 import { textToBase64 } from 'undio'
 import type { H3Event } from 'h3'
@@ -9,16 +10,13 @@ import { createDefu, defu } from 'defu'
 
 import type {
   DatabasePreset,
-  DatabasePresetKeys,
-  DatabasePresetServerKeys,
   RpcRequest,
   ServerOverrides,
   SurrealFetchOptions,
 } from '../../types/index'
 import { createError, useRuntimeConfig } from '#imports'
 
-type DPresets = Record<DatabasePresetKeys, DatabasePreset>
-type DPresetsServer = Record<DatabasePresetServerKeys, DatabasePreset>
+type DatabasePresetKeys = keyof PublicRuntimeConfig['surrealdb']['databases'] | keyof RuntimeConfig['surrealdb']['databases']
 
 function authTokenFn(dbAuth: DatabasePreset['auth']) {
   if (!dbAuth) return undefined
@@ -31,9 +29,8 @@ function authTokenFn(dbAuth: DatabasePreset['auth']) {
 }
 
 export function useSurrealDatabases(event?: H3Event): {
-  [key in DatabasePresetServerKeys]: DatabasePreset
+  [key in DatabasePresetKeys]: DatabasePreset
 } {
-  // TODO: properly type this
   const {
     surrealdb: {
       databases: privateDatabases,
@@ -45,9 +42,9 @@ export function useSurrealDatabases(event?: H3Event): {
         defaultDatabase: defaultPublicDatabase,
       },
     },
-  } = useRuntimeConfig(event) as any
-  const defaultPrivateDB = privateDatabases[defaultPrivateDatabase] as DPresets
-  const defaultPublicDB = _publicDatabases[defaultPublicDatabase] as DPresetsServer
+  } = useRuntimeConfig(event)
+  const defaultPrivateDB = privateDatabases[defaultPrivateDatabase as keyof RuntimeConfig['surrealdb']['databases']]
+  const defaultPublicDB = _publicDatabases[defaultPublicDatabase as keyof PublicRuntimeConfig['surrealdb']['databases']]
 
   const defuPublicDatabases = createDefu((obj, key, value) => {
     obj[key] = defu(value, obj[key], defaultPublicDB)
@@ -61,7 +58,7 @@ export function useSurrealDatabases(event?: H3Event): {
     return true
   })
 
-  const databases = defuDatabases(privateDatabases, publicDatabases) as DPresetsServer
+  const databases = defuDatabases(privateDatabases, publicDatabases)
 
   return databases
 }
@@ -74,9 +71,8 @@ export function useSurrealFetch<
   req: R,
   options: SurrealFetchOptions & ServerOverrides,
 ): Promise<T> {
-  // TODO: properly type this
-  const { surrealdb: { defaultDatabase }, public: { surrealdb: { auth: { cookieName } } } } = useRuntimeConfig(event) as any
-  const defaultDB = useSurrealDatabases(event)[defaultDatabase as DatabasePresetServerKeys]
+  const { surrealdb: { defaultDatabase }, public: { surrealdb: { auth: { cookieName } } } } = useRuntimeConfig(event)
+  const defaultDB = useSurrealDatabases(event)[defaultDatabase as keyof RuntimeConfig['surrealdb']['databases']]
   const authToken = authTokenFn(defaultDB.auth)
   const userAuth = getCookie(event, cookieName)
   const { database, token, ...opts } = options
@@ -129,14 +125,13 @@ export function useSurrealFetchOptionsOverride<
   overrides: ServerOverrides = {},
   defaults?: Pick<FetchOptions<R>, 'headers'>,
 ) {
-  // TODO: properly type this
   const {
     database,
     token,
   } = overrides
-  const { surrealdb: { defaultDatabase }, public: { surrealdb: { auth: { cookieName } } } } = useRuntimeConfig(event) as any
+  const { surrealdb: { defaultDatabase }, public: { surrealdb: { auth: { cookieName } } } } = useRuntimeConfig(event)
   const databases = useSurrealDatabases(event)
-  const authToken = authTokenFn(databases[defaultDatabase as DatabasePresetServerKeys].auth)
+  const authToken = authTokenFn(databases[defaultDatabase as keyof RuntimeConfig['surrealdb']['databases']].auth)
   const userAuth = getCookie(event, cookieName)
 
   const headers = defaults?.headers as Record<string, string> || {}

@@ -24,5 +24,8 @@ export default createConfigForNuxt({
           max: 3,
         },
       }],
+
+      // Project Specific
+      '@typescript-eslint/no-empty-object-type': 'off',
     },
   })
