@@ -100,11 +100,15 @@ export default defineNuxtPlugin(async ({ $config }) => {
       }
       else if (typeof token === 'string' || typeof token === 'object') {
         const _token = authTokenFn(token)
-        _token !== undefined && (headers.Authorization = _token)
+        if (_token !== undefined) {
+          headers.Authorization = _token
+        }
       }
       else {
         const _token = userAuth.value ? `Bearer ${userAuth.value}` : dbAuth
-        _token !== undefined && (headers.Authorization = _token)
+        if (_token !== undefined) {
+          headers.Authorization = _token
+        }
       }
     }
 

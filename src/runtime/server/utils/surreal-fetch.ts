@@ -17,6 +17,9 @@ import type {
 } from '../../types/index'
 import { createError, useRuntimeConfig } from '#imports'
 
+type DPresets = Record<DatabasePresetKeys, DatabasePreset>
+type DPresetsServer = Record<DatabasePresetServerKeys, DatabasePreset>
+
 function authTokenFn(dbAuth: DatabasePreset['auth']) {
   if (!dbAuth) return undefined
   if (typeof dbAuth === 'string') {
@@ -30,6 +33,7 @@ function authTokenFn(dbAuth: DatabasePreset['auth']) {
 export function useSurrealDatabases(event?: H3Event): {
   [key in DatabasePresetServerKeys]: DatabasePreset
 } {
+  // TODO: properly type this
   const {
     surrealdb: {
       databases: privateDatabases,
@@ -41,9 +45,9 @@ export function useSurrealDatabases(event?: H3Event): {
         defaultDatabase: defaultPublicDatabase,
       },
     },
-  } = useRuntimeConfig(event)
-  const defaultPrivateDB = privateDatabases[defaultPrivateDatabase as DatabasePresetKeys]
-  const defaultPublicDB = _publicDatabases[defaultPublicDatabase as DatabasePresetKeys]
+  } = useRuntimeConfig(event) as any
+  const defaultPrivateDB = privateDatabases[defaultPrivateDatabase] as DPresets
+  const defaultPublicDB = _publicDatabases[defaultPublicDatabase] as DPresetsServer
 
   const defuPublicDatabases = createDefu((obj, key, value) => {
     obj[key] = defu(value, obj[key], defaultPublicDB)
@@ -57,7 +61,7 @@ export function useSurrealDatabases(event?: H3Event): {
     return true
   })
 
-  const databases = defuDatabases(privateDatabases, publicDatabases)
+  const databases = defuDatabases(privateDatabases, publicDatabases) as DPresetsServer
 
   return databases
 }
@@ -70,7 +74,8 @@ export function useSurrealFetch<
   req: R,
   options: SurrealFetchOptions & ServerOverrides,
 ): Promise<T> {
-  const { surrealdb: { defaultDatabase }, public: { surrealdb: { auth: { cookieName } } } } = useRuntimeConfig(event)
+  // TODO: properly type this
+  const { surrealdb: { defaultDatabase }, public: { surrealdb: { auth: { cookieName } } } } = useRuntimeConfig(event) as any
   const defaultDB = useSurrealDatabases(event)[defaultDatabase as DatabasePresetServerKeys]
   const authToken = authTokenFn(defaultDB.auth)
   const userAuth = getCookie(event, cookieName)
@@ -124,11 +129,12 @@ export function useSurrealFetchOptionsOverride<
   overrides: ServerOverrides = {},
   defaults?: Pick<FetchOptions<R>, 'headers'>,
 ) {
+  // TODO: properly type this
   const {
     database,
     token,
   } = overrides
-  const { surrealdb: { defaultDatabase }, public: { surrealdb: { auth: { cookieName } } } } = useRuntimeConfig(event)
+  const { surrealdb: { defaultDatabase }, public: { surrealdb: { auth: { cookieName } } } } = useRuntimeConfig(event) as any
   const databases = useSurrealDatabases(event)
   const authToken = authTokenFn(databases[defaultDatabase as DatabasePresetServerKeys].auth)
   const userAuth = getCookie(event, cookieName)
@@ -165,11 +171,15 @@ export function useSurrealFetchOptionsOverride<
     }
     else if (typeof token === 'string' || typeof token === 'object') {
       const _token = authTokenFn(token)
-      _token !== undefined && (headers.Authorization = _token)
+      if (_token !== undefined) {
+        headers.Authorization = _token
+      }
     }
     else {
       const _token = userAuth ? `Bearer ${userAuth}` : dbAuth
-      _token !== undefined && (headers.Authorization = _token)
+      if (_token !== undefined) {
+        headers.Authorization = _token
+      }
     }
   }
 

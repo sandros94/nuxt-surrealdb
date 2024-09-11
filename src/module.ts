@@ -101,7 +101,6 @@ export default defineNuxtModule<ModuleOptions>({
 
 declare module '@nuxt/schema' {
   interface NuxtOptions {
-    surrealdb?: ModuleOptions
     runtimeConfig: {
       surrealdb: ModuleOptions['server']
       public: {

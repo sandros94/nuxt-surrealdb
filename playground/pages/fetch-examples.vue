@@ -107,7 +107,9 @@ const search = ref('products')
 const { data, error, execute } = await select<Product[]>(search, {
   watch: [search],
 })
-error.value && console.error('error', error.value)
+if (error.value) {
+  console.error('error', error.value)
+}
 
 const newProduct = reactive<Partial<Product>>({})
 const { data: dataCreate, execute: executeCreate } = await create<Product>('products', newProduct)

@@ -1,7 +1,7 @@
 import type { ComputedRef, Ref } from 'vue'
 
-export interface User {
-}
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+export interface User {}
 
 export interface UserSession {
   user?: User
