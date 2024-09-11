@@ -1,6 +1,6 @@
 // The following nitropack import is from https://github.com/nuxt/module-builder/issues/141#issuecomment-2078248248
 import type {} from 'nitropack'
-import type { PublicRuntimeConfig } from 'nuxt/schema'
+import type { PublicRuntimeConfig } from '@nuxt/schema'
 import type { FetchOptions, ResponseType } from 'ofetch'
 import { ofetch } from 'ofetch'
 import { textToBase64 } from 'undio'

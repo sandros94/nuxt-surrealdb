@@ -1,4 +1,4 @@
-import type { PublicRuntimeConfig } from 'nuxt/schema'
+import type { PublicRuntimeConfig } from '@nuxt/schema'
 import type { AsyncData } from 'nuxt/app'
 import type { FetchError } from 'ofetch'
 import { hash } from 'ohash'

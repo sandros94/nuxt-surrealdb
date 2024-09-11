@@ -1,4 +1,4 @@
-import type { PublicRuntimeConfig } from 'nuxt/schema'
+import type { PublicRuntimeConfig } from '@nuxt/schema'
 import { defu } from 'defu'
 
 import type { DatabasePreset, Overrides, UserSession } from '../types/index'

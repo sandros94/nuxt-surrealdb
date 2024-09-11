@@ -1,4 +1,4 @@
-import type { PublicRuntimeConfig, RuntimeConfig } from 'nuxt/schema'
+import type { PublicRuntimeConfig, RuntimeConfig } from '@nuxt/schema'
 import type { AsyncDataOptions, UseFetchOptions } from 'nuxt/app'
 import type { FetchOptions, ResponseType } from 'ofetch'
 
