@@ -110,15 +110,3 @@ declare module '@nuxt/schema' {
     }
   }
 }
-
-declare module 'nuxt/schema' {
-  interface NuxtOptions {
-    surrealdb?: ModuleOptions
-    runtimeConfig: {
-      surrealdb: ModuleOptions['server']
-      public: {
-        surrealdb: Omit<ModuleOptions, 'server'>
-      }
-    }
-  }
-}
