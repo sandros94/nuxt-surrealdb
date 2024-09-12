@@ -525,6 +525,8 @@ export function useSurrealDB(overrides?: Overrides) {
     authenticate,
     $create,
     create,
+    $delete: $remove,
+    delete: remove,
     $info,
     info,
     $insert,
