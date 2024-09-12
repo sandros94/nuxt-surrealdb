@@ -13,7 +13,10 @@ import type {
   RpcRequest,
   RpcResponseError,
   UseSurrealRpcOptions,
-} from '../types/index'
+} from '#surrealdb/types/index'
+import {
+  surrealFetchOptionsOverride,
+} from '#surrealdb/utils/overrides'
 
 import type { MaybeRefOrGetter } from '#imports'
 import {
@@ -22,13 +25,14 @@ import {
   toValue,
   useNuxtApp,
   useSurrealFetch,
+  useSurrealPreset,
   useSurrealRPC,
 } from '#imports'
 
 type MROGParam<T, M extends keyof RpcMethods<T>, N extends number> = MaybeRefOrGetter<RpcParams<T, M>[N]>
 
 export function useSurrealDB(overrides?: Overrides) {
-  const { $surrealFetch, $surrealFetchOptionsOverride, $surrealRPC } = useNuxtApp()
+  const { $surrealFetch, $surrealRPC } = useNuxtApp()
 
   // authenticate [ token ]
   async function $authenticate(
@@ -370,18 +374,18 @@ export function useSurrealDB(overrides?: Overrides) {
       database?: keyof PublicRuntimeConfig['surrealdb']['databases'] | { host?: string }
     },
   ): Promise<string> {
-    const { NS, DB, SC } = toValue(auth)
-    if (!SC && !toValue(auth).user && !toValue(auth).pass) throw createError({ statusCode: 400, message: 'Wrong admin credentials' })
-    const { baseURL } = $surrealFetchOptionsOverride(options || overrides)
+    const { NS, DB, SC, AC } = toValue(auth)
+    if (!(SC || AC) && (!toValue(auth).user || !toValue(auth).pass)) throw createError({ statusCode: 400, message: 'Wrong admin credentials' })
+    const { host } = useSurrealPreset(options || overrides)
     return $surrealRPC<string>({
       method: 'signin', params: [toValue(auth)],
     }, {
       database: {
-        host: baseURL,
+        host,
         NS,
         DB,
         SC,
-        AC: SC,
+        AC,
       },
     })
   }
@@ -389,10 +393,10 @@ export function useSurrealDB(overrides?: Overrides) {
     auth: MROGParam<any, 'signin', 0>,
     options?: UseSurrealRpcOptions<string>,
   ): Promise<AsyncData<string | undefined, RpcResponseError | FetchError<any> | null>> {
-    const { NS, DB, SC } = toValue(auth)
-    if (!SC && !toValue(auth).user && !toValue(auth).pass) throw createError({ statusCode: 400, message: 'Wrong admin credentials' })
+    const { NS, DB, SC, AC } = toValue(auth)
+    if (!(SC || AC) && (!toValue(auth).user || !toValue(auth).pass)) throw createError({ statusCode: 400, message: 'Wrong admin credentials' })
     const { database, immediate, key, token, watch, ...opts } = options || {}
-    const { baseURL } = $surrealFetchOptionsOverride({ database: database || overrides?.database })
+    const { host } = useSurrealPreset({ database: database || overrides?.database })
 
     const params = computed<RpcRequest<any, 'signin'>['params']>(() => ([toValue(auth)]))
     const _key = key ?? 'Sur_' + hash(['surreal', 'signin', toValue(params)])
@@ -400,11 +404,11 @@ export function useSurrealDB(overrides?: Overrides) {
     return useSurrealRPC<string>({ method: 'signin', params }, {
       ...opts,
       database: {
-        host: baseURL,
+        host,
         NS,
         DB,
         SC,
-        AC: SC,
+        AC,
       },
       immediate: immediate === undefined ? false : immediate,
       key: _key,
@@ -419,20 +423,20 @@ export function useSurrealDB(overrides?: Overrides) {
       database?: keyof PublicRuntimeConfig['surrealdb']['databases'] | { host?: string }
     },
   ): Promise<string> {
-    const { NS, DB, SC } = toValue(auth)
+    const { NS, DB, SC, AC } = toValue(auth)
     if (!NS) throw createError({ statusCode: 400, message: 'Missing NS param' })
     if (!DB) throw createError({ statusCode: 400, message: 'Missing DB param' })
-    if (!SC) throw createError({ statusCode: 400, message: 'Missing SC param' })
-    const { baseURL } = $surrealFetchOptionsOverride(options || overrides)
+    if (!SC || !AC) throw createError({ statusCode: 400, message: 'Missing SC/AC param' })
+    const { host } = useSurrealPreset(options || overrides)
     return $surrealRPC<string>({
       method: 'signup', params: [toValue(auth)],
     }, {
       database: {
-        host: baseURL,
+        host,
         NS,
         DB,
         SC,
-        AC: SC,
+        AC,
       },
     })
   }
@@ -442,12 +446,12 @@ export function useSurrealDB(overrides?: Overrides) {
       database?: keyof PublicRuntimeConfig['surrealdb']['databases'] | { host?: string }
     },
   ): Promise<AsyncData<string | undefined, RpcResponseError | FetchError<any> | null>> {
-    const { NS, DB, SC } = toValue(auth)
+    const { NS, DB, SC, AC } = toValue(auth)
     if (!NS) throw createError({ statusCode: 400, message: 'Missing NS param' })
     if (!DB) throw createError({ statusCode: 400, message: 'Missing DB param' })
-    if (!SC) throw createError({ statusCode: 400, message: 'Missing SC param' })
+    if (!SC || !AC) throw createError({ statusCode: 400, message: 'Missing SC/AC param' })
     const { database, immediate, key, token, watch, ...opts } = options || {}
-    const { baseURL } = $surrealFetchOptionsOverride({ database: database || overrides?.database })
+    const { host } = useSurrealPreset({ database: database || overrides?.database })
 
     const params = computed<RpcRequest<any, 'signup'>['params']>(() => ([toValue(auth)]))
     const _key = key ?? 'Sur_' + hash(['surreal', 'signup', toValue(params)])
@@ -455,11 +459,11 @@ export function useSurrealDB(overrides?: Overrides) {
     return useSurrealRPC<string>({ method: 'signup', params }, {
       ...opts,
       database: {
-        host: baseURL,
+        host,
         NS,
         DB,
         SC,
-        AC: SC,
+        AC,
       },
       immediate: immediate === undefined ? false : immediate,
       key: _key,
@@ -504,19 +508,15 @@ export function useSurrealDB(overrides?: Overrides) {
   }
 
   async function $version(options?: Overrides): Promise<string> {
+    const database = useSurrealPreset(options || overrides)
     return $surrealFetch<string>('version', {
-      ...$surrealFetchOptionsOverride({
-        database: options?.database || overrides?.database,
-        token: options?.token || overrides?.token,
-      }),
+      ...surrealFetchOptionsOverride(database),
     })
   }
   async function version(options?: Overrides): Promise<AsyncData<string | undefined, FetchError<any> | null>> {
+    const database = useSurrealPreset(options || overrides)
     return useSurrealFetch<string>('version', {
-      ...$surrealFetchOptionsOverride({
-        database: options?.database || overrides?.database,
-        token: options?.token || overrides?.token,
-      }),
+      ...surrealFetchOptionsOverride(database),
     })
   }
 

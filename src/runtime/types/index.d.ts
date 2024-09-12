@@ -8,8 +8,8 @@ export type * from './auth'
 
 export type DatabasePresetKeys = keyof PublicRuntimeConfig['surrealdb']['databases']
 export type DatabasePresetServerKeys =
-  | keyof PublicRuntimeConfig['surrealdb']['databases']
-  | keyof RuntimeConfig['surrealdb']['databases']
+  keyof PublicRuntimeConfig['surrealdb']['databases']
+  & keyof RuntimeConfig['surrealdb']['databases']
 
 export type AuthToken = string | {
   user: string
@@ -17,17 +17,17 @@ export type AuthToken = string | {
 }
 
 export interface Overrides {
-  database?: DatabasePresetKeys | DatabasePreset
+  database?: DatabasePresetKeys | Partial<DatabasePreset>
   token?: AuthToken | boolean
 }
 
 export interface ServerOverrides {
-  database?: DatabasePresetServerKeys | DatabasePreset
+  database?: DatabasePresetServerKeys | Partial<DatabasePreset>
   token?: AuthToken | boolean
 }
 
 export interface DatabasePreset {
-  host?: string
+  host: string
   ws?: string
   NS?: string
   DB?: string
@@ -137,6 +137,7 @@ type SignUpParams = [{
   NS: string
   DB: string
   SC: string
+  AC: string
   [key: string]: string
 }]
 

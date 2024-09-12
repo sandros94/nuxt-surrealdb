@@ -1,32 +1,29 @@
-import type { PublicRuntimeConfig, RuntimeConfig } from '@nuxt/schema'
+import type { PublicRuntimeConfig } from '@nuxt/schema'
 import { defineNuxtModule, addPlugin, addImportsDir, addServerImportsDir, createResolver } from '@nuxt/kit'
-import { defu } from 'defu'
 
 import type { DatabasePreset } from './runtime/types'
+import { surrealdbRuntimeConfig } from './init-module'
 
 export type * from './runtime/types'
 
 type PublicDatabases = PublicRuntimeConfig['surrealdb']['databases']
-type PrivateDatabases = RuntimeConfig['surrealdb']['databases']
 
 // Module options TypeScript interface definition
 export interface ModuleOptions {
-  auth?: {
+  auth: {
     adminMaxAge?: number
     database?: keyof PublicDatabases | false
     sessionName?: string
     cookieName?: string
     sameSite?: boolean | 'strict' | 'lax' | 'none'
   }
-  defaultDatabase?: keyof PublicDatabases
-  databases?: {
+  databases: {
     default?: DatabasePreset
-    [key: string]: DatabasePreset | undefined
+    [key: string]: Partial<DatabasePreset> | undefined
   }
-  server?: {
-    defaultDatabase?: keyof PublicDatabases | keyof PrivateDatabases
+  server: {
     databases?: {
-      [key: string]: DatabasePreset | undefined
+      [key: string]: Partial<DatabasePreset> | undefined
     }
   }
 }
@@ -47,26 +44,6 @@ export default defineNuxtModule<ModuleOptions>({
       cookieName: 'nuxt-surrealdb',
       sameSite: 'lax',
     },
-    defaultDatabase: 'default',
-    databases: {
-      default: {
-        host: '',
-        ws: '',
-        NS: '',
-        DB: '',
-      },
-    },
-    server: {
-      databases: {
-        default: {
-          host: '',
-          ws: '',
-          NS: '',
-          DB: '',
-        },
-      },
-      defaultDatabase: 'default',
-    },
   },
   setup(options, nuxt) {
     const { resolve } = createResolver(import.meta.url)
@@ -77,29 +54,7 @@ export default defineNuxtModule<ModuleOptions>({
 
     nuxt.options.alias['#surrealdb'] = runtimeDir
 
-    // Public RuntimeConfig
-    nuxt.options.runtimeConfig.public.surrealdb = defu<
-      PublicRuntimeConfig['surrealdb'],
-      Omit<ModuleOptions, 'server'>[]
-    >(
-      nuxt.options.runtimeConfig.public.surrealdb,
-      {
-        auth: options.auth,
-        databases: options.databases,
-        defaultDatabase: options.defaultDatabase,
-      },
-    )
-    // Private RuntimeConfig
-    nuxt.options.runtimeConfig.surrealdb = defu<
-      RuntimeConfig['surrealdb'],
-      ModuleOptions['server'][]
-    >(
-      nuxt.options.runtimeConfig.surrealdb,
-      {
-        databases: options.server?.databases,
-        defaultDatabase: options.server?.defaultDatabase,
-      },
-    )
+    nuxt.options.runtimeConfig = surrealdbRuntimeConfig(nuxt.options.runtimeConfig, options)
 
     addPlugin(resolve(runtimeDir, 'plugin'))
     addImportsDir(resolve(runtimeDir, 'composables'))

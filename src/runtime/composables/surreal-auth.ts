@@ -1,38 +1,29 @@
-import type { PublicRuntimeConfig } from '@nuxt/schema'
-import { defu } from 'defu'
+import type {
+  DatabasePresetKeys,
+  UserSession,
+} from '#surrealdb/types/index'
 
-import type { DatabasePreset, Overrides, UserSession } from '../types/index'
+import {
+  computed,
+  createError,
+  useCookie,
+  useRuntimeConfig,
+  useState,
+  useSurrealDB,
+} from '#imports'
 
-import { computed, createError, useCookie, useRuntimeConfig, useState, useSurrealDB } from '#imports'
-
-export function useSurrealAuth(database?: Overrides['database']) {
+export function useSurrealAuth(database?: DatabasePresetKeys) {
   const {
     databases,
     auth: {
       adminMaxAge,
-      database: _database,
+      database: authDb,
       sessionName,
       cookieName,
       sameSite,
     },
   } = useRuntimeConfig().public.surrealdb
-
-  const authDatabase = _database as keyof PublicRuntimeConfig['surrealdb']['databases'] | false
-
-  function _getDatabasePreset(database: Overrides['database']): DatabasePreset {
-    if (typeof database !== 'string' && typeof database !== 'number' && typeof database !== 'symbol' && database !== undefined) {
-      return defu<DatabasePreset, DatabasePreset[]>(database, databases[authDatabase !== false ? authDatabase : 'default'])
-    }
-    else if (database !== undefined) {
-      return databases[database]
-    }
-    else if (authDatabase !== false) {
-      return databases[authDatabase]
-    }
-    else {
-      throw createError({ statusCode: 500, message: 'No auth database provided either via Nuxt Runtime Config nor as a useSurrealAuth param' })
-    }
-  }
+  const db = databases[database || authDb as DatabasePresetKeys]
 
   const {
     $authenticate,
@@ -41,7 +32,7 @@ export function useSurrealAuth(database?: Overrides['database']) {
     $query,
     $signin,
     $signup,
-  } = useSurrealDB({ database: _getDatabasePreset(database) })
+  } = useSurrealDB({ database: db })
 
   const session = useState<UserSession>(sessionName, () => ({}))
 
@@ -92,7 +83,7 @@ export function useSurrealAuth(database?: Overrides['database']) {
 
   // signin
   async function signin(credentials: Record<string, any>, o: { admin?: boolean } = {}) {
-    const { NS, DB, SC } = _getDatabasePreset(database)
+    const { NS, DB, SC } = db
     if ((!NS || !DB || !SC) && !o.admin) throw createError({ statusCode: 500, message: 'Invalid database preset' })
 
     const result = await $signin({
@@ -116,7 +107,7 @@ export function useSurrealAuth(database?: Overrides['database']) {
 
   // signup
   async function signup(credentials: Record<string, any>) {
-    const { NS, DB, SC } = _getDatabasePreset(database)
+    const { NS, DB, SC } = db
     if (!NS || !DB || !SC) throw createError({ statusCode: 500, message: 'Invalid database preset' })
 
     const result = await $signup({
