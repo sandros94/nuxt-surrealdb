@@ -8,6 +8,7 @@ Here the full list:
 const {
   authenticate, // $authenticate
   create,       // $create
+  delete,       // $delete
   info,         // $info
   insert,       // $insert
   invalidate,   // $invalidate

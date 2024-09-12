@@ -19,6 +19,7 @@ export default defineNuxtConfig({
       },
 
       website: {
+        // This preset will inherit `host`, `ws` and `NS` from the default preset above
         DB: 'website',
       },
 
@@ -27,16 +28,11 @@ export default defineNuxtConfig({
         ws: 'wss://crm.example.com',
         NS: 'demo',
         DB: 'crm',
-        // The following bearer auth is exposed client side!
+        // The following bearer token is exposed client side!
         auth: 'mySuperLongBearerToken',
       },
 
-      shop: {
-        host: '', // initialize any property that will be set via `.env`
-        ws: '',
-        NS: '',
-        DB: '',
-      },
+      shop: {}, // initialize the preset and edit it via `.env`
     },
   },
 })
@@ -49,10 +45,6 @@ NUXT_PUBLIC_SURREALDB_DATABASES_SHOP_NS="surrealdb"
 NUXT_PUBLIC_SURREALDB_DATABASES_SHOP_DB="docs"
 NUXT_PUBLIC_SURREALDB_DATABASES_SHOP_SC="user"
 ```
-
-::: tip
-When editing variables via `.env` to a custom preset, like the `shop` preset above, it is important to initialize any parameter as an empty string inside your `nuxt.config.ts`.
-:::
 
 ### Database Presets for development
 
@@ -83,30 +75,6 @@ export default defineNuxtConfig({
     }
   },
   // ...
-})
-```
-
-## Set a Preset as the Default Database
-
-It is also possible to set a particular Preset as the Default Database, with the ability to set a different one between client and server side.
-
-```ts
-export default defineNuxtConfig({
-  modules: ['nuxt-surrealdb'],
-  surrealdb: {
-    defaultDatabase: 'website',
-    databases: {
-      default: {
-        host: 'https://example.com',
-        ws: 'wss://example.com',
-        NS: 'production',
-        DB: 'example',
-      },
-      website: {
-        DB: 'website',
-      }
-    }
-  }
 })
 ```
 

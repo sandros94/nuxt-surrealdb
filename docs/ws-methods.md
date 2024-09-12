@@ -11,11 +11,12 @@ const {
   close,
   create,
   data,
-  set,  // Surreal's `let`
+  set,      // alias for `let`
   info,
   insert,
   invalidate,
   kill,
+  let,
   live,
   merge,
   open,
@@ -27,7 +28,7 @@ const {
   send,
   signin,
   signup,
-  sql,     // alias for query
+  sql,      // alias for `query`
   status,
   unset,
   update,
