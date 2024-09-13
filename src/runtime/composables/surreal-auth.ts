@@ -1,4 +1,5 @@
 import type {
+  DatabasePreset,
   DatabasePresetKeys,
   UserSession,
 } from '#surrealdb/types/index'
@@ -23,7 +24,7 @@ export function useSurrealAuth(database?: DatabasePresetKeys) {
       sameSite,
     },
   } = useRuntimeConfig().public.surrealdb
-  const db = databases[database || authDb as DatabasePresetKeys]
+  const db = databases[database || authDb as DatabasePresetKeys] as DatabasePreset
 
   const {
     $authenticate,
@@ -83,12 +84,13 @@ export function useSurrealAuth(database?: DatabasePresetKeys) {
 
   // signin
   async function signin(credentials: Record<string, any>, o: { admin?: boolean } = {}) {
-    const { NS, DB, SC } = db
-    if ((!NS || !DB || !SC) && !o.admin) throw createError({ statusCode: 500, message: 'Invalid database preset' })
+    const { NS, DB, SC, AC } = db
+    if ((!NS || !DB) && !o.admin) throw createError({ statusCode: 500, message: 'Sign In: Missing database preset' })
+    const SC_AC = _userScope('Sign In: Missing either SC/AC', SC, AC)
 
     const result = await $signin({
       ...credentials,
-      ...(!o.admin && { NS, DB, SC, AC: SC }),
+      ...(!o.admin && { NS, DB, ...SC_AC }),
     })
     if (result) {
       await getSessionExp(result).then(async ({ exp }) => {
@@ -107,15 +109,15 @@ export function useSurrealAuth(database?: DatabasePresetKeys) {
 
   // signup
   async function signup(credentials: Record<string, any>) {
-    const { NS, DB, SC } = db
-    if (!NS || !DB || !SC) throw createError({ statusCode: 500, message: 'Invalid database preset' })
+    const { NS, DB, SC, AC } = db
+    if (!NS || !DB) throw createError({ statusCode: 500, message: 'Sign Up: Missing database preset' })
+    const SC_AC = _userScope('Sign Up: Missing either SC/AC', SC, AC)
 
     const result = await $signup({
       ...credentials,
       NS,
       DB,
-      SC,
-      AC: SC,
+      ...SC_AC,
     })
     if (result) {
       await getSessionExp(result).then(async ({ exp }) => {
@@ -127,6 +129,15 @@ export function useSurrealAuth(database?: DatabasePresetKeys) {
         }
       })
     }
+  }
+
+  // TODO: better handle SC/AC
+  function _userScope(message: string, SC?: string, AC?: string): { SC: string }
+  function _userScope(message: string, SC?: string, AC?: string): { AC: string }
+  function _userScope(message: string, SC?: string, AC?: string): { SC: string } | { AC: string } {
+    if (AC) return { AC }
+    else if (SC) return { SC }
+    throw createError({ statusCode: 500, message })
   }
 
   return {

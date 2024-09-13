@@ -98,8 +98,6 @@ export function surrealFetchOptionsOverride<
     {
       'surreal-NS': databasePreset.NS,
       'surreal-DB': databasePreset.DB,
-      'surreal-SC': databasePreset.SC,
-      'surreal-AC': databasePreset.AC,
       'Authorization': authorization,
     },
     // @ts-expect-error using a generic

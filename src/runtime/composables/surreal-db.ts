@@ -417,8 +417,10 @@ export function useSurrealDB(overrides?: Overrides) {
   }
 
   // signup [ NS, DB, SC, ... ]
+  async function $signup(credentials: MROGParam<any, 'signup', 0> & { SC: string, AC?: never }): Promise<string>
+  async function $signup(credentials: MROGParam<any, 'signup', 0> & { AC: string, SC?: never }): Promise<string>
   async function $signup(
-    auth: MROGParam<any, 'signup', 0>,
+    auth: MROGParam<any, 'signup', 0> & ({ SC: string, AC?: never } | { AC: string, SC?: never }),
     options?: {
       database?: keyof PublicRuntimeConfig['surrealdb']['databases'] | { host?: string }
     },

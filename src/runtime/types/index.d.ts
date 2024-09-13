@@ -136,8 +136,6 @@ type SignInParams = [Record<string, string | undefined>]
 type SignUpParams = [{
   NS: string
   DB: string
-  SC: string
-  AC: string
   [key: string]: string
 }]
 
