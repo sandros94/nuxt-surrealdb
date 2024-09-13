@@ -1,4 +1,4 @@
-import type { PublicRuntimeConfig, RuntimeConfig } from 'nuxt/schema'
+import type { PublicRuntimeConfig, RuntimeConfig } from '@nuxt/schema'
 import type { AsyncDataOptions, UseFetchOptions } from 'nuxt/app'
 import type { FetchOptions, ResponseType } from 'ofetch'
 
@@ -8,8 +8,8 @@ export type * from './auth'
 
 export type DatabasePresetKeys = keyof PublicRuntimeConfig['surrealdb']['databases']
 export type DatabasePresetServerKeys =
-  | keyof PublicRuntimeConfig['surrealdb']['databases']
-  | keyof RuntimeConfig['surrealdb']['databases']
+  keyof PublicRuntimeConfig['surrealdb']['databases']
+  & keyof RuntimeConfig['surrealdb']['databases']
 
 export type AuthToken = string | {
   user: string
@@ -17,19 +17,18 @@ export type AuthToken = string | {
 }
 
 export interface Overrides {
-  database?: DatabasePresetKeys | DatabasePreset
+  database?: DatabasePresetKeys | Partial<DatabasePreset>
   token?: AuthToken | boolean
 }
 
 export interface ServerOverrides {
-  database?: DatabasePresetServerKeys | DatabasePreset
+  database?: DatabasePresetServerKeys | Partial<DatabasePreset>
   token?: AuthToken | boolean
 }
 
 export interface DatabasePreset {
-  host?: string
+  host: string
   ws?: string
-  KV?: string
   NS?: string
   DB?: string
   SC?: string
@@ -137,7 +136,6 @@ type SignInParams = [Record<string, string | undefined>]
 type SignUpParams = [{
   NS: string
   DB: string
-  SC: string
   [key: string]: string
 }]
 

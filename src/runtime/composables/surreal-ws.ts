@@ -9,7 +9,7 @@ import type {
   RpcParamsWS,
   RpcRequestWS,
   RpcResponseWS,
-} from '../types/index'
+} from '#surrealdb/types/index'
 import type {
   MaybeRefOrGetter,
 } from '#imports'
@@ -34,9 +34,8 @@ export function useSurrealWS(
   const {
     auth: { database: authDatabase },
     databases,
-    defaultDatabase,
   } = useRuntimeConfig().public.surrealdb
-  const { token: userAuth } = useSurrealAuth()
+  const { token: userToken } = useSurrealAuth()
 
   const { database, onDisconnected: _onDisconnected, ...opts } = options || {}
   const _database = computed(() => {
@@ -49,7 +48,7 @@ export function useSurrealWS(
       }
     }
     else {
-      return databases[defaultDatabase as keyof typeof databases]
+      return databases['default']
     }
   })
   const useId = 0
@@ -87,7 +86,7 @@ export function useSurrealWS(
       _sendQueue()
       stopInitWatcher()
     }
-    if (!userAuth.value || !isAuthDatabase) {
+    if (!userToken.value || !isAuthDatabase) {
       _sendQueue()
       stopInitWatcher()
     }
@@ -99,11 +98,11 @@ export function useSurrealWS(
       method: 'use',
       params: [_database.value.NS, _database.value.DB],
     }))
-    if (userAuth.value && isAuthDatabase) {
+    if (userToken.value && isAuthDatabase) {
       _send(JSON.stringify({
         id: authId,
         method: 'query',
-        params: [userAuth.value],
+        params: [userToken.value],
       }))
     }
     else if (options?.auth) {
@@ -344,10 +343,12 @@ export function useSurrealWS(
     create,
     _data,
     data,
+    delete: remove,
     info,
     insert,
     invalidate,
     kill,
+    let: set,
     live,
     merge,
     open,

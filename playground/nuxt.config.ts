@@ -1,26 +1,18 @@
 export default defineNuxtConfig({
-  modules: ['nuxt-surrealdb'],
+  modules: ['../src/module'],
   surrealdb: {
     auth: {
       database: 'staging',
     },
     databases: {
-      staging: {
-        host: '',
-        ws: '',
-        NS: '',
-        DB: '',
-        SC: '',
-      },
+      staging: {},
       nasa: {
         host: 'https://surrealdb.s94.dev',
         ws: 'wss://surrealdb.s94.dev',
         NS: 'demo',
         DB: 'nasa',
       },
-      example: {
-        DB: '',
-      },
+      example: {},
     },
     server: {
       databases: {

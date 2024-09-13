@@ -1,10 +1,8 @@
 import type { AsyncData } from 'nuxt/app'
 import type { FetchError } from 'ofetch'
 import { hash } from 'ohash'
-import { createDefu, defu } from 'defu'
 
 import type {
-  DatabasePresetKeys,
   KeysOf,
   PickFrom,
   UseSurrealFetchOptions,
@@ -12,7 +10,10 @@ import type {
   RpcRequest,
   RpcResponseError,
   HttpResponseError,
-} from '../types/index'
+} from '#surrealdb/types/index'
+import {
+  surrealFetchOptionsOverride,
+} from '#surrealdb/utils/overrides'
 import type {
   ComputedRef,
   MaybeRefOrGetter,
@@ -23,7 +24,7 @@ import {
   toValue,
   useFetch,
   useNuxtApp,
-  useRuntimeConfig,
+  useSurrealPreset,
 } from '#imports'
 
 export function useSurrealFetch<
@@ -41,17 +42,20 @@ export function useSurrealFetch<
     token,
     ...opts
   } = options
-  const { $surrealFetch, $surrealFetchOptionsOverride } = useNuxtApp()
-
-  const { baseURL, headers } = $surrealFetchOptionsOverride({ database, token })
+  const { $surrealFetch } = useNuxtApp()
+  const _database = useSurrealPreset({ database, token })
+  const {
+    baseURL,
+    headers,
+  } = surrealFetchOptionsOverride(_database, {
+    baseURL: opts.baseURL,
+    headers: opts.headers,
+  })
 
   return useFetch(endpoint, {
     ...opts,
-    ...(baseURL !== undefined && { baseURL }),
-    headers: {
-      ...opts.headers,
-      ...headers,
-    },
+    baseURL,
+    headers,
     $fetch: $surrealFetch,
   })
 }
@@ -94,23 +98,4 @@ export function useSurrealRPC<
     },
     key: _key,
   })
-}
-
-export function useSurrealDatabases() {
-  const {
-    databases: publicDatabases,
-    defaultDatabase,
-  } = useRuntimeConfig().public.surrealdb
-  const defaultDB = publicDatabases[defaultDatabase as DatabasePresetKeys]
-
-  const defuDatabases = createDefu((obj, key, value) => {
-    obj[key] = defu(value, obj[key], defaultDB)
-    return true
-  })
-
-  const databases = defuDatabases(publicDatabases, {
-    [defaultDatabase]: defaultDB,
-  })
-
-  return databases
 }

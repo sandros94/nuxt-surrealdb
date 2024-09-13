@@ -1,7 +1,6 @@
 import type { ComputedRef, Ref } from 'vue'
 
-export interface User {
-}
+export interface User {}
 
 export interface UserSession {
   user?: User
