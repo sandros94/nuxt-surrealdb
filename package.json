@@ -8,6 +8,7 @@
     "surrealdb"
   ],
   "repository": "https://github.com/sandros94/nuxt-surrealdb",
+  "homepage": "https://nuxt-surrealdb.s94.dev",
   "license": "MIT",
   "type": "module",
   "author": {

@@ -10,11 +10,8 @@
 A Nuxt module aimed to simplify the use of [SurrealDB](https://surrealdb.com).
 
 - [✨ &nbsp;Release Notes](/CHANGELOG.md)
-<!-- - [📖 &nbsp;Documentation](https://example.com) -->
+- [📖 &nbsp;Documentation](https://nuxt-surrealdb.s94.dev)
 <!-- - [🏀 Online playground](https://stackblitz.com/github/sandros94/nuxt-surrealdb?file=playground%2Fapp.vue) -->
-
-> [!NOTE]
-> There are no docs atm, please refer to the [playground](/playground/) or checkout directly the [source code](/src/).
 
 ## Quick Setup
 
