@@ -12,21 +12,14 @@ import {
   useSurrealPreset,
 } from '#imports'
 
-// Extending the ofetch module to include the `overrides` option
-declare module 'ofetch' {
-  interface FetchOptions {
-    overrides?: Overrides
-  }
-}
-
 export default defineNuxtPlugin(async ({ $config }) => {
   const authDatabase = $config.public.surrealdb.auth.database as DatabasePresetKeys | false
   const { token: userToken, session } = useSurrealAuth()
+  const database = useSurrealPreset()
 
   const surrealFetch = ofetch.create({
     onRequest({ options }) {
-      const database = useSurrealPreset(options.overrides)
-      const { baseURL, headers } = surrealFetchOptionsOverride(database)
+      const { baseURL, headers } = surrealFetchOptionsOverride(database, options)
       options.baseURL = baseURL
       options.headers = defu<HeadersInit, HeadersInit[]>(options.headers, { ...headers })
     },

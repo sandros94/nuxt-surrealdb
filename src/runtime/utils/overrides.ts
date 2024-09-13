@@ -85,12 +85,16 @@ export function getDatabasePreset(options: GetDatabasePresetOptions | GetDatabas
 }
 
 export function surrealFetchOptionsOverride<
+  B = string,
   T = HeadersInit,
 >(
   databasePreset: DatabasePreset,
-  headers?: T,
+  options?: {
+    baseURL?: B
+    headers?: T
+  },
 ): {
-    baseURL: string
+    baseURL: B
     headers: T
   } {
   const authorization = authTokenFn(databasePreset.auth)
@@ -100,15 +104,16 @@ export function surrealFetchOptionsOverride<
       'surreal-DB': databasePreset.DB,
       'Authorization': authorization,
     },
-    // @ts-expect-error using a generic
-    headers,
+    {
+      ...options?.headers,
+    },
     {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
     },
   )
   return {
-    baseURL: databasePreset.host,
+    baseURL: options?.baseURL || databasePreset.host as B,
     headers: _headers as T,
   }
 }

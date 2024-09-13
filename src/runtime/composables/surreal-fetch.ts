@@ -44,7 +44,13 @@ export function useSurrealFetch<
   } = options
   const { $surrealFetch } = useNuxtApp()
   const _database = useSurrealPreset({ database, token })
-  const { baseURL, headers } = surrealFetchOptionsOverride(_database, opts.headers)
+  const {
+    baseURL,
+    headers,
+  } = surrealFetchOptionsOverride(_database, {
+    baseURL: opts.baseURL,
+    headers: opts.headers,
+  })
 
   return useFetch(endpoint, {
     ...opts,

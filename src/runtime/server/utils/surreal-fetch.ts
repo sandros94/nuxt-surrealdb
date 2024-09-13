@@ -25,7 +25,13 @@ export function useSurrealFetch<
 ): Promise<T> {
   const { database, token, ...opts } = options
   const _database = useSurrealPreset(event, { database, token })
-  const { baseURL, headers } = surrealFetchOptionsOverride(_database)
+  const {
+    baseURL,
+    headers,
+  } = surrealFetchOptionsOverride(_database, {
+    baseURL: opts.baseURL,
+    headers: opts.headers,
+  })
 
   const surrealFetch = ofetch.create({
     baseURL,
