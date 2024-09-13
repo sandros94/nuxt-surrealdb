@@ -79,17 +79,13 @@ export default defineNuxtConfig({
         auth: 'mySuperLongBearerToken'
       },
 
-      shop: {
-        host: '', // initialize any property that will be set via `.env`
-        ws: '',
-        NS: '',
-        DB: ''
-      },
+      shop: {},
     },
     server: { // the following add auth only server side
       databases: {
         default: {
           auth: '', // then edit it via NUXT_SURREALDB_DATABASES_DEFAULT_AUTH
+          // OR
           auth: {
             user: '', // then edit it via NUXT_SURREALDB_DATABASES_DEFAULT_AUTH_USER
             pass: '' // then edit it via NUXT_SURREALDB_DATABASES_DEFAULT_AUTH_PASS
@@ -155,6 +151,7 @@ Here the full list:
 const {
   authenticate, // $authenticate
   create,       // $create
+  delete,       // $delete
   info,         // $info
   insert,       // $insert
   invalidate,   // $invalidate
@@ -187,11 +184,12 @@ const {
   close,
   create,
   data,
-  set,  // Surreal's `let`
+  set,      // alias for `let`
   info,
   insert,
   invalidate,
   kill,
+  let,
   live,
   merge,
   open,
@@ -203,7 +201,7 @@ const {
   send,
   signin,
   signup,
-  sql,     // alias for query
+  sql,      // alias for `query`
   status,
   unset,
   update,
