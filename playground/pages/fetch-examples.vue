@@ -101,6 +101,7 @@ interface Product {
 
 const { create, remove, select, sql } = useSurrealDB({
   database: 'staging',
+  token: false,
 })
 
 const search = ref('products')
