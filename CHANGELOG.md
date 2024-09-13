@@ -1,6 +1,51 @@
 # Changelog
 
 
+## v0.3.0
+
+[compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.2.2...v0.3.0)
+
+### 🩹 Fixes
+
+- Stop augmenting `nuxt/schema` nuxt/nuxt#28332 ([#28332](https://github.com/sandros94/nuxt-surrealdb/issues/28332))
+- Missing server tsconfig ([0648ded](https://github.com/sandros94/nuxt-surrealdb/commit/0648ded))
+- Nuxt schema type import ([d26f674](https://github.com/sandros94/nuxt-surrealdb/commit/d26f674))
+- Types ([a31960c](https://github.com/sandros94/nuxt-surrealdb/commit/a31960c))
+- Add `delete` and `let` methods ([c8605d1](https://github.com/sandros94/nuxt-surrealdb/commit/c8605d1))
+- Authentication ([e2af8f8](https://github.com/sandros94/nuxt-surrealdb/commit/e2af8f8))
+- Token override ([e8f9d1b](https://github.com/sandros94/nuxt-surrealdb/commit/e8f9d1b))
+- Auth for SurrealDB 2.x-beta ([e0701be](https://github.com/sandros94/nuxt-surrealdb/commit/e0701be))
+
+### 💅 Refactors
+
+- ⚠️  Database preset handling ([a110e9b](https://github.com/sandros94/nuxt-surrealdb/commit/a110e9b))
+
+### 📖 Documentation
+
+- Update following latest changes ([7f412c0](https://github.com/sandros94/nuxt-surrealdb/commit/7f412c0))
+- Update readme ([16d1c40](https://github.com/sandros94/nuxt-surrealdb/commit/16d1c40))
+
+### 🏡 Chore
+
+- **release:** V0.2.2 ([a34c8b7](https://github.com/sandros94/nuxt-surrealdb/commit/a34c8b7))
+- Update @nuxt/module-builder ([8ed39ed](https://github.com/sandros94/nuxt-surrealdb/commit/8ed39ed))
+- Update release scrips ([6b6bd64](https://github.com/sandros94/nuxt-surrealdb/commit/6b6bd64))
+- Remove unneeded KV headers ([5154b1a](https://github.com/sandros94/nuxt-surrealdb/commit/5154b1a))
+- Add typescript dep ([f80783e](https://github.com/sandros94/nuxt-surrealdb/commit/f80783e))
+- Update deps ([e92902c](https://github.com/sandros94/nuxt-surrealdb/commit/e92902c))
+- Update deps ([114690f](https://github.com/sandros94/nuxt-surrealdb/commit/114690f))
+- **release:** V0.2.3-0 ([123ec9e](https://github.com/sandros94/nuxt-surrealdb/commit/123ec9e))
+- **release:** V0.2.3-0" ([1409649](https://github.com/sandros94/nuxt-surrealdb/commit/1409649))
+- Remove test and prerelease script ([c9995fe](https://github.com/sandros94/nuxt-surrealdb/commit/c9995fe))
+
+#### ⚠️ Breaking Changes
+
+- ⚠️  Database preset handling ([a110e9b](https://github.com/sandros94/nuxt-surrealdb/commit/a110e9b))
+
+### ❤️ Contributors
+
+- Sandros94 ([@sandros94](http://github.com/sandros94))
+
 ## v0.2.2
 
 [compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.2.1...v0.2.2)
