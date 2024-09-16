@@ -1,6 +1,22 @@
 # Changelog
 
 
+## v0.3.1
+
+[compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.3.0...v0.3.1)
+
+### 🩹 Fixes
+
+- Database preset types ([2677570](https://github.com/sandros94/nuxt-surrealdb/commit/2677570))
+
+### 🏡 Chore
+
+- Add docs link ([3c36cc1](https://github.com/sandros94/nuxt-surrealdb/commit/3c36cc1))
+
+### ❤️ Contributors
+
+- Sandros94 ([@sandros94](http://github.com/sandros94))
+
 ## v0.3.0
 
 [compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.2.2...v0.3.0)
