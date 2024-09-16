@@ -1,5 +1,5 @@
 import type { PublicRuntimeConfig, RuntimeConfig } from '@nuxt/schema'
-import { createDefu, defu } from 'defu'
+import { defu } from 'defu'
 
 import type { ModuleOptions } from './module'
 
@@ -27,29 +27,35 @@ export function surrealdbRuntimeConfig(
       databases: options.databases,
     },
   )
-  // Inherit public database properties from default database
-  const defDB = {
-    host: envVariable(`DATABASES_DEFAULT_HOST`, true) || '',
-    ws: envVariable(`DATABASES_DEFAULT_WS`, true) || undefined,
-    NS: envVariable(`DATABASES_DEFAULT_NS`, true) || undefined,
-    DB: envVariable(`DATABASES_DEFAULT_DB`, true) || undefined,
-    SC: envVariable(`DATABASES_DEFAULT_SC`, true) || undefined,
-    AC: envVariable(`DATABASES_DEFAULT_AC`, true) || undefined,
-  }
-  const defuDatabases = createDefu((obj, key, value) => {
-    if (key === 'default') return false
-    obj[key] = defu(
-      value,
-      defDB,
-    )
-    return true
-  })
-  pubSurrealdb.databases = defuDatabases(
-    pubSurrealdb.databases,
+
+  const defaultDB = defu(
     {
-      default: defDB,
+      host: envVariable(`DATABASES_DEFAULT_HOST`, true),
+      ws: envVariable(`DATABASES_DEFAULT_WS`, true),
+      NS: envVariable(`DATABASES_DEFAULT_NS`, true),
+      DB: envVariable(`DATABASES_DEFAULT_DB`, true),
+      SC: envVariable(`DATABASES_DEFAULT_SC`, true),
+      AC: envVariable(`DATABASES_DEFAULT_AC`, true),
     },
+    pubSurrealdb.databases.default,
+    options.databases.default,
   )
+  for (const _db in pubSurrealdb.databases) {
+    const db = _db as keyof typeof pubSurrealdb.databases
+    pubSurrealdb.databases[db] = defu(
+      {
+        host: envVariable(`DATABASES_${db}_HOST`, true),
+        ws: envVariable(`DATABASES_${db}_WS`, true),
+        NS: envVariable(`DATABASES_${db}_NS`, true),
+        DB: envVariable(`DATABASES_${db}_DB`, true),
+        SC: envVariable(`DATABASES_${db}_SC`, true),
+        AC: envVariable(`DATABASES_${db}_AC`, true),
+      },
+      pubSurrealdb.databases[db],
+      options.databases[db],
+      defaultDB,
+    )
+  }
 
   // Private RuntimeConfig
   runtimeConfig.surrealdb = defu<
@@ -58,6 +64,9 @@ export function surrealdbRuntimeConfig(
   >(
     runtimeConfig.surrealdb,
     options.server,
+    {
+      databases: pubSurrealdb.databases,
+    },
   )
 
   return runtimeConfig

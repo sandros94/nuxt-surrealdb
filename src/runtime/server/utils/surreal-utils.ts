@@ -1,4 +1,3 @@
-import { defu } from 'defu'
 import type { H3Event } from 'h3'
 import { getCookie } from 'h3'
 
@@ -22,18 +21,7 @@ export function useSurrealDatabases(event?: H3Event, databasePreset?: DatabasePr
 export function useSurrealDatabases(event?: H3Event, databasePreset?: DatabasePresetServerKeys): DatabasePreset | {
   [key in DatabasePresetServerKeys]: DatabasePreset
 } {
-  const {
-    surrealdb: {
-      databases: privateDatabases,
-    },
-    public: {
-      surrealdb: {
-        databases: publicDatabases,
-      },
-    },
-  } = useRuntimeConfig(event)
-
-  const databases = defu(privateDatabases, publicDatabases)
+  const { databases } = useRuntimeConfig(event).surrealdb
 
   if (!databasePreset) return databases
   return databases[databasePreset]
