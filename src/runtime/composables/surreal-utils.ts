@@ -4,6 +4,7 @@ import type {
   Overrides,
 } from '#surrealdb/types/index'
 import {
+  defuDbs,
   getDatabasePreset,
 } from '#surrealdb/utils/overrides'
 import {
@@ -11,17 +12,26 @@ import {
   useSurrealAuth,
 } from '#imports'
 
-export function useSurrealDatabases(): {
+type DatabasePresets = {
   [key in DatabasePresetKeys]: DatabasePreset
 }
+
+export function useSurrealDatabases(): DatabasePresets
 export function useSurrealDatabases(databasePreset: DatabasePresetKeys): DatabasePreset
-export function useSurrealDatabases(databasePreset?: DatabasePresetKeys): DatabasePreset | {
-  [key in DatabasePresetKeys]: DatabasePreset
-} {
+export function useSurrealDatabases(databasePreset?: DatabasePresetKeys): DatabasePreset | DatabasePresets {
   const { databases } = useRuntimeConfig().public.surrealdb
 
-  if (!databasePreset) return databases
-  return databases[databasePreset]
+  const dbs = databases
+  for (const _db in databases) {
+    const db = _db as DatabasePresetKeys
+    dbs[db] = defuDbs(
+      databases[db],
+      databases.default,
+    )
+  }
+
+  if (!databasePreset) return dbs
+  return dbs[databasePreset]
 }
 
 export function useSurrealPreset(overrides?: Overrides): DatabasePreset {

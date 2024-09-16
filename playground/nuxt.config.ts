@@ -5,14 +5,22 @@ export default defineNuxtConfig({
       database: 'staging',
     },
     databases: {
-      staging: {},
+      staging: {
+        host: '',
+        ws: '',
+        NS: '',
+        DB: '',
+        SC: '',
+      },
       nasa: {
         host: 'https://surrealdb.s94.dev',
         ws: 'wss://surrealdb.s94.dev',
         NS: 'demo',
         DB: 'nasa',
       },
-      example: {},
+      example: {
+        NS: '',
+      },
     },
     server: {
       databases: {

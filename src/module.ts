@@ -1,8 +1,8 @@
-import type { PublicRuntimeConfig } from '@nuxt/schema'
+import type { PublicRuntimeConfig, RuntimeConfig } from '@nuxt/schema'
 import { defineNuxtModule, addPlugin, addImportsDir, addServerImportsDir, createResolver } from '@nuxt/kit'
+import { defu } from 'defu'
 
 import type { DatabasePreset } from './runtime/types'
-import { surrealdbRuntimeConfig } from './init-module'
 
 export type * from './runtime/types'
 
@@ -44,6 +44,16 @@ export default defineNuxtModule<ModuleOptions>({
       cookieName: 'nuxt-surrealdb',
       sameSite: 'lax',
     },
+    databases: {
+      default: {
+        host: '',
+        ws: '',
+        NS: '',
+        DB: '',
+        SC: '',
+        AC: '',
+      },
+    },
   },
   setup(options, nuxt) {
     const { resolve } = createResolver(import.meta.url)
@@ -54,7 +64,29 @@ export default defineNuxtModule<ModuleOptions>({
 
     nuxt.options.alias['#surrealdb'] = runtimeDir
 
-    nuxt.options.runtimeConfig = surrealdbRuntimeConfig(nuxt.options.runtimeConfig, options)
+    // Public RuntimeConfig
+    nuxt.options.runtimeConfig.public.surrealdb = defu<
+      PublicRuntimeConfig['surrealdb'],
+      Omit<ModuleOptions, 'server'>[]
+    >(
+      nuxt.options.runtimeConfig.public.surrealdb,
+      {
+        auth: options.auth,
+        databases: options.databases,
+      },
+    )
+
+    // Private RuntimeConfig
+    nuxt.options.runtimeConfig.surrealdb = defu<
+      RuntimeConfig['surrealdb'],
+      ModuleOptions['server'][]
+    >(
+      nuxt.options.runtimeConfig.surrealdb,
+      options.server,
+      {
+        databases: nuxt.options.runtimeConfig.public.surrealdb.databases,
+      },
+    )
 
     addPlugin(resolve(runtimeDir, 'plugin'))
     addImportsDir(resolve(runtimeDir, 'composables'))

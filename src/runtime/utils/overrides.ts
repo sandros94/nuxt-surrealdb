@@ -1,5 +1,5 @@
 import { textToBase64 } from 'undio'
-import { defu } from 'defu'
+import { createDefu, defu } from 'defu'
 import type {
   AuthToken,
   DatabasePreset,
@@ -117,3 +117,11 @@ export function surrealFetchOptionsOverride<
     headers: _headers as T,
   }
 }
+
+export const defuDbs = createDefu((obj: any, key, value) => {
+  if (value) {
+    obj[key] = value
+    return true
+  }
+  return true
+})

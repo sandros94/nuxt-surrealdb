@@ -32,7 +32,12 @@ export default defineNuxtConfig({
         auth: 'mySuperLongBearerToken',
       },
 
-      shop: {}, // initialize the preset and edit it via `.env`
+      shop: {
+        host: '', // initialize any property that will be set via `.env`
+        ws: '',
+        NS: '',
+        DB: '',
+      },
     },
   },
 })
@@ -45,6 +50,10 @@ NUXT_PUBLIC_SURREALDB_DATABASES_SHOP_NS="surrealdb"
 NUXT_PUBLIC_SURREALDB_DATABASES_SHOP_DB="docs"
 NUXT_PUBLIC_SURREALDB_DATABASES_SHOP_SC="user"
 ```
+
+::: tip
+When editing variables via `.env` to a custom preset, like the `shop` preset above, it is important to initialize any parameter as an empty string inside your `nuxt.config.ts`.
+:::
 
 ### Database Presets for development
 
