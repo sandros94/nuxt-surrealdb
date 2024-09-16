@@ -17,17 +17,17 @@ export type AuthToken = string | {
 }
 
 export interface Overrides {
-  database?: DatabasePresetKeys | Partial<DatabasePreset>
+  database?: DatabasePresetKeys | DatabasePreset
   token?: AuthToken | boolean
 }
 
 export interface ServerOverrides {
-  database?: DatabasePresetServerKeys | Partial<DatabasePreset>
+  database?: DatabasePresetServerKeys | DatabasePreset
   token?: AuthToken | boolean
 }
 
 export interface DatabasePreset {
-  host: string
+  host?: string
   ws?: string
   NS?: string
   DB?: string

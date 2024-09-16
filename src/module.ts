@@ -19,11 +19,11 @@ export interface ModuleOptions {
   }
   databases: {
     default?: DatabasePreset
-    [key: string]: Partial<DatabasePreset> | undefined
+    [key: string]: DatabasePreset | undefined
   }
   server: {
     databases?: {
-      [key: string]: Partial<DatabasePreset> | undefined
+      [key: string]: DatabasePreset | undefined
     }
   }
 }
