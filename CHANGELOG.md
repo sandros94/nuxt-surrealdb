@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v0.3.2
+
+[compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.3.1...v0.3.2)
+
+### 🩹 Fixes
+
+- Defunig database presets before runtime ([5bc6c6c](https://github.com/sandros94/nuxt-surrealdb/commit/5bc6c6c))
+
+### ❤️ Contributors
+
+- Sandros94 ([@sandros94](http://github.com/sandros94))
+
 ## v0.3.1
 
 [compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.3.0...v0.3.1)
