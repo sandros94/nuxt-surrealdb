@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v0.3.3
+
+[compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.3.2...v0.3.3)
+
+### 🩹 Fixes
+
+- Defuing dbs after during runtime ([7cf8a15](https://github.com/sandros94/nuxt-surrealdb/commit/7cf8a15))
+
+### ❤️ Contributors
+
+- Sandros94 ([@sandros94](http://github.com/sandros94))
+
 ## v0.3.2
 
 [compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.3.1...v0.3.2)

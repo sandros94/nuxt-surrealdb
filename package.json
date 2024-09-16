@@ -1,6 +1,6 @@
 {
   "name": "nuxt-surrealdb",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "A Nuxt module aimed to simplify the use of SurrealDB",
   "keywords": [
     "nuxt",
