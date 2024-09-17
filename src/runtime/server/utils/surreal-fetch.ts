@@ -32,6 +32,12 @@ export function useSurrealFetch<
     baseURL: opts.baseURL,
     headers: opts.headers,
   })
+  if (!baseURL) {
+    createError({
+      statusCode: 500,
+      message: 'Missing SurrealDB URL',
+    })
+  }
 
   const surrealFetch = ofetch.create({
     baseURL,

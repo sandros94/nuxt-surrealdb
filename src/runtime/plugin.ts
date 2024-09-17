@@ -20,6 +20,12 @@ export default defineNuxtPlugin(async ({ $config }) => {
   const surrealFetch = ofetch.create({
     onRequest({ options }) {
       const { baseURL, headers } = surrealFetchOptionsOverride(database, options)
+      if (!baseURL) {
+        createError({
+          statusCode: 500,
+          message: 'Missing SurrealDB URL',
+        })
+      }
       options.baseURL = baseURL
       options.headers = defu<HeadersInit, HeadersInit[]>(options.headers, { ...headers })
     },
