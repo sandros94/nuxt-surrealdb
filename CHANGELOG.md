@@ -1,6 +1,22 @@
 # Changelog
 
 
+## v0.3.4
+
+[compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.3.3...v0.3.4)
+
+### 🩹 Fixes
+
+- Check for missing surrealdb url ([0c18288](https://github.com/sandros94/nuxt-surrealdb/commit/0c18288))
+
+### 🏡 Chore
+
+- Fix docs ci triggering on non-main branches ([73f853c](https://github.com/sandros94/nuxt-surrealdb/commit/73f853c))
+
+### ❤️ Contributors
+
+- Sandros94 ([@sandros94](http://github.com/sandros94))
+
 ## v0.3.3
 
 [compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.3.2...v0.3.3)
