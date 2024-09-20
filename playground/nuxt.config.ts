@@ -10,7 +10,7 @@ export default defineNuxtConfig({
         ws: '',
         NS: '',
         DB: '',
-        SC: '',
+        AC: '',
       },
       nasa: {
         host: 'https://surrealdb.s94.dev',
