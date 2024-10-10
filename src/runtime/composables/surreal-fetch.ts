@@ -16,7 +16,7 @@ import { hash } from 'ohash'
 
 import type { AsyncData, AsyncDataOptions } from '#app'
 import { useAsyncData, useNuxtApp, useSurrealPreset } from '#imports'
-import type { Overrides } from '#surrealdb/types'
+import type { Overrides } from '#surrealdb/types/index'
 import {
   surrealFetchOptionsOverride,
 } from '#surrealdb/utils/overrides'
