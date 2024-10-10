@@ -1,6 +1,32 @@
 # Changelog
 
 
+## v0.4.0
+
+[compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.3.4...v0.4.0)
+
+### 🩹 Fixes
+
+- Self referencing type sources ([d92a0b6](https://github.com/sandros94/nuxt-surrealdb/commit/d92a0b6))
+
+### 💅 Refactors
+
+- ⚠️  Full custom `useSurrealFetch` fixes #17 fixes #18 ([#17](https://github.com/sandros94/nuxt-surrealdb/issues/17), [#18](https://github.com/sandros94/nuxt-surrealdb/issues/18))
+
+### 🏡 Chore
+
+- Update all deps ([aae477b](https://github.com/sandros94/nuxt-surrealdb/commit/aae477b))
+- Install `ofetch` as dep ([b864da3](https://github.com/sandros94/nuxt-surrealdb/commit/b864da3))
+- Install `ofetch` as dep" ([b4883d9](https://github.com/sandros94/nuxt-surrealdb/commit/b4883d9))
+
+#### ⚠️ Breaking Changes
+
+- ⚠️  Full custom `useSurrealFetch` fixes #17 fixes #18 ([#17](https://github.com/sandros94/nuxt-surrealdb/issues/17), [#18](https://github.com/sandros94/nuxt-surrealdb/issues/18))
+
+### ❤️ Contributors
+
+- Sandros94 ([@sandros94](http://github.com/sandros94))
+
 ## v0.3.4
 
 [compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.3.3...v0.3.4)
