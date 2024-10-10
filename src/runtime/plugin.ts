@@ -1,10 +1,12 @@
 // The following nitropack import is from https://github.com/nuxt/module-builder/issues/141#issuecomment-2078248248
 import type {} from 'nitropack'
 import { ofetch } from 'ofetch'
-import { defu } from 'defu'
 
 import type { DatabasePresetKeys, Overrides, RpcRequest } from '#surrealdb/types/index'
-import { surrealFetchOptionsOverride } from '#surrealdb/utils/overrides'
+import {
+  setRequestHeaders,
+  surrealFetchOptionsOverride,
+} from '#surrealdb/utils/overrides'
 import {
   createError,
   defineNuxtPlugin,
@@ -16,27 +18,20 @@ export default defineNuxtPlugin(async ({ $config }) => {
   const authDatabase = $config.public.surrealdb.auth.database as DatabasePresetKeys | false
   const { token: userToken, session } = useSurrealAuth()
   const database = useSurrealPreset()
+  const { baseURL, headers } = surrealFetchOptionsOverride(database)
 
   const surrealFetch = ofetch.create({
-    onRequest({ options }) {
-      const { baseURL, headers } = surrealFetchOptionsOverride(database, options)
-      if (!baseURL) {
-        createError({
-          statusCode: 500,
-          message: 'Missing SurrealDB URL',
-        })
-      }
-      options.baseURL = baseURL
-      options.headers = defu<HeadersInit, HeadersInit[]>(options.headers, { ...headers })
+    onRequest(ctx) {
+      ctx.options.baseURL ||= baseURL
+      ctx.options.headers ||= setRequestHeaders(ctx.options.headers, headers)
     },
   })
 
   function surrealRPC<T = any>(req: RpcRequest<T>, overrides?: Overrides): Promise<T> {
     let id = 0
-    const database = useSurrealPreset(overrides)
 
     return surrealFetch<T>('rpc', {
-      ...surrealFetchOptionsOverride(database),
+      ...surrealFetchOptionsOverride(useSurrealPreset(overrides)),
       onResponse({ response }) {
         if (response.status === 200 && response._data.error) {
           throw createError({

@@ -1,3 +1,4 @@
+import type { ResolvedFetchOptions, ResponseType } from 'ofetch'
 import { textToBase64 } from 'undio'
 import { createDefu, defu } from 'defu'
 import type {
@@ -84,37 +85,23 @@ export function getDatabasePreset(options: GetDatabasePresetOptions | GetDatabas
   return getPresetWithAuth(basePreset, token)
 }
 
-export function surrealFetchOptionsOverride<
-  B = string,
-  T = HeadersInit,
->(
+export function surrealFetchOptionsOverride(
   databasePreset: DatabasePreset,
-  options?: {
-    baseURL?: B
-    headers?: T
-  },
 ): {
-    baseURL: B
-    headers: T
+    baseURL: ResolvedFetchOptions<ResponseType, any>['baseURL']
+    headers: Record<string, string>
   } {
   const authorization = authTokenFn(databasePreset.auth)
-  const _headers = defu(
-    {
-      'surreal-NS': databasePreset.NS,
-      'surreal-DB': databasePreset.DB,
-      'Authorization': authorization,
-    },
-    {
-      ...options?.headers,
-    },
-    {
+  return {
+    baseURL: databasePreset.host,
+    headers: {
+      ...(authorization ? { Authorization: authorization } : {}),
+      'surreal-NS': databasePreset.NS as string,
+      'surreal-DB': databasePreset.DB as string,
       'Content-Type': 'application/json',
       'Accept': 'application/json',
     },
-  )
-  return {
-    baseURL: options?.baseURL || databasePreset.host as B,
-    headers: _headers as T,
+
   }
 }
 
@@ -125,3 +112,11 @@ export const defuDbs = createDefu((obj: any, key, value) => {
   }
   return true
 })
+
+export function setRequestHeaders(headers: Headers, append?: Record<string, string>): Headers {
+  if (!append) return headers
+  for (const [key, value] of Object.entries(append)) {
+    headers.set(key, value)
+  }
+  return headers
+}

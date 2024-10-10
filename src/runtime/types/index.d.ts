@@ -1,8 +1,10 @@
 import type { PublicRuntimeConfig, RuntimeConfig } from '@nuxt/schema'
-import type { AsyncDataOptions, UseFetchOptions } from 'nuxt/app'
 import type { FetchOptions, ResponseType } from 'ofetch'
+import type { AsyncDataOptions } from 'nuxt/app'
+import type { UseSurrealFetchOptions } from '../composables/surreal-fetch'
 
 export type * from './auth'
+export type * from '../composables/surreal-fetch'
 
 /* Database Overrides */
 
@@ -46,38 +48,14 @@ export type SurrealFetchOptions<
 > = Omit<FetchOptions<T>, 'method'> & {
   method?: Uppercase<SurrealMethods> | SurrealMethods
 }
-export type UseSurrealFetchOptions<
-  ResT,
-  DataT = ResT,
-  PickKeys extends KeysOf<DataT> = KeysOf<DataT>,
-  DefaultT = undefined,
-> = UseFetchOptions<ResT, DataT, PickKeys, DefaultT> & Overrides
 export type UseSurrealRpcOptions<
   ResT,
   DataT = ResT,
-  PickKeys extends KeysOf<DataT> = KeysOf<DataT>,
   DefaultT = undefined,
-> = Omit<UseSurrealFetchOptions<ResT, DataT, PickKeys, DefaultT>, 'method' | 'body' | 'onResponse'>
+  PickKeys extends KeysOf<DataT> = KeysOf<DataT>,
+> = Omit<UseSurrealFetchOptions<ResT, DataT, DefaultT, PickKeys>, 'method' | 'body' | 'onResponse'>
 
 /* Utils */
-
-export type PickFrom<T, K extends Array<string>> = T extends Array<any>
-  ? T
-  : T extends Record<string, any>
-    ? keyof T extends K[number]
-      ? T // Exact same keys as the target, skip Pick
-      : K[number] extends never
-        ? T
-        : Pick<T, K[number]>
-    : T
-
-export type KeysOf<T> = Array<
-  T extends T // Include all keys of union types, not just common keys
-    ? keyof T extends string
-      ? keyof T
-      : never
-    : never
->
 
 export type JSONPatchPath<T> = T extends object ? {
   [K in keyof T]-?: K extends string ? `/${K}` | `/${K}${Path<T[K]>}` : never

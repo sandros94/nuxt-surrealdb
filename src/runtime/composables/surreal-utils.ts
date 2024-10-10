@@ -34,7 +34,7 @@ export function useSurrealDatabases(databasePreset?: DatabasePresetKeys): Databa
   return dbs[databasePreset]
 }
 
-export function useSurrealPreset(overrides?: Overrides): DatabasePreset {
+export function useSurrealPreset(overrides?: Overrides) {
   const { surrealdb } = useRuntimeConfig().public
 
   return getDatabasePreset({
