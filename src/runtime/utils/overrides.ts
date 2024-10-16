@@ -101,7 +101,6 @@ export function surrealFetchOptionsOverride(
       'Content-Type': 'application/json',
       'Accept': 'application/json',
     },
-
   }
 }
 

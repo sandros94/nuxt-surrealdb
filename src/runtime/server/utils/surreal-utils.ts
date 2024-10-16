@@ -38,7 +38,6 @@ export function useSurrealDatabases(event?: H3Event, databasePreset?: DatabasePr
 
   for (const _db in { ...databases, ...serverDbs }) {
     const db = _db as DatabasePresetServerKeys
-    console.log(`Database \`${db}\`\nPublic:`, JSON.stringify(databases[db], null, 2), '\nServer:', JSON.stringify(serverDbs[db], null, 2), '\ncomputed', JSON.stringify(dbs[db], null, 2), '\n\n')
     dbs[db] = defuDbs(
       serverDbs[db],
       databases[db],
@@ -51,13 +50,22 @@ export function useSurrealDatabases(event?: H3Event, databasePreset?: DatabasePr
   return dbs[databasePreset]
 }
 
-export function useSurrealPreset(event: H3Event, overrides?: ServerOverrides): DatabasePreset {
+export function useSurrealPreset(overrides?: ServerOverrides): DatabasePreset
+export function useSurrealPreset(event?: H3Event, overrides?: ServerOverrides): DatabasePreset
+export function useSurrealPreset(...args: any[]): DatabasePreset {
+  if (typeof args[0] !== 'undefined' && !('node' in args[0])) {
+    args.unshift(undefined)
+  }
+
+  // eslint-disable-next-line prefer-const
+  let [event, overrides] = args as [H3Event | undefined, ServerOverrides | undefined]
+
   const { auth } = useRuntimeConfig(event).public.surrealdb
 
   return getDatabasePreset({
     authDatabase: auth.database as DatabasePresetKeys | false,
     databases: useSurrealDatabases(event),
     overrides,
-    userToken: getCookie(event, auth.cookieName),
+    userToken: event ? getCookie(event, auth.cookieName) : undefined,
   })
 }

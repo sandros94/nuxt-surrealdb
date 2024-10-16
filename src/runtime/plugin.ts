@@ -19,6 +19,12 @@ export default defineNuxtPlugin(async ({ $config }) => {
   const { token: userToken, session } = useSurrealAuth()
   const database = useSurrealPreset()
   const { baseURL, headers } = surrealFetchOptionsOverride(database)
+  if (!baseURL) {
+    createError({
+      statusCode: 500,
+      message: 'Missing SurrealDB URL',
+    })
+  }
 
   const surrealFetch = ofetch.create({
     onRequest(ctx) {
