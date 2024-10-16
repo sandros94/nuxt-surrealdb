@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v0.4.1
+
+[compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.4.0...v0.4.1)
+
+### 🩹 Fixes
+
+- Server utils headers and make `event` optional ([17406da](https://github.com/sandros94/nuxt-surrealdb/commit/17406da))
+
+### ❤️ Contributors
+
+- Sandros94 ([@sandros94](http://github.com/sandros94))
+
 ## v0.4.0
 
 [compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.3.4...v0.4.0)
