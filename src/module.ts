@@ -1,106 +1,235 @@
-import type { PublicRuntimeConfig, RuntimeConfig } from '@nuxt/schema'
-import { defineNuxtModule, addPlugin, addImportsDir, addServerImportsDir, createResolver } from '@nuxt/kit'
+import { defineNuxtModule, createResolver, addPlugin, addImports, addServerImports, addServerPlugin, addImportsSources } from '@nuxt/kit'
+import { resolveModulePath } from 'exsolve'
+import type { Surreal } from 'surrealdb'
+import type { Import } from 'unimport'
 import { defu } from 'defu'
 
-import type { DatabasePreset } from './runtime/types'
+import type {
+  SurrealDatabaseOptions,
+  SurrealEngineOptions,
+  SurrealClientConfig,
+  SurrealServerConfig,
+} from './runtime/types'
 
-export type * from './runtime/types'
+interface SurrealOptionsClient extends SurrealDatabaseOptions {
+  wasmEngine?: SurrealEngineOptions
+}
+interface SurrealOptionsServer extends SurrealDatabaseOptions {
+  nodeEngine?: SurrealEngineOptions
+}
 
-type PublicDatabases = PublicRuntimeConfig['surrealdb']['databases']
-
-// Module options TypeScript interface definition
 export interface ModuleOptions {
-  auth: {
-    adminMaxAge?: number
-    database?: keyof PublicDatabases | false
-    sessionName?: string
-    cookieName?: string
-    sameSite?: boolean | 'strict' | 'lax' | 'none'
+  autoImports?: boolean
+  disableWasmEngine?: boolean
+  disableNodeEngine?: boolean
+  client?: SurrealOptionsClient & {
+    memory?: SurrealOptionsClient
+    local?: SurrealOptionsClient
   }
-  databases: {
-    default?: DatabasePreset
-    [key: string]: DatabasePreset | undefined
-  }
-  server: {
-    databases?: {
-      [key: string]: DatabasePreset | undefined
-    }
+  server?: SurrealOptionsServer & {
+    memory?: SurrealOptionsServer
+    local?: SurrealOptionsServer
   }
 }
 
 export default defineNuxtModule<ModuleOptions>({
   meta: {
-    name: 'nuxt-surrealdb',
+    name: 'surrealdb',
     configKey: 'surrealdb',
-    compatibility: {
-      nuxt: '>=3.10.0',
-    },
-  },
-  defaults: {
-    auth: {
-      adminMaxAge: 60 * 60 * 24 * 7,
-      database: 'default',
-      sessionName: 'nuxt-session',
-      cookieName: 'nuxt-surrealdb',
-      sameSite: 'lax',
-    },
-    databases: {
-      default: {
-        host: '',
-        ws: '',
-        NS: '',
-        DB: '',
-        SC: '',
-        AC: '',
-      },
-    },
   },
   setup(options, nuxt) {
     const { resolve } = createResolver(import.meta.url)
-
-    // Transpile runtime
     const runtimeDir = resolve('./runtime')
-    nuxt.options.build.transpile.push(runtimeDir)
 
     nuxt.options.alias['#surrealdb'] = runtimeDir
 
-    // Public RuntimeConfig
-    nuxt.options.runtimeConfig.public.surrealdb = defu<
-      PublicRuntimeConfig['surrealdb'],
-      Omit<ModuleOptions, 'server'>[]
-    >(
-      nuxt.options.runtimeConfig.public.surrealdb,
-      {
-        auth: options.auth,
-        databases: options.databases,
-      },
-    )
+    const runtimeConfig = nuxt.options.runtimeConfig || {}
+    const publicRuntimeConfig = runtimeConfig.public || {}
 
-    // Private RuntimeConfig
-    nuxt.options.runtimeConfig.surrealdb = defu<
-      RuntimeConfig['surrealdb'],
-      ModuleOptions['server'][]
-    >(
-      nuxt.options.runtimeConfig.surrealdb,
+    const [wasmModule, nodeModule] = [
+      tryImport('@surrealdb/wasm'),
+      tryImport('@surrealdb/node'),
+    ]
+
+    const defConnOpts = {
+      namespace: '',
+      database: '',
+    }
+    publicRuntimeConfig.surrealdb = defu(
+      publicRuntimeConfig.surrealdb,
+      options.client,
+      {
+        endpoint: '',
+        connectOptions: defConnOpts,
+        memory: wasmModule
+          ? {
+              endpoint: 'mem://',
+              connectOptions: defConnOpts,
+            }
+          : undefined,
+        local: wasmModule
+          ? {
+              endpoint: 'indxdb://',
+              connectOptions: defConnOpts,
+            }
+          : undefined,
+      },
+    ) as ModuleOptions['client']
+    runtimeConfig.surrealdb = defu(
+      runtimeConfig.surrealdb,
       options.server,
       {
-        databases: nuxt.options.runtimeConfig.public.surrealdb.databases,
+        memory: nodeModule
+          ? {
+              endpoint: 'mem://',
+              connectOptions: defConnOpts,
+            }
+          : undefined,
+        local: nodeModule
+          ? {
+              endpoint: '',
+              connectOptions: defConnOpts,
+            }
+          : undefined,
       },
+    ) as ModuleOptions['server']
+
+    // Adapt Vite config to support top-level-await and avoid esbuild errors with wasm
+    nuxt.options.vite ||= {}
+    nuxt.options.vite.optimizeDeps ||= {}
+    nuxt.options.vite.optimizeDeps.exclude ||= []
+    nuxt.options.vite.optimizeDeps.exclude.push('@surrealdb/wasm')
+
+    const imports: Import[] = []
+    const serverImports: Import[] = []
+    if (options.disableWasmEngine !== true && wasmModule === true) {
+      imports.push(
+        {
+          from: resolve(runtimeDir, 'app', 'composables', 'surreal-wasm'),
+          name: 'useSurreal',
+        },
+        {
+          from: resolve(runtimeDir, 'app', 'composables', 'surreal-memory'),
+          name: 'useSurrealMem',
+        },
+        {
+          from: resolve(runtimeDir, 'app', 'composables', 'surreal-local'),
+          name: 'useSurrealLocal',
+        },
+      )
+      addPlugin(resolve(runtimeDir, 'app', 'plugins', 'memory.client'))
+      addPlugin(resolve(runtimeDir, 'app', 'plugins', 'memory.server'))
+      addPlugin(resolve(runtimeDir, 'app', 'plugins', 'local.client'))
+      addPlugin(resolve(runtimeDir, 'app', 'plugins', 'local.server'))
+    }
+    else {
+      imports.push({
+        from: resolve(runtimeDir, 'app', 'composables', 'surreal'),
+        name: 'useSurreal',
+      })
+    }
+    if (options.disableNodeEngine !== true && nodeModule === true) {
+      serverImports.push(
+        {
+          from: resolve(runtimeDir, 'server', 'utils', 'surreal-node'),
+          name: 'useSurreal',
+        },
+        {
+          from: resolve(runtimeDir, 'server', 'utils', 'surreal-memory'),
+          name: 'useSurrealMem',
+        },
+        {
+          from: resolve(runtimeDir, 'server', 'utils', 'surreal-local'),
+          name: 'useSurrealLocal',
+        },
+      )
+    }
+    else {
+      serverImports.push({
+        from: resolve(runtimeDir, 'server', 'utils', 'surreal'),
+        name: 'useSurreal',
+      })
+    }
+
+    imports.push(
+      ...[
+        'useSurrealPing',
+        'useSurrealInfo',
+        'useSurrealQuery',
+        'useSurrealSelect',
+        'useSurrealVersion',
+        'useSurrealRun',
+        'useSurrealRpc',
+        'useSurrealExport',
+        'useSurrealImport',
+      ].map(c => ({
+        from: resolve(runtimeDir, 'app', 'composables', 'ssr-safe'),
+        name: c,
+      })),
     )
 
-    addPlugin(resolve(runtimeDir, 'plugin'))
-    addImportsDir(resolve(runtimeDir, 'composables'))
-    addServerImportsDir(resolve(runtimeDir, 'server', 'utils'))
+    addImports(imports)
+    addServerImports(serverImports)
+    addServerPlugin(resolve(runtimeDir, 'server', 'plugins', 'clear'))
+
+    if (options.autoImports !== false) {
+      // TODO: add auto-import types
+      addImportsSources({
+        from: 'surrealdb',
+        imports: [
+          'Uuid',
+          'RecordId',
+          'StringRecordId',
+          'BoundIncluded',
+          'BoundExcluded',
+          'RecordIdRange',
+          'Future',
+          'Duration',
+          'Decimal',
+          'Table',
+          'Geometry',
+          'GeometryPoint',
+          'GeometryLine',
+          'GeometryPolygon',
+          'GeometryMultiPoint',
+          'GeometryMultiLine',
+          'GeometryMultiPolygon',
+          'GeometryCollection',
+          'encodeCbor',
+          'decodeCbor',
+          'Surreal',
+        ],
+      })
+    }
   },
 })
 
-interface SurrealServerOptions {
-  surrealdb?: ModuleOptions['server']
+function tryImport(pkg: string): boolean {
+  try {
+    const m = resolveModulePath(pkg, { from: import.meta.url })
+    return typeof m === 'string' && m.length > 0
+  }
+  catch {
+    return false
+  }
 }
-interface SurrealOptions {
-  surrealdb?: Omit<ModuleOptions, 'server'>
-}
+
 declare module '@nuxt/schema' {
-  interface RuntimeConfig extends SurrealServerOptions {}
-  interface PublicRuntimeConfig extends SurrealOptions {}
+  interface PublicRuntimeConfig {
+    surrealdb: ModuleOptions['client']
+  }
+  interface RuntimeConfig {
+    surrealdb: ModuleOptions['server']
+  }
+  interface NuxtHooks {
+    'surrealdb:memory:connected': (client: Surreal, config: SurrealClientConfig) => void | Promise<void>
+    'surrealdb:local:connected': (client: Surreal, config: SurrealClientConfig) => void | Promise<void>
+  }
+}
+
+declare module 'nitropack/types' {
+  interface NitroRuntimeHooks {
+    'surrealdb:memory:connected': (client: Surreal, config: SurrealServerConfig) => void | Promise<void>
+    'surrealdb:local:connected': (client: Surreal, config: SurrealServerConfig) => void | Promise<void>
+  }
 }

@@ -1,9 +1,5 @@
 {
+  // https://nuxt.com/docs/guide/concepts/typescript
   "extends": "./.nuxt/tsconfig.json",
-  "exclude": [
-    "docs",
-    "dist",
-    "node_modules",
-    "playground",
-  ]
+  "exclude": ["docs", "dist", "node_modules", "playground"]
 }

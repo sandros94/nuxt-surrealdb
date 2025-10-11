@@ -1,43 +1,28 @@
+// https://nuxt.com/docs/guide/directory-structure/nuxt.config#nuxt-config-file
 export default defineNuxtConfig({
-  modules: ['../src/module'],
+  modules: [
+    '@nuxt/ui',
+    '@nuxtjs/mdc',
+    '../src/module',
+  ],
+  imports: { autoImport: true },
+
+  devtools: {
+    enabled: true,
+  },
+
+  css: ['~/assets/css/main.css'],
+
+  compatibilityDate: '2025-09-30',
+
   surrealdb: {
-    auth: {
-      database: 'staging',
-    },
-    databases: {
-      staging: {
-        host: '',
-        ws: '',
-        NS: '',
-        DB: '',
-        AC: '',
-      },
-      nasa: {
-        host: 'https://surrealdb.s94.dev',
-        ws: 'wss://surrealdb.s94.dev',
-        NS: 'demo',
-        DB: 'nasa',
-      },
-      example: {
-        NS: '',
-      },
-    },
-    server: {
-      databases: {
-        staging: {
-          auth: {
-            user: '',
-            pass: '',
-          },
-        },
-        example: {
-          host: 'http://localhost:8000',
-          ws: 'http://localhost:8000',
+    client: {
+      connectOptions: {
+        auth: {
+          username: '',
+          password: '',
         },
       },
     },
   },
-  devtools: { enabled: true },
-  imports: { autoImport: true },
-  compatibilityDate: '2024-08-22',
 })
