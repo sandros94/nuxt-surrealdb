@@ -23,11 +23,11 @@ export interface ModuleOptions {
   disableWasmEngine?: boolean
   disableNodeEngine?: boolean
   client?: SurrealOptionsClient & {
-    memory?: SurrealOptionsClient
+    memory?: Omit<SurrealOptionsClient, 'endpoint'>
     local?: SurrealOptionsClient
   }
   server?: SurrealOptionsServer & {
-    memory?: SurrealOptionsServer
+    memory?: Omit<SurrealOptionsServer, 'endpoint'>
     local?: SurrealOptionsServer
   }
 }
