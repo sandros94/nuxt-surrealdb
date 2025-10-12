@@ -16,9 +16,9 @@ export default defineNuxtPlugin(async (nuxtApp) => {
 
   if (local?.endpoint) {
     // This is actually always true, because endpoint has a default value
-    await client.connect(local.endpoint, local.connectOptions)
-    // @ts-expect-error Nuxt hook not being recognized
-    nuxtApp.callHook('surrealdb:local:connected', client, local)
+    const isConnected = await client.connect(local.endpoint, local.connectOptions)
+    if (isConnected)
+      nuxtApp.callHook('surrealdb:local:connected', client, local)
   }
 
   return {

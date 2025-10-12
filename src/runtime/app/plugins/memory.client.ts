@@ -16,9 +16,9 @@ export default defineNuxtPlugin(async (nuxtApp) => {
 
   if (memory?.endpoint) {
     // This is actually always true, because endpoint has a default value
-    await client.connect(memory.endpoint, memory.connectOptions)
-    // @ts-expect-error Nuxt hook not being recognized
-    nuxtApp.callHook('surrealdb:memory:connected', client, memory)
+    const isConnected = await client.connect(memory.endpoint, memory.connectOptions)
+    if (isConnected)
+      nuxtApp.callHook('surrealdb:memory:connected', client, memory)
   }
 
   return {

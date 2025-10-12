@@ -7,7 +7,8 @@ import type {
   SurrealDatabaseOptions,
   SurrealEngineOptions,
 } from '#surrealdb/types'
-import { useNitroApp, useRuntimeConfig } from '#imports'
+import { useNitroApp } from 'nitropack/runtime'
+import { useRuntimeConfig } from '#imports'
 
 export interface UseSurrealLocalOptions extends SurrealDatabaseOptions {
   mergeConfig?: boolean
@@ -30,9 +31,9 @@ export async function useSurrealLocal(event?: H3Event, options?: UseSurrealLocal
   const { hooks } = useNitroApp()
 
   if (config?.endpoint) {
-    await client.connect(config.endpoint, config.connectOptions)
-    // @ts-expect-error Nitro hook not being recognized
-    hooks.callHookParallel('surrealdb:local:connected', client, config)
+    const isConnected = await client.connect(config.endpoint, config.connectOptions)
+    if (isConnected)
+      hooks.callHookParallel('surrealdb:local:connected', client, config)
   }
 
   hooks.hook('close', async () => {

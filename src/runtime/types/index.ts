@@ -1,5 +1,5 @@
 import type { PublicRuntimeConfig, RuntimeConfig } from '@nuxt/schema'
-import type { Prettify, ConnectOptions } from 'surrealdb'
+import type { Prettify, ConnectOptions, Surreal } from 'surrealdb'
 
 /* Databases */
 
@@ -32,5 +32,51 @@ export interface SurrealEngineOptions {
     functions?: boolean | string[] | CapabilitiesAllowDenyList
     network_targets?: boolean | string[] | CapabilitiesAllowDenyList
     experimental?: boolean | string[] | CapabilitiesAllowDenyList
+  }
+}
+
+/* Module */
+
+export interface SurrealOptionsClient extends SurrealDatabaseOptions {
+  wasmEngine?: SurrealEngineOptions
+}
+export interface SurrealOptionsServer extends SurrealDatabaseOptions {
+  nodeEngine?: SurrealEngineOptions
+}
+
+export interface ModuleOptions {
+  autoImports?: boolean
+  disableWasmEngine?: boolean
+  disableNodeEngine?: boolean
+  client?: SurrealOptionsClient & {
+    memory?: Omit<SurrealOptionsClient, 'endpoint'>
+    local?: SurrealOptionsClient
+  }
+  server?: SurrealOptionsServer & {
+    memory?: Omit<SurrealOptionsServer, 'endpoint'>
+    local?: SurrealOptionsServer
+  }
+}
+
+declare module '@nuxt/schema' {
+  interface PublicRuntimeConfig {
+    surrealdb: ModuleOptions['client']
+  }
+  interface RuntimeConfig {
+    surrealdb: ModuleOptions['server']
+  }
+}
+
+declare module '#app' {
+  interface RuntimeNuxtHooks {
+    'surrealdb:memory:connected': (client: Surreal, config: SurrealClientConfig) => void | Promise<void>
+    'surrealdb:local:connected': (client: Surreal, config: SurrealClientConfig) => void | Promise<void>
+  }
+}
+
+declare module 'nitropack/types' {
+  interface NitroRuntimeHooks {
+    'surrealdb:memory:connected': (client: Surreal, config: SurrealServerConfig) => void | Promise<void>
+    'surrealdb:local:connected': (client: Surreal, config: SurrealServerConfig) => void | Promise<void>
   }
 }

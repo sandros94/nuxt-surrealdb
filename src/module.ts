@@ -1,36 +1,9 @@
 import { defineNuxtModule, createResolver, addPlugin, addImports, addServerImports, addServerPlugin, addImportsSources } from '@nuxt/kit'
 import { resolveModulePath } from 'exsolve'
-import type { Surreal } from 'surrealdb'
 import type { Import } from 'unimport'
 import { defu } from 'defu'
 
-import type {
-  SurrealDatabaseOptions,
-  SurrealEngineOptions,
-  SurrealClientConfig,
-  SurrealServerConfig,
-} from './runtime/types'
-
-interface SurrealOptionsClient extends SurrealDatabaseOptions {
-  wasmEngine?: SurrealEngineOptions
-}
-interface SurrealOptionsServer extends SurrealDatabaseOptions {
-  nodeEngine?: SurrealEngineOptions
-}
-
-export interface ModuleOptions {
-  autoImports?: boolean
-  disableWasmEngine?: boolean
-  disableNodeEngine?: boolean
-  client?: SurrealOptionsClient & {
-    memory?: Omit<SurrealOptionsClient, 'endpoint'>
-    local?: SurrealOptionsClient
-  }
-  server?: SurrealOptionsServer & {
-    memory?: Omit<SurrealOptionsServer, 'endpoint'>
-    local?: SurrealOptionsServer
-  }
-}
+import type { ModuleOptions } from './runtime/types'
 
 export default defineNuxtModule<ModuleOptions>({
   meta: {
@@ -211,25 +184,5 @@ function tryImport(pkg: string): boolean {
   }
   catch {
     return false
-  }
-}
-
-declare module '@nuxt/schema' {
-  interface PublicRuntimeConfig {
-    surrealdb: ModuleOptions['client']
-  }
-  interface RuntimeConfig {
-    surrealdb: ModuleOptions['server']
-  }
-  interface NuxtHooks {
-    'surrealdb:memory:connected': (client: Surreal, config: SurrealClientConfig) => void | Promise<void>
-    'surrealdb:local:connected': (client: Surreal, config: SurrealClientConfig) => void | Promise<void>
-  }
-}
-
-declare module 'nitropack/types' {
-  interface NitroRuntimeHooks {
-    'surrealdb:memory:connected': (client: Surreal, config: SurrealServerConfig) => void | Promise<void>
-    'surrealdb:local:connected': (client: Surreal, config: SurrealServerConfig) => void | Promise<void>
   }
 }
