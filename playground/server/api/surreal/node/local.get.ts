@@ -8,5 +8,5 @@ export default defineEventHandler(async (event) => {
     database: 'test',
   })
   const res = await client.query('REMOVE TABLE IF EXISTS test; CREATE test SET name = "from-node-local";SELECT * FROM test;')
-  return res[2]
+  return surrealJsonify(res[2])
 })

@@ -171,11 +171,23 @@ export default defineNuxtModule<ModuleOptions>({
         from: 'surrealdb',
         imports: names,
       })
+      addImports({
+        from: 'surrealdb',
+        name: 'jsonify',
+        as: 'surrealJsonify',
+      })
       addServerImports(
-        names.map(n => ({
-          from: 'surrealdb',
-          name: n,
-        })),
+        [
+          ...names.map(n => ({
+            from: 'surrealdb',
+            name: n,
+          })),
+          {
+            from: 'surrealdb',
+            name: 'jsonify',
+            as: 'surrealJsonify',
+          },
+        ],
       )
       // TODO: add types auto-import
     }

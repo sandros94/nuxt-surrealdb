@@ -1,4 +1,4 @@
-import { jsonify, Surreal } from 'surrealdb'
+import { Surreal } from 'surrealdb'
 import type {
   Prettify,
   ActionResult,
@@ -21,7 +21,7 @@ import type {
   SurrealDatabaseOptions,
   SurrealEngineOptions,
 } from '#surrealdb/types'
-import { type MaybeRef, toRef, useSurreal, useAsyncData } from '#imports'
+import { type MaybeRef, toRef, useSurreal, surrealJsonify, useAsyncData } from '#imports'
 
 type R = Prettify<Record<string, unknown>>
 type RecordId$1<Tb extends string = string> = RecordId<Tb> | StringRecordId
@@ -67,7 +67,7 @@ export async function useSurrealPing<
       const client = await getClient(clientOrOptions)
       const res = await client.ping()
 
-      return jsonify(res)
+      return surrealJsonify(res)
     },
     restOptions,
   )
@@ -97,7 +97,7 @@ export async function useSurrealInfo<
       const client = await getClient(clientOrOptions)
       const res = await client.info<T>()
 
-      return jsonify(res)
+      return surrealJsonify(res)
     },
     restOptions,
   )
@@ -129,7 +129,7 @@ export async function useSurrealQuery<
       const client = await getClient(clientOrOptions)
       const res = await client.query<T>(...(queryRef.value as QueryParameters))
 
-      return jsonify(res)
+      return surrealJsonify(res)
     },
     {
       ...restOptions,
@@ -175,7 +175,7 @@ export async function useSurrealSelect<
       const client = await getClient(clientOrOptions)
       const res = await client.select<T>(thingRef.value as any)
 
-      return jsonify(res) as Thing extends RecordId$1
+      return surrealJsonify(res) as Thing extends RecordId$1
         ? Jsonify<ActionResult<T>>
         : Jsonify<ActionResult<T>[]>
     },
@@ -209,7 +209,7 @@ export async function useSurrealVersion<
       const client = await getClient(clientOrOptions)
       const res = await client.version()
 
-      return jsonify(res)
+      return surrealJsonify(res)
     },
     restOptions,
   )
@@ -243,7 +243,7 @@ export async function useSurrealRun<
       const client = await getClient(clientOrOptions)
       const res = await client.run<T>(nameRef.value, argsRef.value)
 
-      return jsonify(res)
+      return surrealJsonify(res)
     },
     {
       ...restOptions,
@@ -280,7 +280,7 @@ export async function useSurrealRpc<
       const client = await getClient(clientOrOptions)
       const res = await client.rpc<T>(methodRef.value, paramsRef.value)
 
-      return jsonify(res)
+      return surrealJsonify(res)
     },
     {
       ...restOptions,
@@ -314,7 +314,7 @@ export async function useSurrealExport<
       const client = await getClient(clientOrOptions)
       const res = await client.export(optionsRef.value)
 
-      return jsonify(res)
+      return surrealJsonify(res)
     },
     {
       ...restOptions,
