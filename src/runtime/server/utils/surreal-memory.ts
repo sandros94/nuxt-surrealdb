@@ -30,6 +30,8 @@ export async function useSurrealMem(event?: H3Event, options?: UseSurrealMemOpti
 
   const { hooks } = useNitroApp()
 
+  await hooks.callHookParallel('surrealdb:memory:init', client, config)
+
   if (config.autoConnect !== false) {
     const isConnected = await client.connect('mem://', config.connectOptions)
     if (isConnected)

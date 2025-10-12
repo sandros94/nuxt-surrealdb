@@ -55,6 +55,10 @@ export async function useSurreal<M extends boolean, T extends SurrealDatabaseOpt
 
   const client = createClient(nodeEngine)
 
+  const { hooks } = useNitroApp()
+
+  await hooks.callHookParallel('surrealdb:init', client, config)
+
   if (config.endpoint && config.autoConnect !== false) {
     let endpoint = config.endpoint
 
@@ -65,7 +69,7 @@ export async function useSurreal<M extends boolean, T extends SurrealDatabaseOpt
 
     const isConnected = await client.connect(endpoint, config.connectOptions)
     if (isConnected)
-      useNitroApp().hooks.callHookParallel('surrealdb:connected', client, config)
+      hooks.callHookParallel('surrealdb:connected', client, config)
   }
 
   if (event) {

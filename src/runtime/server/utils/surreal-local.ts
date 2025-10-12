@@ -30,6 +30,8 @@ export async function useSurrealLocal(event?: H3Event, options?: UseSurrealLocal
 
   const { hooks } = useNitroApp()
 
+  await hooks.callHookParallel('surrealdb:local:init', client, config)
+
   if (config?.endpoint && config.autoConnect !== false) {
     const isConnected = await client.connect(config.endpoint, config.connectOptions)
     if (isConnected)

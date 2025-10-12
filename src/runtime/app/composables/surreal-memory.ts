@@ -14,11 +14,15 @@ export async function useSurrealMem(): Promise<Surreal | null> {
       $surrealMem.close().catch(() => {})
   })
 
-  if ($surrealMem !== null && memory?.autoConnect !== false) {
-    // This is actually always true, because endpoint has a default value
-    const isConnected = await $surrealMem.connect('mem://', memory?.connectOptions)
-    if (isConnected)
-      hooks.callHookParallel('surrealdb:memory:connected', $surrealMem, memory || {})
+  if ($surrealMem !== null) {
+    await hooks.callHookParallel('surrealdb:memory:init', $surrealMem, memory || {})
+
+    if (memory?.autoConnect !== false) {
+      // This is actually always true, because endpoint has a default value
+      const isConnected = await $surrealMem.connect('mem://', memory?.connectOptions)
+      if (isConnected)
+        hooks.callHookParallel('surrealdb:memory:connected', $surrealMem, memory || {})
+    }
   }
 
   return $surrealMem

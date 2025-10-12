@@ -47,6 +47,8 @@ export async function useSurreal<M extends boolean, T extends SurrealDatabaseOpt
     client.close().catch(() => {})
   })
 
+  await hooks.callHookParallel('surrealdb:init', client, config)
+
   if (config.endpoint && config.autoConnect !== false) {
     let endpoint = config.endpoint
 

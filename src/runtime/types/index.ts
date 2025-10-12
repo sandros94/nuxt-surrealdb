@@ -71,6 +71,9 @@ declare module '@nuxt/schema' {
 
 declare module '#app' {
   interface RuntimeNuxtHooks {
+    'surrealdb:init': (client: Surreal, config: SurrealClientOptions) => void | Promise<void>
+    'surrealdb:memory:init': (client: Surreal, config: Omit<SurrealClientOptions, 'endpoint'>) => void | Promise<void>
+    'surrealdb:local:init': (client: Surreal, config: SurrealClientOptions) => void | Promise<void>
     'surrealdb:connected': (client: Surreal, config: SurrealClientOptions) => void | Promise<void>
     'surrealdb:memory:connected': (client: Surreal, config: Omit<SurrealClientOptions, 'endpoint'>) => void | Promise<void>
     'surrealdb:local:connected': (client: Surreal, config: SurrealClientOptions) => void | Promise<void>
@@ -90,6 +93,9 @@ declare module 'vue' {
 
 declare module 'nitropack/types' {
   interface NitroRuntimeHooks {
+    'surrealdb:init': (client: Surreal, config: SurrealServerOptions) => void | Promise<void>
+    'surrealdb:memory:init': (client: Surreal, config: Omit<SurrealServerOptions, 'endpoint'>) => void | Promise<void>
+    'surrealdb:local:init': (client: Surreal, config: SurrealServerOptions) => void | Promise<void>
     'surrealdb:connected': (client: Surreal, config: SurrealServerOptions) => void | Promise<void>
     'surrealdb:memory:connected': (client: Surreal, config: Omit<SurrealServerOptions, 'endpoint'>) => void | Promise<void>
     'surrealdb:local:connected': (client: Surreal, config: SurrealServerOptions) => void | Promise<void>
