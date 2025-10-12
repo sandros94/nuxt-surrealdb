@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v0.5.0-alpha.2
+
+[compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.5.0-alpha.1...v0.5.0-alpha.2)
+
+### 🩹 Fixes
+
+- Move wasm and node from peer to dev deps ([373e02d](https://github.com/sandros94/nuxt-surrealdb/commit/373e02d))
+
+### ❤️ Contributors
+
+- Sandro Circi ([@sandros94](https://github.com/sandros94))
+
 ## v0.5.0-alpha.1
 
 [compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.5.0-alpha.0...v0.5.0-alpha.1)
