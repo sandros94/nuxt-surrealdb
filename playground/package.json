@@ -8,7 +8,9 @@
     "generate": "nuxi generate"
   },
   "dependencies": {
-    "nuxt-surrealdb": "latest",
-    "nuxt": "^3.14.159"
+    "@nuxt/ui": "^4.0.1",
+    "@nuxtjs/mdc": "^0.18.0",
+    "nuxt-surrealdb": "workspace:*",
+    "nuxt": "^4.1.3"
   }
 }
