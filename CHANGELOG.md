@@ -1,6 +1,27 @@
 # Changelog
 
 
+## v0.5.0-alpha.0
+
+[compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.4.1...v0.5.0-alpha.0)
+
+### 💅 Refactors
+
+- ⚠️  Rewrite module using official SDK ([#22](https://github.com/sandros94/nuxt-surrealdb/pull/22))
+
+### 🏡 Chore
+
+- Update deps ([4d7957a](https://github.com/sandros94/nuxt-surrealdb/commit/4d7957a))
+
+#### ⚠️ Breaking Changes
+
+- ⚠️  Rewrite module using official SDK ([#22](https://github.com/sandros94/nuxt-surrealdb/pull/22))
+
+### ❤️ Contributors
+
+- Sandro Circi ([@sandros94](https://github.com/sandros94))
+- Sandros94 ([@sandros94](https://github.com/sandros94))
+
 ## v0.4.1
 
 [compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.4.0...v0.4.1)
