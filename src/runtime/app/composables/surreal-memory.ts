@@ -14,7 +14,7 @@ export async function useSurrealMem(): Promise<Surreal | null> {
       $surrealMem.close().catch(() => {})
   })
 
-  if ($surrealMem !== null) {
+  if ($surrealMem !== null && memory?.autoConnect !== false) {
     // This is actually always true, because endpoint has a default value
     const isConnected = await $surrealMem.connect('mem://', memory?.connectOptions)
     if (isConnected)

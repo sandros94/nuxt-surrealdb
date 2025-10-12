@@ -6,8 +6,10 @@ import { defu } from 'defu'
 import type {
   SurrealDatabaseOptions,
   SurrealEngineOptions,
-  SurrealServerConfig,
+  SurrealServerRuntimeConfig,
+  SurrealServerOptions,
 } from '#surrealdb/types'
+import { useNitroApp } from 'nitropack/runtime'
 import { useRuntimeConfig } from '#imports'
 
 // #region internal utils
@@ -30,7 +32,7 @@ export type UseSurrealOptions<M extends boolean, T extends SurrealDatabaseOption
 } & T
 export interface UseSurrealReturn<M extends boolean, T extends SurrealDatabaseOptions = SurrealDatabaseOptions> {
   client: Surreal
-  config: M extends false ? T : SurrealServerConfig<T>
+  config: M extends false ? T : SurrealServerRuntimeConfig<T>
 }
 
 export async function useSurreal<M extends boolean, T extends SurrealDatabaseOptions>(event?: H3Event, options?: UseSurrealOptions<M, T>): Promise<UseSurrealReturn<M, T>> {
@@ -41,7 +43,7 @@ export async function useSurreal<M extends boolean, T extends SurrealDatabaseOpt
     }
   }
 
-  const { autoConnect, mergeConfig, preferHttp, ..._options } = options || {}
+  const { mergeConfig, preferHttp, ..._options } = options || {}
   const {
     public: { surrealdb: pubSurrealdb },
     surrealdb: srvSurrealdb,
@@ -49,11 +51,11 @@ export async function useSurreal<M extends boolean, T extends SurrealDatabaseOpt
 
   const { nodeEngine, ...config } = (mergeConfig !== false
     ? defu(_options, srvSurrealdb, pubSurrealdb)
-    : _options) as T & { nodeEngine?: SurrealEngineOptions }
+    : _options) as T & SurrealServerOptions
 
   const client = createClient(nodeEngine)
 
-  if (autoConnect !== false && config.endpoint) {
+  if (config.endpoint && config.autoConnect !== false) {
     let endpoint = config.endpoint
 
     // prefer http
@@ -61,7 +63,9 @@ export async function useSurreal<M extends boolean, T extends SurrealDatabaseOpt
       endpoint = endpoint.replace(/^ws/, 'http')
     }
 
-    await client.connect(endpoint, config.connectOptions)
+    const isConnected = await client.connect(endpoint, config.connectOptions)
+    if (isConnected)
+      useNitroApp().hooks.callHookParallel('surrealdb:connected', client, config)
   }
 
   if (event) {

@@ -5,7 +5,8 @@ import { defu } from 'defu'
 import type {
   SurrealDatabaseOptions,
   SurrealEngineOptions,
-  SurrealClientConfig,
+  SurrealClientRuntimeConfig,
+  SurrealClientOptions,
 } from '#surrealdb/types'
 import { onBeforeUnmount, useNuxtApp } from '#imports'
 
@@ -29,16 +30,16 @@ export type UseSurrealOptions<M extends boolean, T extends SurrealDatabaseOption
 } & T
 export interface UseSurrealReturn<M extends boolean, T extends SurrealDatabaseOptions = SurrealDatabaseOptions> {
   client: Surreal
-  config: M extends false ? T : SurrealClientConfig<T>
+  config: M extends false ? T : SurrealClientRuntimeConfig<T>
 }
 
 export async function useSurreal<M extends boolean, T extends SurrealDatabaseOptions>(options?: UseSurrealOptions<M, T>): Promise<UseSurrealReturn<M, T>> {
-  const { autoConnect, mergeConfig, preferHttp, ..._options } = options || {}
+  const { mergeConfig, preferHttp, ..._options } = options || {}
   const { $config: { public: { surrealdb } }, hooks } = useNuxtApp()
 
   const { wasmEngine, ...config } = (mergeConfig !== false
     ? defu(_options, surrealdb)
-    : _options) as T & { wasmEngine?: SurrealEngineOptions }
+    : _options) as T & SurrealClientOptions
 
   const client = createClient(wasmEngine)
 
@@ -46,7 +47,7 @@ export async function useSurreal<M extends boolean, T extends SurrealDatabaseOpt
     client.close().catch(() => {})
   })
 
-  if (autoConnect !== false && config.endpoint) {
+  if (config.endpoint && config.autoConnect !== false) {
     let endpoint = config.endpoint
 
     if (import.meta.server) {

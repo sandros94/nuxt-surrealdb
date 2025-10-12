@@ -5,7 +5,7 @@ import { defu } from 'defu'
 
 import type {
   SurrealDatabaseOptions,
-  SurrealEngineOptions,
+  SurrealServerOptions,
 } from '#surrealdb/types'
 import { useNitroApp } from 'nitropack/runtime'
 import { useRuntimeConfig } from '#imports'
@@ -16,11 +16,11 @@ export interface UseSurrealLocalOptions extends SurrealDatabaseOptions {
 
 let client: Surreal | null = null
 export async function useSurrealLocal(event?: H3Event, options?: UseSurrealLocalOptions): Promise<Surreal> {
-  const { local } = useRuntimeConfig(event).surrealdb as { local?: SurrealDatabaseOptions & { nodeEngine?: SurrealEngineOptions } }
+  const { local } = useRuntimeConfig(event).surrealdb!
   const { mergeConfig, ...opts } = options || {}
   const config = (mergeConfig !== false
     ? defu(opts, local)
-    : opts) as SurrealDatabaseOptions
+    : opts) as SurrealServerOptions
 
   if (!client) {
     client = new Surreal({
@@ -30,7 +30,7 @@ export async function useSurrealLocal(event?: H3Event, options?: UseSurrealLocal
 
   const { hooks } = useNitroApp()
 
-  if (config?.endpoint) {
+  if (config?.endpoint && config.autoConnect !== false) {
     const isConnected = await client.connect(config.endpoint, config.connectOptions)
     if (isConnected)
       hooks.callHookParallel('surrealdb:local:connected', client, config)

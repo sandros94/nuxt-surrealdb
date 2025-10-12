@@ -8,12 +8,12 @@ export interface SurrealDatabaseOptions {
   connectOptions?: ConnectOptions
 }
 
-export type SurrealClientConfig<
+export type SurrealClientRuntimeConfig<
   T extends SurrealDatabaseOptions = SurrealDatabaseOptions,
 > = Prettify<Omit<PublicRuntimeConfig['surrealdb'], 'memory' | 'local' | 'wasmEngine'> & T>
-export type SurrealServerConfig<
+export type SurrealServerRuntimeConfig<
   T extends SurrealDatabaseOptions = SurrealDatabaseOptions,
-> = Prettify<SurrealClientConfig<T> & Omit<RuntimeConfig['surrealdb'], 'memory' | 'local' | 'nodeEngine'> & T>
+> = Prettify<SurrealClientRuntimeConfig<T> & Omit<RuntimeConfig['surrealdb'], 'memory' | 'local' | 'nodeEngine'> & T>
 
 /* Wasm */
 
@@ -37,10 +37,12 @@ export interface SurrealEngineOptions {
 
 /* Module */
 
-export interface SurrealOptionsClient extends SurrealDatabaseOptions {
+export interface SurrealClientOptions extends SurrealDatabaseOptions {
+  autoConnect?: boolean
   wasmEngine?: SurrealEngineOptions
 }
-export interface SurrealOptionsServer extends SurrealDatabaseOptions {
+export interface SurrealServerOptions extends SurrealDatabaseOptions {
+  autoConnect?: boolean
   nodeEngine?: SurrealEngineOptions
 }
 
@@ -48,13 +50,13 @@ export interface ModuleOptions {
   autoImports?: boolean
   disableWasmEngine?: boolean
   disableNodeEngine?: boolean
-  client?: SurrealOptionsClient & {
-    memory?: Omit<SurrealOptionsClient, 'endpoint'>
-    local?: SurrealOptionsClient
+  client?: SurrealClientOptions & {
+    memory?: Omit<SurrealClientOptions, 'endpoint'>
+    local?: SurrealClientOptions
   }
-  server?: SurrealOptionsServer & {
-    memory?: Omit<SurrealOptionsServer, 'endpoint'>
-    local?: SurrealOptionsServer
+  server?: SurrealServerOptions & {
+    memory?: Omit<SurrealServerOptions, 'endpoint'>
+    local?: SurrealServerOptions
   }
 }
 
@@ -69,9 +71,9 @@ declare module '@nuxt/schema' {
 
 declare module '#app' {
   interface RuntimeNuxtHooks {
-    'surrealdb:connected': (client: Surreal, config: SurrealClientConfig) => void | Promise<void>
-    'surrealdb:memory:connected': (client: Surreal, config: SurrealClientConfig) => void | Promise<void>
-    'surrealdb:local:connected': (client: Surreal, config: SurrealClientConfig) => void | Promise<void>
+    'surrealdb:connected': (client: Surreal, config: SurrealClientOptions) => void | Promise<void>
+    'surrealdb:memory:connected': (client: Surreal, config: Omit<SurrealClientOptions, 'endpoint'>) => void | Promise<void>
+    'surrealdb:local:connected': (client: Surreal, config: SurrealClientOptions) => void | Promise<void>
   }
   interface NuxtApp {
     $surrealLocal: Surreal | null
@@ -88,8 +90,8 @@ declare module 'vue' {
 
 declare module 'nitropack/types' {
   interface NitroRuntimeHooks {
-    'surrealdb:connected': (client: Surreal, config: SurrealServerConfig) => void | Promise<void>
-    'surrealdb:memory:connected': (client: Surreal, config: SurrealServerConfig) => void | Promise<void>
-    'surrealdb:local:connected': (client: Surreal, config: SurrealServerConfig) => void | Promise<void>
+    'surrealdb:connected': (client: Surreal, config: SurrealServerOptions) => void | Promise<void>
+    'surrealdb:memory:connected': (client: Surreal, config: Omit<SurrealServerOptions, 'endpoint'>) => void | Promise<void>
+    'surrealdb:local:connected': (client: Surreal, config: SurrealServerOptions) => void | Promise<void>
   }
 }
