@@ -3,7 +3,7 @@ import {} from 'nuxt/app'
 import { defineNuxtPlugin } from '#imports'
 
 export default defineNuxtPlugin({
-  name: 'surreal-memory',
+  name: 'surrealdb:memory',
   enforce: 'pre',
   setup() {
     return {

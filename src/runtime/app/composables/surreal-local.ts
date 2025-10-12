@@ -1,9 +1,25 @@
 import type { Surreal } from 'surrealdb'
 
-import { useNuxtApp } from '#imports'
+import { onBeforeUnmount, useNuxtApp } from '#imports'
 
-export function useSurrealLocal(): Surreal | null {
-  const client = useNuxtApp().$surrealLocal as Surreal | null
+export async function useSurrealLocal(): Promise<Surreal | null> {
+  const {
+    $surrealLocal,
+    hooks,
+    $config: { public: { surrealdb: { local } = {} } = {} },
+  } = useNuxtApp()
 
-  return client
+  onBeforeUnmount(() => {
+    if ($surrealLocal !== null)
+      $surrealLocal.close().catch(() => {})
+  })
+
+  if ($surrealLocal !== null && local?.endpoint) {
+    // This is actually always true, because endpoint has a default value
+    const isConnected = await $surrealLocal.connect(local.endpoint, local.connectOptions)
+    if (isConnected)
+      hooks.callHookParallel('surrealdb:local:connected', $surrealLocal, local)
+  }
+
+  return $surrealLocal
 }

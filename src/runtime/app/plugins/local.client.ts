@@ -7,23 +7,20 @@ import { Surreal } from 'surrealdb'
 import type { SurrealDatabaseOptions, SurrealEngineOptions } from '#surrealdb/types'
 import { defineNuxtPlugin } from '#imports'
 
-export default defineNuxtPlugin(async (nuxtApp) => {
-  const { local } = nuxtApp.$config.public.surrealdb as { local?: SurrealDatabaseOptions & { wasmEngine?: SurrealEngineOptions } }
+export default defineNuxtPlugin({
+  name: 'surrealdb:local',
+  enforce: 'pre',
+  setup(nuxtApp) {
+    const { local } = nuxtApp.$config.public.surrealdb as { local?: SurrealDatabaseOptions & { wasmEngine?: SurrealEngineOptions } }
 
-  const client = new Surreal({
-    engines: surrealdbWasmEngines(local?.wasmEngine),
-  })
+    const client = new Surreal({
+      engines: surrealdbWasmEngines(local?.wasmEngine),
+    })
 
-  if (local?.endpoint) {
-    // This is actually always true, because endpoint has a default value
-    const isConnected = await client.connect(local.endpoint, local.connectOptions)
-    if (isConnected)
-      nuxtApp.callHook('surrealdb:local:connected', client, local)
-  }
-
-  return {
-    provide: {
-      surrealLocal: client,
-    },
-  }
+    return {
+      provide: {
+        surrealLocal: client,
+      },
+    }
+  },
 })

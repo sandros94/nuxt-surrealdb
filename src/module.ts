@@ -36,7 +36,6 @@ export default defineNuxtModule<ModuleOptions>({
         connectOptions: defConnOpts,
         memory: wasmModule
           ? {
-              endpoint: 'mem://',
               connectOptions: defConnOpts,
             }
           : undefined,
@@ -54,7 +53,6 @@ export default defineNuxtModule<ModuleOptions>({
       {
         memory: nodeModule
           ? {
-              endpoint: 'mem://',
               connectOptions: defConnOpts,
             }
           : undefined,
@@ -90,10 +88,10 @@ export default defineNuxtModule<ModuleOptions>({
           name: 'useSurrealLocal',
         },
       )
-      addPlugin(resolve(runtimeDir, 'app', 'plugins', 'memory.client'))
       addPlugin(resolve(runtimeDir, 'app', 'plugins', 'memory.server'))
-      addPlugin(resolve(runtimeDir, 'app', 'plugins', 'local.client'))
+      addPlugin(resolve(runtimeDir, 'app', 'plugins', 'memory.client'))
       addPlugin(resolve(runtimeDir, 'app', 'plugins', 'local.server'))
+      addPlugin(resolve(runtimeDir, 'app', 'plugins', 'local.client'))
     }
     else {
       imports.push({

@@ -7,7 +7,7 @@ import type {
   SurrealEngineOptions,
   SurrealClientConfig,
 } from '#surrealdb/types'
-import { onBeforeUnmount, useRuntimeConfig } from '#imports'
+import { onBeforeUnmount, useNuxtApp } from '#imports'
 
 // #region internal utils
 
@@ -32,15 +32,19 @@ export interface UseSurrealReturn<M extends boolean, T extends SurrealDatabaseOp
   config: M extends false ? T : SurrealClientConfig<T>
 }
 
-export function useSurreal<M extends boolean, T extends SurrealDatabaseOptions>(options?: UseSurrealOptions<M, T>): UseSurrealReturn<M, T> {
+export async function useSurreal<M extends boolean, T extends SurrealDatabaseOptions>(options?: UseSurrealOptions<M, T>): Promise<UseSurrealReturn<M, T>> {
   const { autoConnect, mergeConfig, preferHttp, ..._options } = options || {}
-  const { surrealdb } = useRuntimeConfig().public
+  const { $config: { public: { surrealdb } }, hooks } = useNuxtApp()
 
   const { wasmEngine, ...config } = (mergeConfig !== false
     ? defu(_options, surrealdb)
     : _options) as T & { wasmEngine?: SurrealEngineOptions }
 
   const client = createClient(wasmEngine)
+
+  onBeforeUnmount(() => {
+    client.close().catch(() => {})
+  })
 
   if (autoConnect !== false && config.endpoint) {
     let endpoint = config.endpoint
@@ -57,12 +61,10 @@ export function useSurreal<M extends boolean, T extends SurrealDatabaseOptions>(
       }
     }
 
-    client.connect(endpoint, config.connectOptions)
+    const isConnected = await client.connect(endpoint, config.connectOptions)
+    if (isConnected)
+      hooks.callHookParallel('surrealdb:connected', client, config)
   }
-
-  onBeforeUnmount(async () => {
-    await client.close()
-  })
 
   return {
     client,

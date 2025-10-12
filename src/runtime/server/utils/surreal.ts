@@ -30,7 +30,7 @@ export interface UseSurrealReturn<M extends boolean, T extends SurrealDatabaseOp
   config: M extends false ? T : SurrealServerConfig<T>
 }
 
-export function useSurreal<M extends boolean, T extends SurrealDatabaseOptions>(event?: H3Event, options?: UseSurrealOptions<M, T>): UseSurrealReturn<M, T> {
+export async function useSurreal<M extends boolean, T extends SurrealDatabaseOptions>(event?: H3Event, options?: UseSurrealOptions<M, T>): Promise<UseSurrealReturn<M, T>> {
   if (event?.context.surrealdb && event.context.surrealdb.client && event.context.surrealdb.config) {
     return {
       client: event.context.surrealdb.client,
@@ -58,7 +58,7 @@ export function useSurreal<M extends boolean, T extends SurrealDatabaseOptions>(
       endpoint = endpoint.replace(/^ws/, 'http')
     }
 
-    client.connect(endpoint, config.connectOptions)
+    await client.connect(endpoint, config.connectOptions)
   }
 
   if (event) {

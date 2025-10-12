@@ -3,7 +3,7 @@ import {} from 'nuxt/app'
 import { defineNuxtPlugin } from '#imports'
 
 export default defineNuxtPlugin({
-  name: 'surreal-local',
+  name: 'surrealdb:local',
   enforce: 'pre',
   setup() {
     return {

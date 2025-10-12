@@ -1,9 +1,25 @@
 import type { Surreal } from 'surrealdb'
 
-import { useNuxtApp } from '#imports'
+import { onBeforeUnmount, useNuxtApp } from '#imports'
 
-export function useSurrealMem(): Surreal | null {
-  const client = useNuxtApp().$surrealMem as Surreal | null
+export async function useSurrealMem(): Promise<Surreal | null> {
+  const {
+    $surrealMem,
+    hooks,
+    $config: { public: { surrealdb: { memory } = {} } = {} },
+  } = useNuxtApp()
 
-  return client
+  onBeforeUnmount(() => {
+    if ($surrealMem !== null)
+      $surrealMem.close().catch(() => {})
+  })
+
+  if ($surrealMem !== null) {
+    // This is actually always true, because endpoint has a default value
+    const isConnected = await $surrealMem.connect('mem://', memory?.connectOptions)
+    if (isConnected)
+      hooks.callHookParallel('surrealdb:memory:connected', $surrealMem, memory || {})
+  }
+
+  return $surrealMem
 }

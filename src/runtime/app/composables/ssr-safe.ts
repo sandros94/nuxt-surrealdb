@@ -30,13 +30,13 @@ type KeysOf<T> = Array<T extends T ? keyof T extends string ? keyof T : never : 
 type _AsyncDataOptions<T, DefaultT> = AsyncDataOptions<T, T, KeysOf<T>, DefaultT>
 type _AsyncData<T, ErrorT, DefaultT> = AsyncData<PickFrom<T, KeysOf<T>> | DefaultT, (ErrorT extends Error | NuxtError ? ErrorT : NuxtError<ErrorT>) | undefined>
 
-function getClient<
+async function getClient<
   M extends boolean,
   TOptions extends SurrealDatabaseOptions = SurrealDatabaseOptions,
 >(clientOrOptions?: Surreal | UseSurrealOptions<M, TOptions>) {
   return clientOrOptions instanceof Surreal
     ? clientOrOptions
-    : useSurreal(clientOrOptions).client
+    : (await useSurreal(clientOrOptions)).client
 }
 
 export type UseSurrealOptions<M extends boolean, T extends SurrealDatabaseOptions = SurrealDatabaseOptions> = {
@@ -64,7 +64,8 @@ export async function useSurrealPing<
   return useAsyncData(
     key,
     async () => {
-      const res = await getClient(clientOrOptions).ping()
+      const client = await getClient(clientOrOptions)
+      const res = await client.ping()
 
       return jsonify(res)
     },
@@ -93,7 +94,8 @@ export async function useSurrealInfo<
   return useAsyncData(
     key,
     async () => {
-      const res = await getClient(clientOrOptions).info<T>()
+      const client = await getClient(clientOrOptions)
+      const res = await client.info<T>()
 
       return jsonify(res)
     },
@@ -124,7 +126,8 @@ export async function useSurrealQuery<
   return useAsyncData(
     key,
     async () => {
-      const res = await getClient(clientOrOptions).query<T>(...(queryRef.value as QueryParameters))
+      const client = await getClient(clientOrOptions)
+      const res = await client.query<T>(...(queryRef.value as QueryParameters))
 
       return jsonify(res)
     },
@@ -169,7 +172,8 @@ export async function useSurrealSelect<
   return useAsyncData(
     key,
     async () => {
-      const res = await getClient(clientOrOptions).select<T>(thingRef.value as any)
+      const client = await getClient(clientOrOptions)
+      const res = await client.select<T>(thingRef.value as any)
 
       return jsonify(res) as Thing extends RecordId$1
         ? Jsonify<ActionResult<T>>
@@ -202,7 +206,8 @@ export async function useSurrealVersion<
   return useAsyncData(
     key,
     async () => {
-      const res = await getClient(clientOrOptions).version()
+      const client = await getClient(clientOrOptions)
+      const res = await client.version()
 
       return jsonify(res)
     },
@@ -235,7 +240,8 @@ export async function useSurrealRun<
   return useAsyncData(
     key,
     async () => {
-      const res = await getClient(clientOrOptions).run<T>(nameRef.value, argsRef.value)
+      const client = await getClient(clientOrOptions)
+      const res = await client.run<T>(nameRef.value, argsRef.value)
 
       return jsonify(res)
     },
@@ -271,7 +277,8 @@ export async function useSurrealRpc<
   return useAsyncData(
     key,
     async () => {
-      const res = await getClient(clientOrOptions).rpc<T>(methodRef.value, paramsRef.value)
+      const client = await getClient(clientOrOptions)
+      const res = await client.rpc<T>(methodRef.value, paramsRef.value)
 
       return jsonify(res)
     },
@@ -304,7 +311,8 @@ export async function useSurrealExport<
   return useAsyncData(
     key,
     async () => {
-      const res = await getClient(clientOrOptions).export(optionsRef.value)
+      const client = await getClient(clientOrOptions)
+      const res = await client.export(optionsRef.value)
 
       return jsonify(res)
     },
@@ -337,7 +345,8 @@ export async function useSurrealImport<
   return useAsyncData(
     key,
     async () => {
-      await getClient(clientOrOptions).import(inputRef.value)
+      const client = await getClient(clientOrOptions)
+      await client.import(inputRef.value)
 
       return true as const
     },

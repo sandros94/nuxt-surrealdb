@@ -69,13 +69,26 @@ declare module '@nuxt/schema' {
 
 declare module '#app' {
   interface RuntimeNuxtHooks {
+    'surrealdb:connected': (client: Surreal, config: SurrealClientConfig) => void | Promise<void>
     'surrealdb:memory:connected': (client: Surreal, config: SurrealClientConfig) => void | Promise<void>
     'surrealdb:local:connected': (client: Surreal, config: SurrealClientConfig) => void | Promise<void>
+  }
+  interface NuxtApp {
+    $surrealLocal: Surreal | null
+    $surrealMem: Surreal | null
+  }
+}
+
+declare module 'vue' {
+  interface ComponentCustomProperties {
+    $surrealLocal: Surreal | null
+    $surrealMem: Surreal | null
   }
 }
 
 declare module 'nitropack/types' {
   interface NitroRuntimeHooks {
+    'surrealdb:connected': (client: Surreal, config: SurrealServerConfig) => void | Promise<void>
     'surrealdb:memory:connected': (client: Surreal, config: SurrealServerConfig) => void | Promise<void>
     'surrealdb:local:connected': (client: Surreal, config: SurrealServerConfig) => void | Promise<void>
   }

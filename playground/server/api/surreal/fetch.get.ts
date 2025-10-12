@@ -1,5 +1,5 @@
 export default defineEventHandler(async (event) => {
-  const { client } = useSurreal(event)
+  const { client } = await useSurreal(event)
 
   return client.query('SELECT * FROM test;')
 })
