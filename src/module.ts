@@ -144,33 +144,40 @@ export default defineNuxtModule<ModuleOptions>({
     addServerPlugin(resolve(runtimeDir, 'server', 'plugins', 'clear'))
 
     if (options.autoImports !== false) {
-      // TODO: add auto-import types
+      const names = [
+        'Uuid',
+        'RecordId',
+        'StringRecordId',
+        'BoundIncluded',
+        'BoundExcluded',
+        'RecordIdRange',
+        'Future',
+        'Duration',
+        'Decimal',
+        'Table',
+        'Geometry',
+        'GeometryPoint',
+        'GeometryLine',
+        'GeometryPolygon',
+        'GeometryMultiPoint',
+        'GeometryMultiLine',
+        'GeometryMultiPolygon',
+        'GeometryCollection',
+        'encodeCbor',
+        'decodeCbor',
+        'Surreal',
+      ]
       addImportsSources({
         from: 'surrealdb',
-        imports: [
-          'Uuid',
-          'RecordId',
-          'StringRecordId',
-          'BoundIncluded',
-          'BoundExcluded',
-          'RecordIdRange',
-          'Future',
-          'Duration',
-          'Decimal',
-          'Table',
-          'Geometry',
-          'GeometryPoint',
-          'GeometryLine',
-          'GeometryPolygon',
-          'GeometryMultiPoint',
-          'GeometryMultiLine',
-          'GeometryMultiPolygon',
-          'GeometryCollection',
-          'encodeCbor',
-          'decodeCbor',
-          'Surreal',
-        ],
+        imports: names,
       })
+      addServerImports(
+        names.map(n => ({
+          from: 'surrealdb',
+          name: n,
+        })),
+      )
+      // TODO: add types auto-import
     }
   },
 })
