@@ -1,6 +1,25 @@
 # Changelog
 
 
+## v0.5.0-alpha.1
+
+[compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.5.0-alpha.0...v0.5.0-alpha.1)
+
+### 🚀 Enhancements
+
+- Make `autoConnect` globally configurable ([493e5b3](https://github.com/sandros94/nuxt-surrealdb/commit/493e5b3))
+- Global init hook right after client initialization but before connection ([339f90d](https://github.com/sandros94/nuxt-surrealdb/commit/339f90d))
+- Add `surrealJsonify` auto-import ([677166e](https://github.com/sandros94/nuxt-surrealdb/commit/677166e))
+
+### 🩹 Fixes
+
+- Standardize all composable to be async and delay local and memory connection ([d107880](https://github.com/sandros94/nuxt-surrealdb/commit/d107880))
+- **Nitro:** Utilities auto import from upstream ([f5f33b2](https://github.com/sandros94/nuxt-surrealdb/commit/f5f33b2))
+
+### ❤️ Contributors
+
+- Sandro Circi ([@sandros94](https://github.com/sandros94))
+
 ## v0.5.0-alpha.0
 
 [compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.4.1...v0.5.0-alpha.0)
