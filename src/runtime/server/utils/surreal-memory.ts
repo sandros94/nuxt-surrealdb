@@ -28,7 +28,7 @@ export async function useSurrealMemory(event?: H3Event, options?: UseSurrealMemO
     })
   }
 
-  await surrealHooks.callHookParallel('surrealdb:memory:init', { client, config })
+  await surrealHooks.callHookParallel('surrealdb:memory:init', { client, config, event })
 
   if (config.autoConnect !== false) {
     await client.connect('mem://', config.connectOptions)

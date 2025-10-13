@@ -51,7 +51,7 @@ export async function useSurreal<M extends boolean, T extends SurrealDatabaseOpt
 
   const client = createClient(nodeEngine)
 
-  await surrealHooks.callHookParallel('surrealdb:init', { client, config })
+  await surrealHooks.callHookParallel('surrealdb:init', { client, config, event })
 
   if (config.endpoint && config.autoConnect !== false) {
     let endpoint = config.endpoint
@@ -71,7 +71,7 @@ export async function useSurreal<M extends boolean, T extends SurrealDatabaseOpt
         }
 
         // @ts-expect-error `callHook` is not able to infer the types properly
-        return surrealHooks.callHook('surrealdb:authentication', { client, config })
+        return surrealHooks.callHook('surrealdb:authentication', { client, config, event })
       },
     })
   }

@@ -28,7 +28,7 @@ export async function useSurrealLocal(event?: H3Event, options?: UseSurrealLocal
     })
   }
 
-  await surrealHooks.callHookParallel('surrealdb:local:init', { client, config })
+  await surrealHooks.callHookParallel('surrealdb:local:init', { client, config, event })
 
   if (config?.endpoint && config.autoConnect !== false) {
     await client.connect(config.endpoint, config.connectOptions)
