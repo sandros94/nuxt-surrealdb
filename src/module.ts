@@ -125,13 +125,13 @@ export default defineNuxtModule<ModuleOptions>({
       },
       ...[
         'useSurrealAuth',
-        // TODO: rewrite query and select
-        // 'useSurrealQuery',
-        // 'useSurrealSelect',
-        'useSurrealVersion',
-        'useSurrealRun',
         'useSurrealExport',
         'useSurrealImport',
+        'useSurrealQuery',
+        'useSurrealRun',
+        // TODO: rewrite select
+        // 'useSurrealSelect',
+        'useSurrealVersion',
       ].map(c => ({
         from: resolve(runtimeDir, 'app', 'composables', 'ssr-safe'),
         name: c,

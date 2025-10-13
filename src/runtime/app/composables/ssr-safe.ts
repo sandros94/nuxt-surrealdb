@@ -1,10 +1,6 @@
 import { Surreal } from 'surrealdb'
 import type {
   RecordResult,
-  // RecordId,
-  // StringRecordId,
-  // RecordIdRange,
-  // Table,
   Jsonify,
   VersionInfo,
   SqlExportOptions,
@@ -22,8 +18,18 @@ import type {
 } from '#surrealdb/types'
 import { type MaybeRef, toRef, useSurreal, useAsyncData } from '#imports'
 
+// Surreal types
+
 type R = ParseType<Record<string, unknown>>
-// type RecordId$1<Tb extends string = string> = RecordId<Tb> | StringRecordId
+type MaybeJsonify<T, J extends boolean> = J extends true ? Jsonify<T> : T
+type Collect<T extends unknown[], J extends boolean> = T extends []
+  ? unknown[]
+  : {
+      [K in keyof T]: MaybeJsonify<T[K], J>;
+    }
+
+// AsyncData types
+
 type PickFrom<T, K extends Array<string>> = T extends Array<any> ? T : T extends Record<string, any> ? keyof T extends K[number] ? T : K[number] extends never ? T : Pick<T, K[number]> : T
 type KeysOf<T> = Array<T extends T ? keyof T extends string ? keyof T : never : never>
 type _AsyncDataOptions<T, DefaultT> = AsyncDataOptions<T, T, KeysOf<T>, DefaultT>
@@ -143,6 +149,43 @@ export async function useSurrealImport<
 
 // #endregion useSurrealImport
 
+// #region useSurrealQuery
+
+export async function useSurrealQuery<
+  T extends unknown[],
+  ErrorT,
+  M extends boolean,
+  TOptions extends SurrealDatabaseOptions = SurrealDatabaseOptions,
+  DefaultT = undefined,
+>(
+  query: MaybeRef<string>,
+  bindings?: MaybeRef<Record<string, MaybeRef<unknown>>>,
+  asyncDataOptions?: _AsyncDataOptions<Collect<T, true>, DefaultT> & {
+    key?: string
+  },
+  clientOrOptions?: Surreal | UseSurrealOptions<M, TOptions>,
+): Promise<_AsyncData<Collect<T, true>, ErrorT, DefaultT>> {
+  const queryRef = toRef(query)
+  const bindingsRef = toRef(bindings)
+  const { key = `surreal:query:${queryRef.value.toString()}:${JSON.stringify(bindingsRef.value)}`, ...restOptions } = asyncDataOptions || {}
+
+  return useAsyncData(
+    key,
+    async () => {
+      const client = await getClient(clientOrOptions)
+      const res = await client.query(queryRef.value, bindingsRef.value).json().collect<T>()
+
+      return res
+    },
+    {
+      ...restOptions,
+      watch: [...(restOptions?.watch || []), queryRef],
+    },
+  )
+}
+
+// #endregion useSurrealQuery
+
 // #region useSurrealRun
 
 export async function useSurrealRun<
@@ -179,6 +222,43 @@ export async function useSurrealRun<
 }
 
 // #endregion useSurrealRun
+
+// #region useSurrealSelect
+
+export async function useSurrealSelect<
+  T,
+  ErrorT,
+  M extends boolean,
+  TOptions extends SurrealDatabaseOptions = SurrealDatabaseOptions,
+  DefaultT = undefined,
+>(
+  name: MaybeRef<string>,
+  args?: MaybeRef<unknown[]>,
+  asyncDataOptions?: _AsyncDataOptions<Jsonify<T>, DefaultT> & {
+    key?: string
+  },
+  clientOrOptions?: Surreal | UseSurrealOptions<M, TOptions>,
+): Promise<_AsyncData<Jsonify<T>, ErrorT, DefaultT>> {
+  const nameRef = toRef(name)
+  const argsRef = toRef(args)
+  const { key = `surreal:run:${nameRef.value.toString()}:${argsRef.value?.toString()}`, ...restOptions } = asyncDataOptions || {}
+
+  return useAsyncData(
+    key,
+    async () => {
+      const client = await getClient(clientOrOptions)
+      const res = await client.run<T>(nameRef.value, argsRef.value).json()
+
+      return res
+    },
+    {
+      ...restOptions,
+      watch: [...(restOptions?.watch || []), nameRef, argsRef],
+    },
+  )
+}
+
+// #endregion useSurrealSelect
 
 // #region useSurrealVersion
 

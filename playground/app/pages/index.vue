@@ -47,11 +47,7 @@
 </template>
 
 <script setup lang="ts">
-const { data } = await useAsyncData(async () => {
-  const { client } = await useSurreal()
-
-  return client.select(new Table('test')).json()
-})
+const { data } = await useSurrealQuery('SELECT * FROM test')
 const { data: srv } = await useFetch('/api/surreal/fetch')
 const { data: srvMem } = await useFetch('/api/surreal/node/mem')
 const { data: srvLocal } = await useFetch('/api/surreal/node/local')
