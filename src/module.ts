@@ -136,6 +136,16 @@ export default defineNuxtModule<ModuleOptions>({
         from: resolve(runtimeDir, 'app', 'composables', 'ssr-safe'),
         name: c,
       })),
+      {
+        from: resolve(runtimeDir, 'app', 'composables', 'surreal-hooks'),
+        name: 'surrealHooks',
+      },
+    )
+    serverImports.push(
+      {
+        from: resolve(runtimeDir, 'server', 'utils', 'surreal-hooks'),
+        name: 'surrealHooks',
+      },
     )
 
     addImports(imports)

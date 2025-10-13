@@ -8,8 +8,7 @@ import type {
   SurrealServerRuntimeConfig,
   SurrealServerOptions,
 } from '#surrealdb/types'
-import { useNitroApp } from 'nitropack/runtime'
-import { useRuntimeConfig } from '#imports'
+import { surrealHooks, useRuntimeConfig } from '#imports'
 
 // #region internal utils
 
@@ -52,9 +51,7 @@ export async function useSurreal<M extends boolean, T extends SurrealDatabaseOpt
 
   const client = createClient(nodeEngine)
 
-  const { hooks } = useNitroApp()
-
-  await hooks.callHookParallel('surrealdb:init', { client, config })
+  await surrealHooks.callHookParallel('surrealdb:init', { client, config })
 
   if (config.endpoint && config.autoConnect !== false) {
     let endpoint = config.endpoint
@@ -66,8 +63,16 @@ export async function useSurreal<M extends boolean, T extends SurrealDatabaseOpt
 
     await client.connect(endpoint, {
       ...config.connectOptions,
-      // @ts-expect-error `callHook` is not able to infer the types properly
-      authentication: config.connectOptions?.authentication || await hooks.callHook('surrealdb:authentication', { client, config }),
+      authentication: () => {
+        if (config.connectOptions?.authentication) {
+          return typeof config.connectOptions.authentication === 'function'
+            ? config.connectOptions.authentication()
+            : config.connectOptions.authentication
+        }
+
+        // @ts-expect-error `callHook` is not able to infer the types properly
+        return surrealHooks.callHook('surrealdb:authentication', { client, config })
+      },
     })
   }
 

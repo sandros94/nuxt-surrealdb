@@ -5,7 +5,7 @@ import type {
   SurrealDatabaseOptions,
   SurrealClientOptions,
 } from '#surrealdb/types'
-import { onBeforeUnmount, useNuxtApp } from '#imports'
+import { surrealHooks, onBeforeUnmount, useNuxtApp } from '#imports'
 
 export interface UseSurrealMemOptions extends SurrealDatabaseOptions {
   mergeConfig?: boolean
@@ -14,7 +14,6 @@ export interface UseSurrealMemOptions extends SurrealDatabaseOptions {
 export async function useSurrealMem(options?: UseSurrealMemOptions): Promise<Surreal | null> {
   const {
     $surrealMemory,
-    hooks,
     $config: { public: { surrealdb: { memory } = {} } = {} },
   } = useNuxtApp()
 
@@ -29,13 +28,21 @@ export async function useSurrealMem(options?: UseSurrealMemOptions): Promise<Sur
       ? defu(opts, memory)
       : opts) as SurrealClientOptions
 
-    await hooks.callHookParallel('surrealdb:memory:init', { client: $surrealMemory, config })
+    await surrealHooks.callHookParallel('surrealdb:memory:init', { client: $surrealMemory, config })
 
     if (config.autoConnect !== false) {
       await $surrealMemory.connect('mem://', {
         ...config.connectOptions,
-        // @ts-expect-error `callHook` is not able to infer the types properly
-        authentication: config.connectOptions?.authentication || await hooks.callHook('surrealdb:memory:authentication', { client: $surrealMemory, config }),
+        authentication: () => {
+          if (config.connectOptions?.authentication) {
+            return typeof config.connectOptions.authentication === 'function'
+              ? config.connectOptions.authentication()
+              : config.connectOptions.authentication
+          }
+
+          // @ts-expect-error `callHook` is not able to infer the types properly
+          return surrealHooks.callHook('surrealdb:memory:authentication', { client: $surrealMemory, config })
+        },
       })
     }
   }

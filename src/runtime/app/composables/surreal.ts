@@ -7,7 +7,7 @@ import type {
   SurrealClientRuntimeConfig,
   SurrealClientOptions,
 } from '#surrealdb/types'
-import { onBeforeUnmount, useNuxtApp } from '#imports'
+import { surrealHooks, onBeforeUnmount, useRuntimeConfig } from '#imports'
 
 // #region internal utils
 
@@ -32,7 +32,7 @@ export interface UseSurrealReturn<M extends boolean, T extends SurrealDatabaseOp
 
 export async function useSurreal<M extends boolean, T extends SurrealDatabaseOptions>(options?: UseSurrealOptions<M, T>): Promise<UseSurrealReturn<M, T>> {
   const { mergeConfig, preferHttp, ..._options } = options || {}
-  const { $config: { public: { surrealdb } }, hooks } = useNuxtApp()
+  const { surrealdb } = useRuntimeConfig().public
 
   const { wasmEngine, ...config } = (mergeConfig !== false
     ? defu(_options, surrealdb)
@@ -44,7 +44,7 @@ export async function useSurreal<M extends boolean, T extends SurrealDatabaseOpt
     client.close().catch(() => {})
   })
 
-  await hooks.callHookParallel('surrealdb:init', { client, config })
+  await surrealHooks.callHookParallel('surrealdb:init', { client, config })
 
   if (config.endpoint && config.autoConnect !== false) {
     let endpoint = config.endpoint
@@ -58,8 +58,16 @@ export async function useSurreal<M extends boolean, T extends SurrealDatabaseOpt
 
     await client.connect(endpoint, {
       ...config.connectOptions,
-      // @ts-expect-error `callHook` is not able to infer the types properly
-      authentication: config.connectOptions?.authentication || await hooks.callHook('surrealdb:authentication', { client, config }),
+      authentication: () => {
+        if (config.connectOptions?.authentication) {
+          return typeof config.connectOptions.authentication === 'function'
+            ? config.connectOptions.authentication()
+            : config.connectOptions.authentication
+        }
+
+        // @ts-expect-error `callHook` is not able to infer the types properly
+        return surrealHooks.callHook('surrealdb:authentication', { client, config })
+      },
     })
   }
 

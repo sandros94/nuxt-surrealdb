@@ -8,7 +8,7 @@ import type {
   SurrealServerOptions,
 } from '#surrealdb/types'
 import { useNitroApp } from 'nitropack/runtime'
-import { useRuntimeConfig } from '#imports'
+import { surrealHooks, useRuntimeConfig } from '#imports'
 
 export interface UseSurrealMemOptions extends SurrealDatabaseOptions {
   mergeConfig?: boolean
@@ -28,19 +28,25 @@ export async function useSurrealMem(event?: H3Event, options?: UseSurrealMemOpti
     })
   }
 
-  const { hooks } = useNitroApp()
-
-  await hooks.callHookParallel('surrealdb:memory:init', { client, config })
+  await surrealHooks.callHookParallel('surrealdb:memory:init', { client, config })
 
   if (config.autoConnect !== false) {
     await client.connect('mem://', {
       ...config.connectOptions,
-      // @ts-expect-error `callHook` is not able to infer the types properly
-      authentication: config.connectOptions?.authentication || await hooks.callHook('surrealdb:memory:authentication', { client, config }),
+      authentication: () => {
+        if (config.connectOptions?.authentication) {
+          return typeof config.connectOptions.authentication === 'function'
+            ? config.connectOptions.authentication()
+            : config.connectOptions.authentication
+        }
+
+        // @ts-expect-error `callHook` is not able to infer the types properly
+        return surrealHooks.callHook('surrealdb:memory:authentication', { client, config })
+      },
     })
   }
 
-  hooks.hook('close', async () => {
+  useNitroApp().hooks.hook('close', async () => {
     if (client) {
       await client.close()
     }
