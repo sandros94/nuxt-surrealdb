@@ -1,4 +1,4 @@
-import { surrealdbWasmEngines } from '@surrealdb/wasm'
+import { createWasmEngines } from '@surrealdb/wasm'
 import { Surreal } from 'surrealdb'
 import { defu } from 'defu'
 
@@ -14,7 +14,7 @@ import { onBeforeUnmount, useNuxtApp } from '#imports'
 
 function createClient(config?: SurrealEngineOptions): Surreal {
   return new Surreal({
-    engines: surrealdbWasmEngines(config),
+    engines: createWasmEngines(config),
   })
 }
 
@@ -47,7 +47,7 @@ export async function useSurreal<M extends boolean, T extends SurrealDatabaseOpt
     client.close().catch(() => {})
   })
 
-  await hooks.callHookParallel('surrealdb:init', client, config)
+  await hooks.callHookParallel('surrealdb:init', { client, config })
 
   if (config.endpoint && config.autoConnect !== false) {
     let endpoint = config.endpoint
@@ -64,9 +64,11 @@ export async function useSurreal<M extends boolean, T extends SurrealDatabaseOpt
       }
     }
 
-    const isConnected = await client.connect(endpoint, config.connectOptions)
-    if (isConnected)
-      hooks.callHookParallel('surrealdb:connected', client, config)
+    await client.connect(endpoint, {
+      ...config.connectOptions,
+      // @ts-expect-error `callHook` is not able to infer the types properly
+      authentication: config.connectOptions?.authentication || await hooks.callHook('surrealdb:authentication', { client, config }),
+    })
   }
 
   return {

@@ -1,4 +1,4 @@
-import { surrealdbNodeEngines } from '@surrealdb/node'
+import { createNodeEngines } from '@surrealdb/node'
 import { Surreal } from 'surrealdb'
 import type { H3Event } from 'h3'
 import { defu } from 'defu'
@@ -24,18 +24,20 @@ export async function useSurrealLocal(event?: H3Event, options?: UseSurrealLocal
 
   if (!client) {
     client = new Surreal({
-      engines: surrealdbNodeEngines(local?.nodeEngine),
+      engines: createNodeEngines(local?.nodeEngine),
     })
   }
 
   const { hooks } = useNitroApp()
 
-  await hooks.callHookParallel('surrealdb:local:init', client, config)
+  await hooks.callHookParallel('surrealdb:local:init', { client, config })
 
   if (config?.endpoint && config.autoConnect !== false) {
-    const isConnected = await client.connect(config.endpoint, config.connectOptions)
-    if (isConnected)
-      hooks.callHookParallel('surrealdb:local:connected', client, config)
+    await client.connect(config.endpoint, {
+      ...config.connectOptions,
+      // @ts-expect-error `callHook` is not able to infer the types properly
+      authentication: config.connectOptions?.authentication || await hooks.callHook('surrealdb:local:authentication', { client, config }),
+    })
   }
 
   hooks.hook('close', async () => {

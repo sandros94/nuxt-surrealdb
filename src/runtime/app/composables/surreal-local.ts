@@ -1,8 +1,17 @@
 import type { Surreal } from 'surrealdb'
+import { defu } from 'defu'
 
+import type {
+  SurrealDatabaseOptions,
+  SurrealClientOptions,
+} from '#surrealdb/types'
 import { onBeforeUnmount, useNuxtApp } from '#imports'
 
-export async function useSurrealLocal(): Promise<Surreal | null> {
+export interface UseSurrealLocalOptions extends SurrealDatabaseOptions {
+  mergeConfig?: boolean
+}
+
+export async function useSurrealLocal(options?: UseSurrealLocalOptions): Promise<Surreal | null> {
   const {
     $surrealLocal,
     hooks,
@@ -15,13 +24,19 @@ export async function useSurrealLocal(): Promise<Surreal | null> {
   })
 
   if ($surrealLocal !== null) {
-    await hooks.callHookParallel('surrealdb:local:init', $surrealLocal, local || {})
+    const { mergeConfig, ...opts } = options || {}
+    const config = (mergeConfig !== false
+      ? defu(opts, local)
+      : opts) as SurrealClientOptions
 
-    if (local?.endpoint && local?.autoConnect !== false) {
-      // This is actually always true, because endpoint has a default value
-      const isConnected = await $surrealLocal.connect(local.endpoint, local.connectOptions)
-      if (isConnected)
-        hooks.callHookParallel('surrealdb:local:connected', $surrealLocal, local)
+    await hooks.callHookParallel('surrealdb:local:init', { client: $surrealLocal, config })
+
+    if (config?.endpoint && config.autoConnect !== false) {
+      await $surrealLocal.connect(config.endpoint, {
+        ...config.connectOptions,
+        // @ts-expect-error `callHook` is not able to infer the types properly
+        authentication: config.connectOptions?.authentication || await hooks.callHook('surrealdb:local:authentication', { client: $surrealLocal, config }),
+      })
     }
   }
 

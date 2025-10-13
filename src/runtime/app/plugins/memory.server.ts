@@ -8,7 +8,7 @@ export default defineNuxtPlugin({
   setup() {
     return {
       provide: {
-        surrealMem: null,
+        surrealMemory: null,
       },
     }
   },

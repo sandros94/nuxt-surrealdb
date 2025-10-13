@@ -1,5 +1,11 @@
 import type { PublicRuntimeConfig, RuntimeConfig } from '@nuxt/schema'
-import type { Prettify, ConnectOptions, Surreal } from 'surrealdb'
+import type { ConnectOptions, Surreal, AuthOrToken } from 'surrealdb'
+
+/* Helper Types */
+
+export type ParseType<T> = {
+  [K in keyof T]: T[K];
+} & {}
 
 /* Databases */
 
@@ -10,10 +16,10 @@ export interface SurrealDatabaseOptions {
 
 export type SurrealClientRuntimeConfig<
   T extends SurrealDatabaseOptions = SurrealDatabaseOptions,
-> = Prettify<Omit<PublicRuntimeConfig['surrealdb'], 'memory' | 'local' | 'wasmEngine'> & T>
+> = ParseType<Omit<PublicRuntimeConfig['surrealdb'], 'memory' | 'local' | 'wasmEngine'> & T>
 export type SurrealServerRuntimeConfig<
   T extends SurrealDatabaseOptions = SurrealDatabaseOptions,
-> = Prettify<SurrealClientRuntimeConfig<T> & Omit<RuntimeConfig['surrealdb'], 'memory' | 'local' | 'nodeEngine'> & T>
+> = ParseType<SurrealClientRuntimeConfig<T> & Omit<RuntimeConfig['surrealdb'], 'memory' | 'local' | 'nodeEngine'> & T>
 
 /* Wasm */
 
@@ -69,35 +75,40 @@ declare module '@nuxt/schema' {
   }
 }
 
+interface SurrealModuleHooksArgs<T extends SurrealDatabaseOptions = SurrealDatabaseOptions> {
+  client: Surreal
+  config: T
+}
+
 declare module '#app' {
   interface RuntimeNuxtHooks {
-    'surrealdb:init': (client: Surreal, config: SurrealClientOptions) => void | Promise<void>
-    'surrealdb:memory:init': (client: Surreal, config: Omit<SurrealClientOptions, 'endpoint'>) => void | Promise<void>
-    'surrealdb:local:init': (client: Surreal, config: SurrealClientOptions) => void | Promise<void>
-    'surrealdb:connected': (client: Surreal, config: SurrealClientOptions) => void | Promise<void>
-    'surrealdb:memory:connected': (client: Surreal, config: Omit<SurrealClientOptions, 'endpoint'>) => void | Promise<void>
-    'surrealdb:local:connected': (client: Surreal, config: SurrealClientOptions) => void | Promise<void>
+    'surrealdb:init': (args: SurrealModuleHooksArgs<SurrealClientOptions>) => void | Promise<void>
+    'surrealdb:memory:init': (args: SurrealModuleHooksArgs<Omit<SurrealClientOptions, 'endpoint'>>) => void | Promise<void>
+    'surrealdb:local:init': (args: SurrealModuleHooksArgs<SurrealClientOptions>) => void | Promise<void>
+    'surrealdb:authentication': (args: SurrealModuleHooksArgs<SurrealClientOptions>) => AuthOrToken | Promise<AuthOrToken>
+    'surrealdb:memory:authentication': (args: SurrealModuleHooksArgs<Omit<SurrealClientOptions, 'endpoint'>>) => AuthOrToken | Promise<AuthOrToken>
+    'surrealdb:local:authentication': (args: SurrealModuleHooksArgs<SurrealClientOptions>) => AuthOrToken | Promise<AuthOrToken>
   }
   interface NuxtApp {
     $surrealLocal: Surreal | null
-    $surrealMem: Surreal | null
+    $surrealMemory: Surreal | null
   }
 }
 
 declare module 'vue' {
   interface ComponentCustomProperties {
     $surrealLocal: Surreal | null
-    $surrealMem: Surreal | null
+    $surrealMemory: Surreal | null
   }
 }
 
 declare module 'nitropack/types' {
   interface NitroRuntimeHooks {
-    'surrealdb:init': (client: Surreal, config: SurrealServerOptions) => void | Promise<void>
-    'surrealdb:memory:init': (client: Surreal, config: Omit<SurrealServerOptions, 'endpoint'>) => void | Promise<void>
-    'surrealdb:local:init': (client: Surreal, config: SurrealServerOptions) => void | Promise<void>
-    'surrealdb:connected': (client: Surreal, config: SurrealServerOptions) => void | Promise<void>
-    'surrealdb:memory:connected': (client: Surreal, config: Omit<SurrealServerOptions, 'endpoint'>) => void | Promise<void>
-    'surrealdb:local:connected': (client: Surreal, config: SurrealServerOptions) => void | Promise<void>
+    'surrealdb:init': (args: SurrealModuleHooksArgs<SurrealServerOptions>) => void | Promise<void>
+    'surrealdb:memory:init': (args: SurrealModuleHooksArgs<Omit<SurrealServerOptions, 'endpoint'>>) => void | Promise<void>
+    'surrealdb:local:init': (args: SurrealModuleHooksArgs<SurrealServerOptions>) => void | Promise<void>
+    'surrealdb:authentication': (args: SurrealModuleHooksArgs<SurrealServerOptions>) => AuthOrToken | Promise<AuthOrToken>
+    'surrealdb:memory:authentication': (args: SurrealModuleHooksArgs<Omit<SurrealServerOptions, 'endpoint'>>) => AuthOrToken | Promise<AuthOrToken>
+    'surrealdb:local:authentication': (args: SurrealModuleHooksArgs<SurrealServerOptions>) => AuthOrToken | Promise<AuthOrToken>
   }
 }

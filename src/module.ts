@@ -124,13 +124,12 @@ export default defineNuxtModule<ModuleOptions>({
 
     imports.push(
       ...[
-        'useSurrealPing',
-        'useSurrealInfo',
-        'useSurrealQuery',
-        'useSurrealSelect',
+        'useSurrealAuth',
+        // TODO: rewrite query and select
+        // 'useSurrealQuery',
+        // 'useSurrealSelect',
         'useSurrealVersion',
         'useSurrealRun',
-        'useSurrealRpc',
         'useSurrealExport',
         'useSurrealImport',
       ].map(c => ({
@@ -151,7 +150,6 @@ export default defineNuxtModule<ModuleOptions>({
         'BoundIncluded',
         'BoundExcluded',
         'RecordIdRange',
-        'Future',
         'Duration',
         'Decimal',
         'Table',
@@ -163,31 +161,17 @@ export default defineNuxtModule<ModuleOptions>({
         'GeometryMultiLine',
         'GeometryMultiPolygon',
         'GeometryCollection',
-        'encodeCbor',
-        'decodeCbor',
         'Surreal',
       ]
       addImportsSources({
         from: 'surrealdb',
         imports: names,
       })
-      addImports({
-        from: 'surrealdb',
-        name: 'jsonify',
-        as: 'surrealJsonify',
-      })
       addServerImports(
-        [
-          ...names.map(n => ({
-            from: 'surrealdb',
-            name: n,
-          })),
-          {
-            from: 'surrealdb',
-            name: 'jsonify',
-            as: 'surrealJsonify',
-          },
-        ],
+        names.map(n => ({
+          from: 'surrealdb',
+          name: n,
+        })),
       )
       // TODO: add types auto-import
     }

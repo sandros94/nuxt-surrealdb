@@ -7,6 +7,6 @@ export default defineEventHandler(async (event) => {
     namespace: 'test',
     database: 'test',
   })
-  const res = await client.query('REMOVE TABLE IF EXISTS test; CREATE test SET name = "from-node-local";SELECT * FROM test;')
-  return surrealJsonify(res[2])
+  const res = await client.query('REMOVE TABLE IF EXISTS test; CREATE test SET name = "from-node-local";SELECT * FROM test;').json().collect()
+  return res[2]
 })

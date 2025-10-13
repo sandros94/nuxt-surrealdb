@@ -1,4 +1,4 @@
-import { surrealdbNodeEngines } from '@surrealdb/node'
+import { createNodeEngines } from '@surrealdb/node'
 import { Surreal } from 'surrealdb'
 import type { H3Event } from 'h3'
 import { defu } from 'defu'
@@ -24,18 +24,20 @@ export async function useSurrealMem(event?: H3Event, options?: UseSurrealMemOpti
 
   if (!client) {
     client = new Surreal({
-      engines: surrealdbNodeEngines(memory?.nodeEngine),
+      engines: createNodeEngines(memory?.nodeEngine),
     })
   }
 
   const { hooks } = useNitroApp()
 
-  await hooks.callHookParallel('surrealdb:memory:init', client, config)
+  await hooks.callHookParallel('surrealdb:memory:init', { client, config })
 
   if (config.autoConnect !== false) {
-    const isConnected = await client.connect('mem://', config.connectOptions)
-    if (isConnected)
-      hooks.callHookParallel('surrealdb:memory:connected', client, config)
+    await client.connect('mem://', {
+      ...config.connectOptions,
+      // @ts-expect-error `callHook` is not able to infer the types properly
+      authentication: config.connectOptions?.authentication || await hooks.callHook('surrealdb:memory:authentication', { client, config }),
+    })
   }
 
   hooks.hook('close', async () => {
