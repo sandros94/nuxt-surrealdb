@@ -18,6 +18,7 @@ import type {
 } from '#app'
 
 import type {
+  MaybePromise,
   ParseType,
   SurrealDatabaseOptions,
   SurrealEngineOptions,
@@ -57,6 +58,33 @@ export type UseSurrealOptions<M extends boolean, T extends SurrealDatabaseOption
   preferHttp?: boolean
   autoConnect?: boolean
 } & T
+
+// #region useSurrealAsyncData
+
+export async function useSurrealAsyncData<
+  T,
+  ErrorT,
+  M extends boolean,
+  TOptions extends SurrealDatabaseOptions = SurrealDatabaseOptions,
+  DefaultT = undefined,
+>(
+  key: string,
+  cb: (client: Surreal) => MaybePromise<T>,
+  asyncDataOptions?: _AsyncDataOptions<T, DefaultT>,
+  clientOrOptions?: Surreal | UseSurrealOptions<M, TOptions>,
+): Promise<_AsyncData<T, ErrorT, DefaultT>> {
+  return useAsyncData(
+    key,
+    async () => {
+      const client = await getClient(clientOrOptions)
+
+      return cb(client)
+    },
+    asyncDataOptions,
+  )
+}
+
+// #endregion useSurrealAsyncData
 
 // #region useSurrealAuth
 

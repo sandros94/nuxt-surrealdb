@@ -124,6 +124,7 @@ export default defineNuxtModule<ModuleOptions>({
         name: 'surrealHooks',
       },
       ...[
+        'useSurrealAsyncData',
         'useSurrealAuth',
         'useSurrealExport',
         'useSurrealImport',
