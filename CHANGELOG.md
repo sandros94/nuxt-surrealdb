@@ -1,6 +1,32 @@
 # Changelog
 
 
+## v0.5.0-alpha.4
+
+[compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.5.0-alpha.3...v0.5.0-alpha.4)
+
+### 🚀 Enhancements
+
+- Implement `useSurrealQuery` ssr-safe utility ([a9d1769](https://github.com/sandros94/nuxt-surrealdb/commit/a9d1769))
+- `useSurrealSelect` ssr-safe utility ([2c7cbf3](https://github.com/sandros94/nuxt-surrealdb/commit/2c7cbf3))
+- `useSurrealAsyncData` ssr-safe utility ([7007df5](https://github.com/sandros94/nuxt-surrealdb/commit/7007df5))
+
+### 🩹 Fixes
+
+- Stop propagating unused engine options ([513120c](https://github.com/sandros94/nuxt-surrealdb/commit/513120c))
+
+### 💅 Refactors
+
+- Ssr-safe utils ([5cf4e07](https://github.com/sandros94/nuxt-surrealdb/commit/5cf4e07))
+
+### 🏡 Chore
+
+- Re-order ssr utils ([b025c98](https://github.com/sandros94/nuxt-surrealdb/commit/b025c98))
+
+### ❤️ Contributors
+
+- Sandro Circi ([@sandros94](https://github.com/sandros94))
+
 ## v0.5.0-alpha.3
 
 [compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.5.0-alpha.2...v0.5.0-alpha.3)
