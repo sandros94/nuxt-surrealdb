@@ -1,6 +1,26 @@
 # Changelog
 
 
+## v0.5.0-alpha.6
+
+[compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.5.0-alpha.5...v0.5.0-alpha.6)
+
+### 🩹 Fixes
+
+- Improve `authentication` hook ([81a97f9](https://github.com/sandros94/nuxt-surrealdb/commit/81a97f9))
+
+### 📦 Build
+
+- Add `surrealdb` as vite's optimized dep ([2d5e6f4](https://github.com/sandros94/nuxt-surrealdb/commit/2d5e6f4))
+
+### 🏡 Chore
+
+- Update SDK ([7e9117f](https://github.com/sandros94/nuxt-surrealdb/commit/7e9117f))
+
+### ❤️ Contributors
+
+- Sandro Circi ([@sandros94](https://github.com/sandros94))
+
 ## v0.5.0-alpha.5
 
 [compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.5.0-alpha.4...v0.5.0-alpha.5)
