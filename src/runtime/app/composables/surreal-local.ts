@@ -31,7 +31,10 @@ export async function useSurrealLocal(options?: UseSurrealLocalOptions): Promise
     await surrealHooks.callHookParallel('surrealdb:local:init', { client: $surrealLocal, config })
 
     if (config?.endpoint && config.autoConnect !== false) {
-      await $surrealLocal.connect(config.endpoint, config.connectOptions)
+      const isConnected = await $surrealLocal.connect(config.endpoint, config.connectOptions)
+      if (isConnected) {
+        await surrealHooks.callHookParallel('surrealdb:local:connected', { client: $surrealLocal, config })
+      }
     }
   }
 

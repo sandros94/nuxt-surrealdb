@@ -46,7 +46,7 @@ export async function useSurreal<M extends boolean, T extends SurrealDatabaseOpt
       }
     }
 
-    await client.connect(endpoint, {
+    const isConnected = await client.connect(endpoint, {
       ...config.connectOptions,
       authentication: () => {
         if (config.connectOptions?.authentication) {
@@ -59,6 +59,9 @@ export async function useSurreal<M extends boolean, T extends SurrealDatabaseOpt
         return surrealHooks.callHook('surrealdb:authentication', { client, config })
       },
     })
+    if (isConnected) {
+      await surrealHooks.callHookParallel('surrealdb:connected', { client, config })
+    }
   }
 
   return {

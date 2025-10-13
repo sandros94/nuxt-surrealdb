@@ -67,21 +67,11 @@ const memClient = await useSurrealMemory()
 const localClient = await useSurrealLocal()
 
 onNuxtReady(async () => {
-  await Promise.all([
-    memClient!.use({
-      namespace: 'test',
-      database: 'test',
-    }),
-    localClient!.use({
-      namespace: 'test',
-      database: 'test',
-    }),
+  const [[memRes], [localRes]] = await Promise.all([
+    memClient!.query('SELECT * FROM test;').json().collect(0),
+    localClient!.query('SELECT * FROM test;').json().collect(0),
   ])
-  const [memRes, localRes] = await Promise.all([
-    memClient!.query('REMOVE TABLE IF EXISTS test; CREATE test SET name = "from-wasm-mem";SELECT * FROM test;').json().collect(),
-    localClient!.query('REMOVE TABLE IF EXISTS test; CREATE test SET name = "from-wasm-local";SELECT * FROM test;').json().collect(),
-  ])
-  mem.value = memRes[2]
-  local.value = localRes[2]
+  mem.value = memRes
+  local.value = localRes
 })
 </script>

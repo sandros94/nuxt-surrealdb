@@ -91,8 +91,11 @@ interface SurrealModuleHooksArgs<T extends SurrealDatabaseOptions = SurrealDatab
 
 export interface SurrealHooks<T extends SurrealDatabaseOptions = SurrealDatabaseOptions, E = {}> {
   'surrealdb:init': (args: ParseType<SurrealModuleHooksArgs<T> & E>) => MaybePromise<void>
+  'surrealdb:connected': (args: ParseType<SurrealModuleHooksArgs<T> & E>) => MaybePromise<void>
   'surrealdb:memory:init': (args: ParseType<SurrealModuleHooksArgs<Omit<T, 'endpoint'>> & E>) => MaybePromise<void>
+  'surrealdb:memory:connected': (args: ParseType<SurrealModuleHooksArgs<T> & E>) => MaybePromise<void>
   'surrealdb:local:init': (args: ParseType<SurrealModuleHooksArgs<T> & E>) => MaybePromise<void>
+  'surrealdb:local:connected': (args: ParseType<SurrealModuleHooksArgs<T> & E>) => MaybePromise<void>
   'surrealdb:authentication': (args: ParseType<SurrealModuleHooksArgs<T> & E>) => MaybePromise<AuthOrToken>
 }
 

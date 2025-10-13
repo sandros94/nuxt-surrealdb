@@ -3,10 +3,6 @@ export default defineEventHandler(async (event) => {
     endpoint: 'surrealkv://./.data/db',
   })
 
-  await client.use({
-    namespace: 'test',
-    database: 'test',
-  })
-  const res = await client.query('REMOVE TABLE IF EXISTS test; CREATE test SET name = "from-node-local";SELECT * FROM test;').json().collect()
-  return res[2]
+  const [res] = await client.query('SELECT * FROM test;').json().collect(0)
+  return res
 })

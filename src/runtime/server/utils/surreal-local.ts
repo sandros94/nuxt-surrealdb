@@ -18,29 +18,39 @@ export interface UseSurrealLocalOptions extends SurrealDatabaseOptions {
 
 let client: Surreal | null = null
 export async function useSurrealLocal(event?: H3Event, options?: UseSurrealLocalOptions): Promise<Surreal> {
+  if (client !== null) {
+    return client
+  }
   const { local } = useRuntimeConfig(event).surrealdb!
+  client = new Surreal({
+    engines: createNodeEngines(local?.nodeEngine),
+  })
+
+  useNitroApp().hooks.hook('close', async () => {
+    if (client !== null) {
+      await client.close()
+    }
+  })
+
   const { mergeConfig, ...opts } = options || {}
   const config = (mergeConfig !== false
     ? defu(opts, local)
     : opts) as SurrealServerOptions
 
-  if (!client) {
-    client = new Surreal({
-      engines: createNodeEngines(local?.nodeEngine),
-    })
-  }
+  try {
+    await surrealHooks.callHookParallel('surrealdb:local:init', { client, config, event })
 
-  await surrealHooks.callHookParallel('surrealdb:local:init', { client, config, event })
-
-  if (config?.endpoint && config.autoConnect !== false) {
-    await client.connect(config.endpoint, config.connectOptions)
-  }
-
-  useNitroApp().hooks.hook('close', async () => {
-    if (client) {
-      await client.close()
+    if (config?.endpoint && config.autoConnect !== false) {
+      const isConnected = await client.connect(config.endpoint, config.connectOptions)
+      if (isConnected) {
+        await surrealHooks.callHookParallel('surrealdb:local:connected', { client, config, event })
+      }
     }
-  })
+  }
+  catch (error_) {
+    client = null
+    throw error_
+  }
 
   return client
 }

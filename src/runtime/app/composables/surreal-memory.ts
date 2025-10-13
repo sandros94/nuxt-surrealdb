@@ -31,7 +31,10 @@ export async function useSurrealMemory(options?: UseSurrealMemOptions): Promise<
     await surrealHooks.callHookParallel('surrealdb:memory:init', { client: $surrealMemory, config })
 
     if (config.autoConnect !== false) {
-      await $surrealMemory.connect('mem://', config.connectOptions)
+      const isConnected = await $surrealMemory.connect('mem://', config.connectOptions)
+      if (isConnected) {
+        await surrealHooks.callHookParallel('surrealdb:memory:connected', { client: $surrealMemory, config })
+      }
     }
   }
 
