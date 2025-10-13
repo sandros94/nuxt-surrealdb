@@ -75,72 +75,6 @@ export async function useSurrealAuth<
 
 // #endregion useSurrealAuth
 
-// #region useSurrealVersion
-
-export async function useSurrealVersion<
-  ErrorT,
-  M extends boolean,
-  TOptions extends SurrealDatabaseOptions = SurrealDatabaseOptions,
-  DefaultT = undefined,
->(
-  asyncDataOptions?: _AsyncDataOptions<VersionInfo, DefaultT> & {
-    key?: string
-  },
-  clientOrOptions?: Surreal | UseSurrealOptions<M, TOptions>,
-): Promise<_AsyncData<VersionInfo, ErrorT, DefaultT>> {
-  const { key = 'surreal:version', ...restOptions } = asyncDataOptions || {}
-
-  return useAsyncData(
-    key,
-    async () => {
-      const client = await getClient(clientOrOptions)
-      const res = await client.version()
-
-      return res
-    },
-    restOptions,
-  )
-}
-
-// #endregion useSurrealVersion
-
-// #region useSurrealRun
-
-export async function useSurrealRun<
-  T,
-  ErrorT,
-  M extends boolean,
-  TOptions extends SurrealDatabaseOptions = SurrealDatabaseOptions,
-  DefaultT = undefined,
->(
-  name: MaybeRef<string>,
-  args?: MaybeRef<unknown[]>,
-  asyncDataOptions?: _AsyncDataOptions<Jsonify<T>, DefaultT> & {
-    key?: string
-  },
-  clientOrOptions?: Surreal | UseSurrealOptions<M, TOptions>,
-): Promise<_AsyncData<Jsonify<T>, ErrorT, DefaultT>> {
-  const nameRef = toRef(name)
-  const argsRef = toRef(args)
-  const { key = `surreal:run:${nameRef.value.toString()}:${argsRef.value?.toString()}`, ...restOptions } = asyncDataOptions || {}
-
-  return useAsyncData(
-    key,
-    async () => {
-      const client = await getClient(clientOrOptions)
-      const res = await client.run<T>(nameRef.value, argsRef.value).json()
-
-      return res
-    },
-    {
-      ...restOptions,
-      watch: [...(restOptions?.watch || []), nameRef, argsRef],
-    },
-  )
-}
-
-// #endregion useSurrealRun
-
 // #region useSurrealExport
 
 export async function useSurrealExport<
@@ -208,3 +142,69 @@ export async function useSurrealImport<
 }
 
 // #endregion useSurrealImport
+
+// #region useSurrealRun
+
+export async function useSurrealRun<
+  T,
+  ErrorT,
+  M extends boolean,
+  TOptions extends SurrealDatabaseOptions = SurrealDatabaseOptions,
+  DefaultT = undefined,
+>(
+  name: MaybeRef<string>,
+  args?: MaybeRef<unknown[]>,
+  asyncDataOptions?: _AsyncDataOptions<Jsonify<T>, DefaultT> & {
+    key?: string
+  },
+  clientOrOptions?: Surreal | UseSurrealOptions<M, TOptions>,
+): Promise<_AsyncData<Jsonify<T>, ErrorT, DefaultT>> {
+  const nameRef = toRef(name)
+  const argsRef = toRef(args)
+  const { key = `surreal:run:${nameRef.value.toString()}:${argsRef.value?.toString()}`, ...restOptions } = asyncDataOptions || {}
+
+  return useAsyncData(
+    key,
+    async () => {
+      const client = await getClient(clientOrOptions)
+      const res = await client.run<T>(nameRef.value, argsRef.value).json()
+
+      return res
+    },
+    {
+      ...restOptions,
+      watch: [...(restOptions?.watch || []), nameRef, argsRef],
+    },
+  )
+}
+
+// #endregion useSurrealRun
+
+// #region useSurrealVersion
+
+export async function useSurrealVersion<
+  ErrorT,
+  M extends boolean,
+  TOptions extends SurrealDatabaseOptions = SurrealDatabaseOptions,
+  DefaultT = undefined,
+>(
+  asyncDataOptions?: _AsyncDataOptions<VersionInfo, DefaultT> & {
+    key?: string
+  },
+  clientOrOptions?: Surreal | UseSurrealOptions<M, TOptions>,
+): Promise<_AsyncData<VersionInfo, ErrorT, DefaultT>> {
+  const { key = 'surreal:version', ...restOptions } = asyncDataOptions || {}
+
+  return useAsyncData(
+    key,
+    async () => {
+      const client = await getClient(clientOrOptions)
+      const res = await client.version()
+
+      return res
+    },
+    restOptions,
+  )
+}
+
+// #endregion useSurrealVersion
