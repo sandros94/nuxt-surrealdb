@@ -1,29 +1,39 @@
 import type { Surreal } from 'surrealdb'
+import { defu } from 'defu'
 
-import { onBeforeUnmount, useNuxtApp } from '#imports'
+import type {
+  SurrealDatabaseOptions,
+  SurrealClientOptions,
+} from '#surrealdb/types'
+import { surrealHooks, onBeforeUnmount, useNuxtApp } from '#imports'
 
-export async function useSurrealMem(): Promise<Surreal | null> {
+export interface UseSurrealMemOptions extends SurrealDatabaseOptions {
+  mergeConfig?: boolean
+}
+
+export async function useSurrealMemory(options?: UseSurrealMemOptions): Promise<Surreal | null> {
   const {
-    $surrealMem,
-    hooks,
+    $surrealMemory,
     $config: { public: { surrealdb: { memory } = {} } = {} },
   } = useNuxtApp()
 
   onBeforeUnmount(() => {
-    if ($surrealMem !== null)
-      $surrealMem.close().catch(() => {})
+    if ($surrealMemory !== null)
+      $surrealMemory.close().catch(() => {})
   })
 
-  if ($surrealMem !== null) {
-    await hooks.callHookParallel('surrealdb:memory:init', $surrealMem, memory || {})
+  if ($surrealMemory !== null) {
+    const { mergeConfig, ...opts } = options || {}
+    const config = (mergeConfig !== false
+      ? defu(opts, memory)
+      : opts) as SurrealClientOptions
 
-    if (memory?.autoConnect !== false) {
-      // This is actually always true, because endpoint has a default value
-      const isConnected = await $surrealMem.connect('mem://', memory?.connectOptions)
-      if (isConnected)
-        hooks.callHookParallel('surrealdb:memory:connected', $surrealMem, memory || {})
+    await surrealHooks.callHookParallel('surrealdb:memory:init', { client: $surrealMemory, config })
+
+    if (config.autoConnect !== false) {
+      await $surrealMemory.connect('mem://', config.connectOptions)
     }
   }
 
-  return $surrealMem
+  return $surrealMemory
 }

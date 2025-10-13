@@ -1,5 +1,5 @@
 export default defineEventHandler(async (event) => {
-  const client = await useSurrealMem(event)
+  const client = await useSurrealMemory(event)
 
   // TOTO: SurrealDB in-memory seems to have issues with storing data, but it does not crash
 
@@ -7,6 +7,6 @@ export default defineEventHandler(async (event) => {
     namespace: 'test',
     database: 'test',
   })
-  const res = await client.query('REMOVE TABLE IF EXISTS test; CREATE test SET name = "from-node-mem"; SELECT * FROM test;')
-  return surrealJsonify(res[2])
+  const res = await client.query('REMOVE TABLE IF EXISTS test; CREATE test SET name = "from-node-mem"; SELECT * FROM test;').json().collect()
+  return res[2]
 })

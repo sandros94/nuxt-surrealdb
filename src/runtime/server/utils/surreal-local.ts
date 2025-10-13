@@ -1,4 +1,4 @@
-import { surrealdbNodeEngines } from '@surrealdb/node'
+import { createNodeEngines } from '@surrealdb/node'
 import { Surreal } from 'surrealdb'
 import type { H3Event } from 'h3'
 import { defu } from 'defu'
@@ -8,7 +8,7 @@ import type {
   SurrealServerOptions,
 } from '#surrealdb/types'
 import { useNitroApp } from 'nitropack/runtime'
-import { useRuntimeConfig } from '#imports'
+import { surrealHooks, useRuntimeConfig } from '#imports'
 
 export interface UseSurrealLocalOptions extends SurrealDatabaseOptions {
   mergeConfig?: boolean
@@ -24,21 +24,17 @@ export async function useSurrealLocal(event?: H3Event, options?: UseSurrealLocal
 
   if (!client) {
     client = new Surreal({
-      engines: surrealdbNodeEngines(local?.nodeEngine),
+      engines: createNodeEngines(local?.nodeEngine),
     })
   }
 
-  const { hooks } = useNitroApp()
-
-  await hooks.callHookParallel('surrealdb:local:init', client, config)
+  await surrealHooks.callHookParallel('surrealdb:local:init', { client, config })
 
   if (config?.endpoint && config.autoConnect !== false) {
-    const isConnected = await client.connect(config.endpoint, config.connectOptions)
-    if (isConnected)
-      hooks.callHookParallel('surrealdb:local:connected', client, config)
+    await client.connect(config.endpoint, config.connectOptions)
   }
 
-  hooks.hook('close', async () => {
+  useNitroApp().hooks.hook('close', async () => {
     if (client) {
       await client.close()
     }

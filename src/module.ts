@@ -76,16 +76,18 @@ export default defineNuxtModule<ModuleOptions>({
     if (options.disableWasmEngine !== true && wasmModule === true) {
       imports.push(
         {
-          from: resolve(runtimeDir, 'app', 'composables', 'surreal-wasm'),
-          name: 'useSurreal',
+          from: resolve(runtimeDir, 'app', 'composables', 'surreal-local'),
+          name: 'useSurrealLocal',
         },
         {
           from: resolve(runtimeDir, 'app', 'composables', 'surreal-memory'),
-          name: 'useSurrealMem',
+          name: 'useSurrealMemory',
+          as: 'useSurrealMemory',
         },
         {
-          from: resolve(runtimeDir, 'app', 'composables', 'surreal-local'),
-          name: 'useSurrealLocal',
+          from: resolve(runtimeDir, 'app', 'composables', 'surreal-memory'),
+          name: 'useSurrealMemory',
+          as: 'useSurrealMem',
         },
       )
       addPlugin(resolve(runtimeDir, 'app', 'plugins', 'memory.server'))
@@ -93,50 +95,57 @@ export default defineNuxtModule<ModuleOptions>({
       addPlugin(resolve(runtimeDir, 'app', 'plugins', 'local.server'))
       addPlugin(resolve(runtimeDir, 'app', 'plugins', 'local.client'))
     }
-    else {
-      imports.push({
-        from: resolve(runtimeDir, 'app', 'composables', 'surreal'),
-        name: 'useSurreal',
-      })
-    }
     if (options.disableNodeEngine !== true && nodeModule === true) {
       serverImports.push(
-        {
-          from: resolve(runtimeDir, 'server', 'utils', 'surreal-node'),
-          name: 'useSurreal',
-        },
-        {
-          from: resolve(runtimeDir, 'server', 'utils', 'surreal-memory'),
-          name: 'useSurrealMem',
-        },
         {
           from: resolve(runtimeDir, 'server', 'utils', 'surreal-local'),
           name: 'useSurrealLocal',
         },
+        {
+          from: resolve(runtimeDir, 'server', 'utils', 'surreal-memory'),
+          name: 'useSurrealMemory',
+          as: 'useSurrealMemory',
+        },
+        {
+          from: resolve(runtimeDir, 'server', 'utils', 'surreal-memory'),
+          name: 'useSurrealMemory',
+          as: 'useSurrealMem',
+        },
       )
-    }
-    else {
-      serverImports.push({
-        from: resolve(runtimeDir, 'server', 'utils', 'surreal'),
-        name: 'useSurreal',
-      })
     }
 
     imports.push(
+      {
+        from: resolve(runtimeDir, 'app', 'composables', 'surreal'),
+        name: 'useSurreal',
+      },
+      {
+        from: resolve(runtimeDir, 'app', 'composables', 'surreal-hooks'),
+        name: 'surrealHooks',
+      },
       ...[
-        'useSurrealPing',
-        'useSurrealInfo',
-        'useSurrealQuery',
-        'useSurrealSelect',
+        'useSurrealAuth',
+        // TODO: rewrite query and select
+        // 'useSurrealQuery',
+        // 'useSurrealSelect',
         'useSurrealVersion',
         'useSurrealRun',
-        'useSurrealRpc',
         'useSurrealExport',
         'useSurrealImport',
       ].map(c => ({
         from: resolve(runtimeDir, 'app', 'composables', 'ssr-safe'),
         name: c,
       })),
+    )
+    serverImports.push(
+      {
+        from: resolve(runtimeDir, 'server', 'utils', 'surreal'),
+        name: 'useSurreal',
+      },
+      {
+        from: resolve(runtimeDir, 'server', 'utils', 'surreal-hooks'),
+        name: 'surrealHooks',
+      },
     )
 
     addImports(imports)
@@ -151,7 +160,6 @@ export default defineNuxtModule<ModuleOptions>({
         'BoundIncluded',
         'BoundExcluded',
         'RecordIdRange',
-        'Future',
         'Duration',
         'Decimal',
         'Table',
@@ -163,31 +171,17 @@ export default defineNuxtModule<ModuleOptions>({
         'GeometryMultiLine',
         'GeometryMultiPolygon',
         'GeometryCollection',
-        'encodeCbor',
-        'decodeCbor',
         'Surreal',
       ]
       addImportsSources({
         from: 'surrealdb',
         imports: names,
       })
-      addImports({
-        from: 'surrealdb',
-        name: 'jsonify',
-        as: 'surrealJsonify',
-      })
       addServerImports(
-        [
-          ...names.map(n => ({
-            from: 'surrealdb',
-            name: n,
-          })),
-          {
-            from: 'surrealdb',
-            name: 'jsonify',
-            as: 'surrealJsonify',
-          },
-        ],
+        names.map(n => ({
+          from: 'surrealdb',
+          name: n,
+        })),
       )
       // TODO: add types auto-import
     }

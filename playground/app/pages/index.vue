@@ -47,14 +47,18 @@
 </template>
 
 <script setup lang="ts">
-const { data } = await useSurrealSelect(new Table('test'))
+const { data } = await useAsyncData(async () => {
+  const { client } = await useSurreal()
+
+  return client.select(new Table('test')).json()
+})
 const { data: srv } = await useFetch('/api/surreal/fetch')
 const { data: srvMem } = await useFetch('/api/surreal/node/mem')
 const { data: srvLocal } = await useFetch('/api/surreal/node/local')
 
 const mem = ref()
 const local = ref()
-const memClient = await useSurrealMem()
+const memClient = await useSurrealMemory()
 const localClient = await useSurrealLocal()
 
 onNuxtReady(async () => {
@@ -69,8 +73,8 @@ onNuxtReady(async () => {
     }),
   ])
   const [memRes, localRes] = await Promise.all([
-    memClient!.query('REMOVE TABLE IF EXISTS test; CREATE test SET name = "from-wasm-mem";SELECT * FROM test;'),
-    localClient!.query('REMOVE TABLE IF EXISTS test; CREATE test SET name = "from-wasm-local";SELECT * FROM test;'),
+    memClient!.query('REMOVE TABLE IF EXISTS test; CREATE test SET name = "from-wasm-mem";SELECT * FROM test;').json().collect(),
+    localClient!.query('REMOVE TABLE IF EXISTS test; CREATE test SET name = "from-wasm-local";SELECT * FROM test;').json().collect(),
   ])
   mem.value = memRes[2]
   local.value = localRes[2]

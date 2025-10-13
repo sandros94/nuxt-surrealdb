@@ -1,4 +1,4 @@
-import { surrealdbNodeEngines } from '@surrealdb/node'
+import { createNodeEngines } from '@surrealdb/node'
 import { Surreal } from 'surrealdb'
 import type { H3Event } from 'h3'
 import { defu } from 'defu'
@@ -8,14 +8,14 @@ import type {
   SurrealServerOptions,
 } from '#surrealdb/types'
 import { useNitroApp } from 'nitropack/runtime'
-import { useRuntimeConfig } from '#imports'
+import { surrealHooks, useRuntimeConfig } from '#imports'
 
 export interface UseSurrealMemOptions extends SurrealDatabaseOptions {
   mergeConfig?: boolean
 }
 
 let client: Surreal | null = null
-export async function useSurrealMem(event?: H3Event, options?: UseSurrealMemOptions): Promise<Surreal> {
+export async function useSurrealMemory(event?: H3Event, options?: UseSurrealMemOptions): Promise<Surreal> {
   const { memory } = useRuntimeConfig(event).surrealdb!
   const { mergeConfig, ...opts } = options || {}
   const config = (mergeConfig !== false
@@ -24,21 +24,17 @@ export async function useSurrealMem(event?: H3Event, options?: UseSurrealMemOpti
 
   if (!client) {
     client = new Surreal({
-      engines: surrealdbNodeEngines(memory?.nodeEngine),
+      engines: createNodeEngines(memory?.nodeEngine),
     })
   }
 
-  const { hooks } = useNitroApp()
-
-  await hooks.callHookParallel('surrealdb:memory:init', client, config)
+  await surrealHooks.callHookParallel('surrealdb:memory:init', { client, config })
 
   if (config.autoConnect !== false) {
-    const isConnected = await client.connect('mem://', config.connectOptions)
-    if (isConnected)
-      hooks.callHookParallel('surrealdb:memory:connected', client, config)
+    await client.connect('mem://', config.connectOptions)
   }
 
-  hooks.hook('close', async () => {
+  useNitroApp().hooks.hook('close', async () => {
     if (client) {
       await client.close()
     }

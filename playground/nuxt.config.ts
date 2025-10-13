@@ -18,7 +18,7 @@ export default defineNuxtConfig({
   surrealdb: {
     client: {
       connectOptions: {
-        auth: {
+        authentication: {
           username: '',
           password: '',
         },

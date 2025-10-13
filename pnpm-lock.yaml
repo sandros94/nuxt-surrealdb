@@ -21,8 +21,8 @@ importers:
         specifier: ^1.0.7
         version: 1.0.7
       surrealdb:
-        specifier: ^1.3.2
-        version: 1.3.2(tslib@2.8.1)(typescript@5.9.3)(ws@8.18.3)
+        specifier: ^2.0.0-alpha.8
+        version: 2.0.0-alpha.8(tslib@2.8.1)(typescript@5.9.3)
     devDependencies:
       '@nuxt/devtools':
         specifier: ^2.6.5
@@ -34,11 +34,11 @@ importers:
         specifier: ^1.0.2
         version: 1.0.2(@nuxt/cli@3.29.3(magicast@0.3.5))(@vue/compiler-core@3.5.22)(esbuild@0.25.10)(typescript@5.9.3)(vue-tsc@3.1.1(typescript@5.9.3))(vue@3.5.22(typescript@5.9.3))
       '@surrealdb/node':
-        specifier: ^1.0.0-beta.3
-        version: 1.0.0-beta.3(surrealdb@1.3.2(tslib@2.8.1)(typescript@5.9.3)(ws@8.18.3))
+        specifier: ^2.3.1
+        version: 2.3.1(surrealdb@2.0.0-alpha.8(tslib@2.8.1)(typescript@5.9.3))
       '@surrealdb/wasm':
-        specifier: ^1.4.1
-        version: 1.4.1(surrealdb@1.3.2(tslib@2.8.1)(typescript@5.9.3)(ws@8.18.3))
+        specifier: ^2.3.1
+        version: 2.3.1(surrealdb@2.0.0-alpha.8(tslib@2.8.1)(typescript@5.9.3))
       changelogen:
         specifier: ^0.6.2
         version: 0.6.2(magicast@0.3.5)
@@ -1707,63 +1707,19 @@ packages:
     peerDependencies:
       eslint: '>=9.0.0'
 
-  '@surrealdb/node-android-arm64@1.0.0-beta.3':
-    resolution: {integrity: sha512-ki1Ag20Jqphnwb+PJLeBEdidXSggsYrJ13QhzvtX9BmbKhlG297wM7v1QoNXPtP650KV6496NReBSmrnU/AmfQ==}
-    engines: {node: '>= 10'}
-    cpu: [arm64]
-    os: [android]
+  '@surrealdb/cbor@2.0.0-alpha.4':
+    resolution: {integrity: sha512-l/hNZ3ZCOJq8rzwx1y5ZV/8b2bYCWdhGqRVY33Pu50NAHyAW5qLsMn3ZBkZow77mAKwNCsbDsRGnyYEuU95mjw==}
+    engines: {node: '>=18.0.0'}
 
-  '@surrealdb/node-darwin-arm64@1.0.0-beta.3':
-    resolution: {integrity: sha512-MVTzJx0DZCo0NI/uSSjffRoBmz3iTENJ8qCFZ73IiqBs+HROff/vneOQ3J5VepfJEpV5qPcymmSlwn6JNou0YQ==}
-    engines: {node: '>= 10'}
-    cpu: [arm64]
-    os: [darwin]
-
-  '@surrealdb/node-darwin-universal@1.0.0-beta.3':
-    resolution: {integrity: sha512-Afxu1/Uzeah7wiHKv3+m9Bc4KM8q1sbBFxZ85VwqPAUh7a9j6EKO3JEitQ98N5mHTbokN+Z3ZoRXeEqI6Nc2NA==}
-    engines: {node: '>= 10'}
-    os: [darwin]
-
-  '@surrealdb/node-darwin-x64@1.0.0-beta.3':
-    resolution: {integrity: sha512-MqsPa8f1zllE4ANOTsuBKG/iQpXo3Mp2NJ+cA/TLlwK5wjFF7cYyMIMZvfIz3Fh+Ikz+iv8ckZ/T1cwbOJaBPQ==}
-    engines: {node: '>= 10'}
-    cpu: [x64]
-    os: [darwin]
-
-  '@surrealdb/node-linux-arm64-gnu@1.0.0-beta.3':
-    resolution: {integrity: sha512-lhPg4dfzQVvqsCCV0RHsCUBFPCHD3rP0ZV3xt74A2yGtd93oeA2BFaVDiretqsOPmiMejS47hBmN/i7Y7agVMQ==}
-    engines: {node: '>= 10'}
-    cpu: [arm64]
-    os: [linux]
-
-  '@surrealdb/node-linux-x64-gnu@1.0.0-beta.3':
-    resolution: {integrity: sha512-QLHnu/s6fTP9hWiHqVodrQLc45UD+kQFSYt23KvOdxIZjseqlK48J31O88DQEEMw9EnmDt9TEAbGjWiB2tLfbA==}
-    engines: {node: '>= 10'}
-    cpu: [x64]
-    os: [linux]
-
-  '@surrealdb/node-linux-x64-musl@1.0.0-beta.3':
-    resolution: {integrity: sha512-k3k/JqXBFb9HZKANIiT4P/WnOkFP8gj/K5ESAiGgNNwWel6OsjlYzLz70rjtzjliHiAfqc4W4uHd2AMo0NHlmg==}
-    engines: {node: '>= 10'}
-    cpu: [x64]
-    os: [linux]
-
-  '@surrealdb/node-win32-x64-msvc@1.0.0-beta.3':
-    resolution: {integrity: sha512-0KkXJvode1v8GnyoS1i6urEmNH2rXI/uXzLDfFhJYU0q36z4SapBTNyqIhaGPMQIvRK6yUqWyEAbhJKcTq6IBQ==}
-    engines: {node: '>= 10'}
-    cpu: [x64]
-    os: [win32]
-
-  '@surrealdb/node@1.0.0-beta.3':
-    resolution: {integrity: sha512-7szXXSzDNoSq/p//j4t3S0Ki1gxrlZGAVe5m6I3INR1IfOY0rlWRgX3CSt8E8oItWywlVzZmPaetf8vRlQm0OQ==}
-    engines: {node: '>= 10'}
+  '@surrealdb/node@2.3.1':
+    resolution: {integrity: sha512-ezkbf2Cop5qKKVTNKxdEIM7xryr4P3WeXaUQha2CM97HAUJTAnhBEpRIlXOx0G5hunYaMkFwmurQ0VhniqdziA==}
     peerDependencies:
-      surrealdb: ^1.0.6
+      surrealdb: ^2.0.0-0
 
-  '@surrealdb/wasm@1.4.1':
-    resolution: {integrity: sha512-0XILvy9MzxtqU5iw0xzWvZ4IiIXFaKYtkOssjX4rDFtqRdOLWQP6Unn89yTDT0ZXldSDVb7L9ckPQSpEclgPaw==}
+  '@surrealdb/wasm@2.3.1':
+    resolution: {integrity: sha512-5nB2AHlyhWJyqkdMIjlr8hjiYG9Z/sv5LfOLfbr2aXkWDijJVj0+UADyWV6+QmqnkaR3FNPt1Fxsyo3jzLyhvg==}
     peerDependencies:
-      surrealdb: ^1.3.1
+      surrealdb: ^2.0.0-0
 
   '@swc/helpers@0.5.17':
     resolution: {integrity: sha512-5IKx/Y13RsYd+sauPb2x+U/xZikHjolzfuDgTAl/Tdf3Q8rslRvC19NKDLgAJQ6wsqADk10ntlv08nPFw/gO/A==}
@@ -3759,11 +3715,6 @@ packages:
     resolution: {integrity: sha512-LpB/54B+/2J5hqQ7imZHfdU31OlgQqx7ZicVlkm9kzg9/w8GKLEcFfJl/t7DCEDueOyBAD6zCCwTO6Fzs0NoEQ==}
     engines: {node: '>=16'}
 
-  isows@1.0.7:
-    resolution: {integrity: sha512-I1fSfDCZL5P0v33sVqeTDSpcstAg/N+wF5HS033mogOVIp4B+oHC7oOCsA3axAbBSGTJ8QubbNmnIRN/h8U7hg==}
-    peerDependencies:
-      ws: '*'
-
   jackspeak@3.4.3:
     resolution: {integrity: sha512-OGlZQpz2yfahA/Rd1Y8Cd9SIEsqvXkLVoSw/cgwhnhFMDbsQFeZYoJJ7bIZBS9BcamUW96asq/npPWugM+RQBw==}
 
@@ -5146,9 +5097,8 @@ packages:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
     engines: {node: '>= 0.4'}
 
-  surrealdb@1.3.2:
-    resolution: {integrity: sha512-mL7nij33iuon3IQP72F46fgX3p2LAxFCWCBDbZB7IohZ13RTEwJVNq7nZeP1eMSceQUpKzS6OHIWOuF9LYAkNw==}
-    engines: {node: '>=18.0.0'}
+  surrealdb@2.0.0-alpha.8:
+    resolution: {integrity: sha512-+PAAdLzatp03mlVCpF94YLTrvlS9UyctshajS2FQ2rvw3bLRlla3P2qG2uehpaECV71sSdxtBcLorbBC4Bu94Q==}
     peerDependencies:
       tslib: ^2.6.3
       typescript: ^5.0.0
@@ -7737,46 +7687,15 @@ snapshots:
       estraverse: 5.3.0
       picomatch: 4.0.3
 
-  '@surrealdb/node-android-arm64@1.0.0-beta.3':
-    optional: true
+  '@surrealdb/cbor@2.0.0-alpha.4': {}
 
-  '@surrealdb/node-darwin-arm64@1.0.0-beta.3':
-    optional: true
-
-  '@surrealdb/node-darwin-universal@1.0.0-beta.3':
-    optional: true
-
-  '@surrealdb/node-darwin-x64@1.0.0-beta.3':
-    optional: true
-
-  '@surrealdb/node-linux-arm64-gnu@1.0.0-beta.3':
-    optional: true
-
-  '@surrealdb/node-linux-x64-gnu@1.0.0-beta.3':
-    optional: true
-
-  '@surrealdb/node-linux-x64-musl@1.0.0-beta.3':
-    optional: true
-
-  '@surrealdb/node-win32-x64-msvc@1.0.0-beta.3':
-    optional: true
-
-  '@surrealdb/node@1.0.0-beta.3(surrealdb@1.3.2(tslib@2.8.1)(typescript@5.9.3)(ws@8.18.3))':
+  '@surrealdb/node@2.3.1(surrealdb@2.0.0-alpha.8(tslib@2.8.1)(typescript@5.9.3))':
     dependencies:
-      surrealdb: 1.3.2(tslib@2.8.1)(typescript@5.9.3)(ws@8.18.3)
-    optionalDependencies:
-      '@surrealdb/node-android-arm64': 1.0.0-beta.3
-      '@surrealdb/node-darwin-arm64': 1.0.0-beta.3
-      '@surrealdb/node-darwin-universal': 1.0.0-beta.3
-      '@surrealdb/node-darwin-x64': 1.0.0-beta.3
-      '@surrealdb/node-linux-arm64-gnu': 1.0.0-beta.3
-      '@surrealdb/node-linux-x64-gnu': 1.0.0-beta.3
-      '@surrealdb/node-linux-x64-musl': 1.0.0-beta.3
-      '@surrealdb/node-win32-x64-msvc': 1.0.0-beta.3
+      surrealdb: 2.0.0-alpha.8(tslib@2.8.1)(typescript@5.9.3)
 
-  '@surrealdb/wasm@1.4.1(surrealdb@1.3.2(tslib@2.8.1)(typescript@5.9.3)(ws@8.18.3))':
+  '@surrealdb/wasm@2.3.1(surrealdb@2.0.0-alpha.8(tslib@2.8.1)(typescript@5.9.3))':
     dependencies:
-      surrealdb: 1.3.2(tslib@2.8.1)(typescript@5.9.3)(ws@8.18.3)
+      surrealdb: 2.0.0-alpha.8(tslib@2.8.1)(typescript@5.9.3)
 
   '@swc/helpers@0.5.17':
     dependencies:
@@ -9929,10 +9848,6 @@ snapshots:
 
   isexe@3.1.1: {}
 
-  isows@1.0.7(ws@8.18.3):
-    dependencies:
-      ws: 8.18.3
-
   jackspeak@3.4.3:
     dependencies:
       '@isaacs/cliui': 8.0.2
@@ -11780,14 +11695,12 @@ snapshots:
 
   supports-preserve-symlinks-flag@1.0.0: {}
 
-  surrealdb@1.3.2(tslib@2.8.1)(typescript@5.9.3)(ws@8.18.3):
+  surrealdb@2.0.0-alpha.8(tslib@2.8.1)(typescript@5.9.3):
     dependencies:
-      isows: 1.0.7(ws@8.18.3)
+      '@surrealdb/cbor': 2.0.0-alpha.4
       tslib: 2.8.1
       typescript: 5.9.3
       uuidv7: 1.0.2
-    transitivePeerDependencies:
-      - ws
 
   svgo@4.0.0:
     dependencies:
