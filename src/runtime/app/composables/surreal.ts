@@ -1,4 +1,4 @@
-import { Surreal } from 'surrealdb'
+import { type AuthProvider, Surreal } from 'surrealdb'
 import { defu } from 'defu'
 
 import type {
@@ -46,18 +46,14 @@ export async function useSurreal<M extends boolean, T extends SurrealDatabaseOpt
       }
     }
 
+    const authentication: AuthProvider = options?.connectOptions?.authentication
+      ? config.connectOptions!.authentication
+      // @ts-expect-error `callHook` is not able to infer the types properly
+      : (await surrealHooks.callHook('surrealdb:authentication', { client, config }) || config.connectOptions?.authentication)
+
     const isConnected = await client.connect(endpoint, {
       ...config.connectOptions,
-      authentication: () => {
-        if (config.connectOptions?.authentication) {
-          return typeof config.connectOptions.authentication === 'function'
-            ? config.connectOptions.authentication()
-            : config.connectOptions.authentication
-        }
-
-        // @ts-expect-error `callHook` is not able to infer the types properly
-        return surrealHooks.callHook('surrealdb:authentication', { client, config })
-      },
+      authentication,
     })
     if (isConnected) {
       await surrealHooks.callHookParallel('surrealdb:connected', { client, config })
