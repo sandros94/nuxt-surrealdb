@@ -8,7 +8,9 @@ import type {
   SurrealServerRuntimeConfig,
   SurrealServerOptions,
 } from '#surrealdb/types'
-import { surrealHooks, useRuntimeConfig } from '#imports'
+import { useRuntimeConfig } from '#imports'
+
+import { surrealHooks } from './surreal-hooks'
 
 // #region internal utils
 

@@ -8,7 +8,9 @@ import type {
   SurrealServerOptions,
 } from '#surrealdb/types'
 import { useNitroApp } from 'nitropack/runtime'
-import { surrealHooks, useRuntimeConfig } from '#imports'
+import { useRuntimeConfig } from '#imports'
+
+import { surrealHooks } from './surreal-hooks'
 
 export interface UseSurrealMemOptions extends SurrealDatabaseOptions {
   mergeConfig?: boolean
