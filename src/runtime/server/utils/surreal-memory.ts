@@ -15,7 +15,7 @@ export interface UseSurrealMemOptions extends SurrealDatabaseOptions {
 }
 
 let client: Surreal | null = null
-export async function useSurrealMem(event?: H3Event, options?: UseSurrealMemOptions): Promise<Surreal> {
+export async function useSurrealMemory(event?: H3Event, options?: UseSurrealMemOptions): Promise<Surreal> {
   const { memory } = useRuntimeConfig(event).surrealdb!
   const { mergeConfig, ...opts } = options || {}
   const config = (mergeConfig !== false

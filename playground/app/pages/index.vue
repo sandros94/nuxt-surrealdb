@@ -58,7 +58,7 @@ const { data: srvLocal } = await useFetch('/api/surreal/node/local')
 
 const mem = ref()
 const local = ref()
-const memClient = await useSurrealMem()
+const memClient = await useSurrealMemory()
 const localClient = await useSurrealLocal()
 
 onNuxtReady(async () => {

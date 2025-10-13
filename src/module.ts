@@ -76,12 +76,18 @@ export default defineNuxtModule<ModuleOptions>({
     if (options.disableWasmEngine !== true && wasmModule === true) {
       imports.push(
         {
-          from: resolve(runtimeDir, 'app', 'composables', 'surreal-memory'),
-          name: 'useSurrealMem',
-        },
-        {
           from: resolve(runtimeDir, 'app', 'composables', 'surreal-local'),
           name: 'useSurrealLocal',
+        },
+        {
+          from: resolve(runtimeDir, 'app', 'composables', 'surreal-memory'),
+          name: 'useSurrealMemory',
+          as: 'useSurrealMemory',
+        },
+        {
+          from: resolve(runtimeDir, 'app', 'composables', 'surreal-memory'),
+          name: 'useSurrealMemory',
+          as: 'useSurrealMem',
         },
       )
       addPlugin(resolve(runtimeDir, 'app', 'plugins', 'memory.server'))
@@ -92,12 +98,18 @@ export default defineNuxtModule<ModuleOptions>({
     if (options.disableNodeEngine !== true && nodeModule === true) {
       serverImports.push(
         {
-          from: resolve(runtimeDir, 'server', 'utils', 'surreal-memory'),
-          name: 'useSurrealMem',
-        },
-        {
           from: resolve(runtimeDir, 'server', 'utils', 'surreal-local'),
           name: 'useSurrealLocal',
+        },
+        {
+          from: resolve(runtimeDir, 'server', 'utils', 'surreal-memory'),
+          name: 'useSurrealMemory',
+          as: 'useSurrealMemory',
+        },
+        {
+          from: resolve(runtimeDir, 'server', 'utils', 'surreal-memory'),
+          name: 'useSurrealMemory',
+          as: 'useSurrealMem',
         },
       )
     }

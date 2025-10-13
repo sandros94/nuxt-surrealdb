@@ -11,7 +11,7 @@ export interface UseSurrealMemOptions extends SurrealDatabaseOptions {
   mergeConfig?: boolean
 }
 
-export async function useSurrealMem(options?: UseSurrealMemOptions): Promise<Surreal | null> {
+export async function useSurrealMemory(options?: UseSurrealMemOptions): Promise<Surreal | null> {
   const {
     $surrealMemory,
     $config: { public: { surrealdb: { memory } = {} } = {} },

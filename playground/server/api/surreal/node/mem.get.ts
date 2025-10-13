@@ -1,5 +1,5 @@
 export default defineEventHandler(async (event) => {
-  const client = await useSurrealMem(event)
+  const client = await useSurrealMemory(event)
 
   // TOTO: SurrealDB in-memory seems to have issues with storing data, but it does not crash
 
