@@ -21,8 +21,8 @@ importers:
         specifier: ^1.0.7
         version: 1.0.7
       surrealdb:
-        specifier: ^2.0.0-alpha.8
-        version: 2.0.0-alpha.8(tslib@2.8.1)(typescript@5.9.3)
+        specifier: ^2.0.0-alpha.9
+        version: 2.0.0-alpha.9(tslib@2.8.1)(typescript@5.9.3)
     devDependencies:
       '@nuxt/devtools':
         specifier: ^2.6.5
@@ -34,11 +34,11 @@ importers:
         specifier: ^1.0.2
         version: 1.0.2(@nuxt/cli@3.29.3(magicast@0.3.5))(@vue/compiler-core@3.5.22)(esbuild@0.25.10)(typescript@5.9.3)(vue-tsc@3.1.1(typescript@5.9.3))(vue@3.5.22(typescript@5.9.3))
       '@surrealdb/node':
-        specifier: ^2.3.1
-        version: 2.3.1(surrealdb@2.0.0-alpha.8(tslib@2.8.1)(typescript@5.9.3))
+        specifier: ^2.3.2
+        version: 2.3.2(surrealdb@2.0.0-alpha.9(tslib@2.8.1)(typescript@5.9.3))
       '@surrealdb/wasm':
-        specifier: ^2.3.1
-        version: 2.3.1(surrealdb@2.0.0-alpha.8(tslib@2.8.1)(typescript@5.9.3))
+        specifier: ^2.3.2
+        version: 2.3.2(surrealdb@2.0.0-alpha.9(tslib@2.8.1)(typescript@5.9.3))
       changelogen:
         specifier: ^0.6.2
         version: 0.6.2(magicast@0.3.5)
@@ -1711,13 +1711,13 @@ packages:
     resolution: {integrity: sha512-l/hNZ3ZCOJq8rzwx1y5ZV/8b2bYCWdhGqRVY33Pu50NAHyAW5qLsMn3ZBkZow77mAKwNCsbDsRGnyYEuU95mjw==}
     engines: {node: '>=18.0.0'}
 
-  '@surrealdb/node@2.3.1':
-    resolution: {integrity: sha512-ezkbf2Cop5qKKVTNKxdEIM7xryr4P3WeXaUQha2CM97HAUJTAnhBEpRIlXOx0G5hunYaMkFwmurQ0VhniqdziA==}
+  '@surrealdb/node@2.3.2':
+    resolution: {integrity: sha512-WJATR6fMjuBLrfvzKZ+8etAku37EdxFF1bTPsCOw91I/YoWRRs6UmvWZryPTHt6wZci3J2op7DYoOwunuebnxw==}
     peerDependencies:
       surrealdb: ^2.0.0-0
 
-  '@surrealdb/wasm@2.3.1':
-    resolution: {integrity: sha512-5nB2AHlyhWJyqkdMIjlr8hjiYG9Z/sv5LfOLfbr2aXkWDijJVj0+UADyWV6+QmqnkaR3FNPt1Fxsyo3jzLyhvg==}
+  '@surrealdb/wasm@2.3.2':
+    resolution: {integrity: sha512-v0G5l/t+p/Wbk8xiyTh7JaLOm2LTuFHSU9FukPjK5eVwIYAxkG2Kkj8urwl1RBJyPeA6VQXuH2DSZgONE+vrcQ==}
     peerDependencies:
       surrealdb: ^2.0.0-0
 
@@ -5097,8 +5097,8 @@ packages:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
     engines: {node: '>= 0.4'}
 
-  surrealdb@2.0.0-alpha.8:
-    resolution: {integrity: sha512-+PAAdLzatp03mlVCpF94YLTrvlS9UyctshajS2FQ2rvw3bLRlla3P2qG2uehpaECV71sSdxtBcLorbBC4Bu94Q==}
+  surrealdb@2.0.0-alpha.9:
+    resolution: {integrity: sha512-TkyGYPu8BlLTp8wLFvDk+h5PA83XZ/UXJtsrpaDBpFXtNHUM2cU8RRvNAij29tafqhxTPWlNiMx6kd8IsbV3dw==}
     peerDependencies:
       tslib: ^2.6.3
       typescript: ^5.0.0
@@ -7689,13 +7689,13 @@ snapshots:
 
   '@surrealdb/cbor@2.0.0-alpha.4': {}
 
-  '@surrealdb/node@2.3.1(surrealdb@2.0.0-alpha.8(tslib@2.8.1)(typescript@5.9.3))':
+  '@surrealdb/node@2.3.2(surrealdb@2.0.0-alpha.9(tslib@2.8.1)(typescript@5.9.3))':
     dependencies:
-      surrealdb: 2.0.0-alpha.8(tslib@2.8.1)(typescript@5.9.3)
+      surrealdb: 2.0.0-alpha.9(tslib@2.8.1)(typescript@5.9.3)
 
-  '@surrealdb/wasm@2.3.1(surrealdb@2.0.0-alpha.8(tslib@2.8.1)(typescript@5.9.3))':
+  '@surrealdb/wasm@2.3.2(surrealdb@2.0.0-alpha.9(tslib@2.8.1)(typescript@5.9.3))':
     dependencies:
-      surrealdb: 2.0.0-alpha.8(tslib@2.8.1)(typescript@5.9.3)
+      surrealdb: 2.0.0-alpha.9(tslib@2.8.1)(typescript@5.9.3)
 
   '@swc/helpers@0.5.17':
     dependencies:
@@ -11695,7 +11695,7 @@ snapshots:
 
   supports-preserve-symlinks-flag@1.0.0: {}
 
-  surrealdb@2.0.0-alpha.8(tslib@2.8.1)(typescript@5.9.3):
+  surrealdb@2.0.0-alpha.9(tslib@2.8.1)(typescript@5.9.3):
     dependencies:
       '@surrealdb/cbor': 2.0.0-alpha.4
       tslib: 2.8.1
