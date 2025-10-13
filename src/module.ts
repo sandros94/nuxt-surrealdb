@@ -70,6 +70,8 @@ export default defineNuxtModule<ModuleOptions>({
     nuxt.options.vite.optimizeDeps ||= {}
     nuxt.options.vite.optimizeDeps.exclude ||= []
     nuxt.options.vite.optimizeDeps.exclude.push('@surrealdb/wasm')
+    nuxt.options.vite.optimizeDeps.include ||= []
+    nuxt.options.vite.optimizeDeps.include.push('surrealdb')
 
     const imports: Import[] = []
     const serverImports: Import[] = []
