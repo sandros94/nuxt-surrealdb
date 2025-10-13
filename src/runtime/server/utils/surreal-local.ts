@@ -31,19 +31,7 @@ export async function useSurrealLocal(event?: H3Event, options?: UseSurrealLocal
   await surrealHooks.callHookParallel('surrealdb:local:init', { client, config })
 
   if (config?.endpoint && config.autoConnect !== false) {
-    await client.connect(config.endpoint, {
-      ...config.connectOptions,
-      authentication: () => {
-        if (config.connectOptions?.authentication) {
-          return typeof config.connectOptions.authentication === 'function'
-            ? config.connectOptions.authentication()
-            : config.connectOptions.authentication
-        }
-
-        // @ts-expect-error `callHook` is not able to infer the types properly
-        return surrealHooks.callHook('surrealdb:local:authentication', { client, config })
-      },
-    })
+    await client.connect(config.endpoint, config.connectOptions)
   }
 
   useNitroApp().hooks.hook('close', async () => {

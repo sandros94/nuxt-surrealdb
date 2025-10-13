@@ -76,10 +76,6 @@ export default defineNuxtModule<ModuleOptions>({
     if (options.disableWasmEngine !== true && wasmModule === true) {
       imports.push(
         {
-          from: resolve(runtimeDir, 'app', 'composables', 'surreal-wasm'),
-          name: 'useSurreal',
-        },
-        {
           from: resolve(runtimeDir, 'app', 'composables', 'surreal-memory'),
           name: 'useSurrealMem',
         },
@@ -93,18 +89,8 @@ export default defineNuxtModule<ModuleOptions>({
       addPlugin(resolve(runtimeDir, 'app', 'plugins', 'local.server'))
       addPlugin(resolve(runtimeDir, 'app', 'plugins', 'local.client'))
     }
-    else {
-      imports.push({
-        from: resolve(runtimeDir, 'app', 'composables', 'surreal'),
-        name: 'useSurreal',
-      })
-    }
     if (options.disableNodeEngine !== true && nodeModule === true) {
       serverImports.push(
-        {
-          from: resolve(runtimeDir, 'server', 'utils', 'surreal-node'),
-          name: 'useSurreal',
-        },
         {
           from: resolve(runtimeDir, 'server', 'utils', 'surreal-memory'),
           name: 'useSurrealMem',
@@ -115,14 +101,16 @@ export default defineNuxtModule<ModuleOptions>({
         },
       )
     }
-    else {
-      serverImports.push({
-        from: resolve(runtimeDir, 'server', 'utils', 'surreal'),
-        name: 'useSurreal',
-      })
-    }
 
     imports.push(
+      {
+        from: resolve(runtimeDir, 'app', 'composables', 'surreal'),
+        name: 'useSurreal',
+      },
+      {
+        from: resolve(runtimeDir, 'app', 'composables', 'surreal-hooks'),
+        name: 'surrealHooks',
+      },
       ...[
         'useSurrealAuth',
         // TODO: rewrite query and select
@@ -136,12 +124,12 @@ export default defineNuxtModule<ModuleOptions>({
         from: resolve(runtimeDir, 'app', 'composables', 'ssr-safe'),
         name: c,
       })),
-      {
-        from: resolve(runtimeDir, 'app', 'composables', 'surreal-hooks'),
-        name: 'surrealHooks',
-      },
     )
     serverImports.push(
+      {
+        from: resolve(runtimeDir, 'server', 'utils', 'surreal'),
+        name: 'useSurreal',
+      },
       {
         from: resolve(runtimeDir, 'server', 'utils', 'surreal-hooks'),
         name: 'surrealHooks',

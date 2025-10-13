@@ -31,19 +31,7 @@ export async function useSurrealMem(options?: UseSurrealMemOptions): Promise<Sur
     await surrealHooks.callHookParallel('surrealdb:memory:init', { client: $surrealMemory, config })
 
     if (config.autoConnect !== false) {
-      await $surrealMemory.connect('mem://', {
-        ...config.connectOptions,
-        authentication: () => {
-          if (config.connectOptions?.authentication) {
-            return typeof config.connectOptions.authentication === 'function'
-              ? config.connectOptions.authentication()
-              : config.connectOptions.authentication
-          }
-
-          // @ts-expect-error `callHook` is not able to infer the types properly
-          return surrealHooks.callHook('surrealdb:memory:authentication', { client: $surrealMemory, config })
-        },
-      })
+      await $surrealMemory.connect('mem://', config.connectOptions)
     }
   }
 

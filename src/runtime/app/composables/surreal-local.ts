@@ -31,19 +31,7 @@ export async function useSurrealLocal(options?: UseSurrealLocalOptions): Promise
     await surrealHooks.callHookParallel('surrealdb:local:init', { client: $surrealLocal, config })
 
     if (config?.endpoint && config.autoConnect !== false) {
-      await $surrealLocal.connect(config.endpoint, {
-        ...config.connectOptions,
-        authentication: () => {
-          if (config.connectOptions?.authentication) {
-            return typeof config.connectOptions.authentication === 'function'
-              ? config.connectOptions.authentication()
-              : config.connectOptions.authentication
-          }
-
-          // @ts-expect-error `callHook` is not able to infer the types properly
-          return surrealHooks.callHook('surrealdb:local:authentication', { client: $surrealLocal, config })
-        },
-      })
+      await $surrealLocal.connect(config.endpoint, config.connectOptions)
     }
   }
 

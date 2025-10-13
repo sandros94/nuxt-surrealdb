@@ -85,8 +85,6 @@ export interface SurrealHooks<T extends SurrealDatabaseOptions = SurrealDatabase
   'surrealdb:memory:init': (args: SurrealModuleHooksArgs<Omit<T, 'endpoint'>>) => void | Promise<void>
   'surrealdb:local:init': (args: SurrealModuleHooksArgs<T>) => void | Promise<void>
   'surrealdb:authentication': (args: SurrealModuleHooksArgs<T>) => AuthOrToken | Promise<AuthOrToken>
-  'surrealdb:memory:authentication': (args: SurrealModuleHooksArgs<Omit<T, 'endpoint'>>) => AuthOrToken | Promise<AuthOrToken>
-  'surrealdb:local:authentication': (args: SurrealModuleHooksArgs<T>) => AuthOrToken | Promise<AuthOrToken>
 }
 
 declare module '#app' {

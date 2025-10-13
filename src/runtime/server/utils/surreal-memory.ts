@@ -31,19 +31,7 @@ export async function useSurrealMem(event?: H3Event, options?: UseSurrealMemOpti
   await surrealHooks.callHookParallel('surrealdb:memory:init', { client, config })
 
   if (config.autoConnect !== false) {
-    await client.connect('mem://', {
-      ...config.connectOptions,
-      authentication: () => {
-        if (config.connectOptions?.authentication) {
-          return typeof config.connectOptions.authentication === 'function'
-            ? config.connectOptions.authentication()
-            : config.connectOptions.authentication
-        }
-
-        // @ts-expect-error `callHook` is not able to infer the types properly
-        return surrealHooks.callHook('surrealdb:memory:authentication', { client, config })
-      },
-    })
+    await client.connect('mem://', config.connectOptions)
   }
 
   useNitroApp().hooks.hook('close', async () => {
