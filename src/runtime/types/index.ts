@@ -47,11 +47,9 @@ export interface SurrealEngineOptions {
 
 export interface SurrealClientOptions extends SurrealDatabaseOptions {
   autoConnect?: boolean
-  wasmEngine?: SurrealEngineOptions
 }
 export interface SurrealServerOptions extends SurrealDatabaseOptions {
   autoConnect?: boolean
-  nodeEngine?: SurrealEngineOptions
 }
 
 export interface ModuleOptions {
@@ -60,12 +58,20 @@ export interface ModuleOptions {
   disableWasmEngine?: boolean
   disableNodeEngine?: boolean
   client?: SurrealClientOptions & {
-    memory?: Omit<SurrealClientOptions, 'endpoint'>
-    local?: SurrealClientOptions
+    memory?: Omit<SurrealClientOptions, 'endpoint'> & {
+      wasmEngine?: SurrealEngineOptions
+    }
+    local?: SurrealClientOptions & {
+      wasmEngine?: SurrealEngineOptions
+    }
   }
   server?: SurrealServerOptions & {
-    memory?: Omit<SurrealServerOptions, 'endpoint'>
-    local?: SurrealServerOptions
+    memory?: Omit<SurrealServerOptions, 'endpoint'> & {
+      nodeEngine?: SurrealEngineOptions
+    }
+    local?: SurrealServerOptions & {
+      nodeEngine?: SurrealEngineOptions
+    }
   }
 }
 

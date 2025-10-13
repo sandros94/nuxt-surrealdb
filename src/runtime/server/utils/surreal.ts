@@ -4,7 +4,6 @@ import { defu } from 'defu'
 
 import type {
   SurrealDatabaseOptions,
-  SurrealEngineOptions,
   SurrealServerRuntimeConfig,
   SurrealServerOptions,
 } from '#surrealdb/types'
@@ -12,18 +11,9 @@ import { useRuntimeConfig } from '#imports'
 
 import { surrealHooks } from './surreal-hooks'
 
-// #region internal utils
-
-function createClient(_config?: SurrealEngineOptions): Surreal {
-  return new Surreal()
-}
-
-// #endregion internal utils
-
 // #region public composable
 
 export type UseSurrealOptions<M extends boolean, T extends SurrealDatabaseOptions = SurrealDatabaseOptions> = {
-  nodeEngine?: SurrealEngineOptions
   mergeConfig?: M
   preferHttp?: boolean
   autoConnect?: boolean
@@ -47,11 +37,11 @@ export async function useSurreal<M extends boolean, T extends SurrealDatabaseOpt
     surrealdb: srvSurrealdb,
   } = useRuntimeConfig(event)
 
-  const { nodeEngine, ...config } = (mergeConfig !== false
+  const config = (mergeConfig !== false
     ? defu(_options, srvSurrealdb, pubSurrealdb)
     : _options) as T & SurrealServerOptions
 
-  const client = createClient(nodeEngine)
+  const client = new Surreal()
 
   await surrealHooks.callHookParallel('surrealdb:init', { client, config, event })
 

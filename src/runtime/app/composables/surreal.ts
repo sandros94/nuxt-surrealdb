@@ -3,24 +3,14 @@ import { defu } from 'defu'
 
 import type {
   SurrealDatabaseOptions,
-  SurrealEngineOptions,
   SurrealClientRuntimeConfig,
   SurrealClientOptions,
 } from '#surrealdb/types'
 import { surrealHooks, onBeforeUnmount, useRuntimeConfig } from '#imports'
 
-// #region internal utils
-
-function createClient(_config?: SurrealEngineOptions): Surreal {
-  return new Surreal()
-}
-
-// #endregion internal utils
-
 // #region public composable
 
 export type UseSurrealOptions<M extends boolean, T extends SurrealDatabaseOptions = SurrealDatabaseOptions> = {
-  wasmEngine?: SurrealEngineOptions
   mergeConfig?: M
   preferHttp?: boolean
   autoConnect?: boolean
@@ -34,11 +24,11 @@ export async function useSurreal<M extends boolean, T extends SurrealDatabaseOpt
   const { mergeConfig, preferHttp, ..._options } = options || {}
   const { surrealdb } = useRuntimeConfig().public
 
-  const { wasmEngine, ...config } = (mergeConfig !== false
+  const config = (mergeConfig !== false
     ? defu(_options, surrealdb)
     : _options) as T & SurrealClientOptions
 
-  const client = createClient(wasmEngine)
+  const client = new Surreal()
 
   onBeforeUnmount(() => {
     client.close().catch(() => {})
