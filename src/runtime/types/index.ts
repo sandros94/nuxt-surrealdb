@@ -3,6 +3,8 @@ import type { ConnectOptions, Surreal, AuthOrToken } from 'surrealdb'
 
 /* Helper Types */
 
+export type MaybePromise<T> = T | Promise<T>
+
 export type ParseType<T> = {
   [K in keyof T]: T[K];
 } & {}
@@ -53,7 +55,8 @@ export interface SurrealServerOptions extends SurrealDatabaseOptions {
 }
 
 export interface ModuleOptions {
-  autoImports?: boolean
+  autoImport?: boolean
+  autoImportExpressions?: boolean
   disableWasmEngine?: boolean
   disableNodeEngine?: boolean
   client?: SurrealClientOptions & {
@@ -81,10 +84,10 @@ interface SurrealModuleHooksArgs<T extends SurrealDatabaseOptions = SurrealDatab
 }
 
 export interface SurrealHooks<T extends SurrealDatabaseOptions = SurrealDatabaseOptions, E = {}> {
-  'surrealdb:init': (args: ParseType<SurrealModuleHooksArgs<T> & E>) => void | Promise<void>
-  'surrealdb:memory:init': (args: ParseType<SurrealModuleHooksArgs<Omit<T, 'endpoint'>> & E>) => void | Promise<void>
-  'surrealdb:local:init': (args: ParseType<SurrealModuleHooksArgs<T> & E>) => void | Promise<void>
-  'surrealdb:authentication': (args: ParseType<SurrealModuleHooksArgs<T> & E>) => AuthOrToken | Promise<AuthOrToken>
+  'surrealdb:init': (args: ParseType<SurrealModuleHooksArgs<T> & E>) => MaybePromise<void>
+  'surrealdb:memory:init': (args: ParseType<SurrealModuleHooksArgs<Omit<T, 'endpoint'>> & E>) => MaybePromise<void>
+  'surrealdb:local:init': (args: ParseType<SurrealModuleHooksArgs<T> & E>) => MaybePromise<void>
+  'surrealdb:authentication': (args: ParseType<SurrealModuleHooksArgs<T> & E>) => MaybePromise<AuthOrToken>
 }
 
 declare module '#app' {

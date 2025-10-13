@@ -129,8 +129,7 @@ export default defineNuxtModule<ModuleOptions>({
         'useSurrealImport',
         'useSurrealQuery',
         'useSurrealRun',
-        // TODO: rewrite select
-        // 'useSurrealSelect',
+        'useSurrealSelect',
         'useSurrealVersion',
       ].map(c => ({
         from: resolve(runtimeDir, 'app', 'composables', 'ssr-safe'),
@@ -152,7 +151,7 @@ export default defineNuxtModule<ModuleOptions>({
     addServerImports(serverImports)
     addServerPlugin(resolve(runtimeDir, 'server', 'plugins', 'clear'))
 
-    if (options.autoImports !== false) {
+    if (options.autoImport !== false) {
       const names = [
         'Uuid',
         'RecordId',
@@ -183,6 +182,41 @@ export default defineNuxtModule<ModuleOptions>({
           name: n,
         })),
       )
+      if (options.autoImportExpressions) {
+        const exprNames = [
+          'expr',
+          'raw',
+          'eq',
+          'eeq',
+          'gt',
+          'gte',
+          'lt',
+          'lte',
+          'contains',
+          'containsAll',
+          'containsAny',
+          'containsNone',
+          'inside',
+          'outside',
+          'intersects',
+          'matches',
+          'knn',
+          'between',
+          'and',
+          'or',
+          'not',
+        ]
+        addImportsSources({
+          from: 'surrealdb',
+          imports: exprNames,
+        })
+        addServerImports(
+          exprNames.map(n => ({
+            from: 'surrealdb',
+            name: n,
+          })),
+        )
+      }
       // TODO: add types auto-import
     }
   },

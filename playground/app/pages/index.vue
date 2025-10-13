@@ -47,7 +47,7 @@
 </template>
 
 <script setup lang="ts">
-const { data } = await useSurrealQuery('SELECT * FROM test')
+const { data } = await useSurrealSelect(new Table('test'), select => select.where(eq('payload', 'ciao')))
 const { data: srv } = await useFetch('/api/surreal/fetch')
 const { data: srvMem } = await useFetch('/api/surreal/node/mem')
 const { data: srvLocal } = await useFetch('/api/surreal/node/local')

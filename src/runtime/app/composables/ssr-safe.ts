@@ -2,6 +2,12 @@ import { Surreal } from 'surrealdb'
 import type {
   RecordResult,
   Jsonify,
+  Table,
+  RecordId,
+  RecordIdRange,
+  Duration,
+  DateTime,
+  ExprLike,
   VersionInfo,
   SqlExportOptions,
 } from 'surrealdb'
@@ -20,7 +26,8 @@ import { type MaybeRef, toRef, useSurreal, useAsyncData } from '#imports'
 
 // Surreal types
 
-type R = ParseType<Record<string, unknown>>
+type Field<I> = keyof I | (string & {})
+type Doc = ParseType<Record<string, unknown>>
 type MaybeJsonify<T, J extends boolean> = J extends true ? Jsonify<T> : T
 type Collect<T extends unknown[], J extends boolean> = T extends []
   ? unknown[]
@@ -54,7 +61,7 @@ export type UseSurrealOptions<M extends boolean, T extends SurrealDatabaseOption
 // #region useSurrealAuth
 
 export async function useSurrealAuth<
-  T extends R,
+  T extends Doc,
   ErrorT,
   M extends boolean,
   TOptions extends SurrealDatabaseOptions = SurrealDatabaseOptions,
@@ -222,6 +229,114 @@ export async function useSurrealRun<
 }
 
 // #endregion useSurrealRun
+
+// #region useSurrealSelect
+
+interface _UseSurrealSelectPromise<T, I> {
+  /**
+   * Configure the query to only select the specified field(s)
+   */
+  fields(...fields: Field<I>[]): _UseSurrealSelectPromise<T, I>
+  /**
+   * Configure the query to retrieve the value of the specified field
+   */
+  value(field: Field<I>): _UseSurrealSelectPromise<T, I>
+  /**
+   * Configure the query to start at the specified index
+   */
+  start(start: number): _UseSurrealSelectPromise<T, I>
+  /**
+   * Configure the query to limit the number of results
+   */
+  limit(limit: number): _UseSurrealSelectPromise<T, I>
+  /**
+   * Configure the query to fetch only records that match the condition.
+   *
+   * Expressions can be imported from the `surrealdb` package and combined
+   * to compose the desired condition.
+   *
+   * @see {@link https://github.com/surrealdb/surrealdb.js/blob/main/packages/sdk/src/utils/expr.ts}
+   */
+  where(expr: ExprLike): _UseSurrealSelectPromise<T, I>
+  /**
+   * Configure the query to fetch record link contents for the specified field(s)
+   */
+  fetch(...fields: Field<I>[]): _UseSurrealSelectPromise<T, I>
+  /**
+   * Configure the timeout of the query
+   */
+  timeout(timeout: Duration): _UseSurrealSelectPromise<T, I>
+  /**
+   * Configure a custom version of the data being created. This is used
+   * alongside version enabled storage engines such as SurrealKV.
+   */
+  version(version: DateTime): _UseSurrealSelectPromise<T, I>
+}
+
+export type UseSurrealSelectPromise<T, I> = (select: _UseSurrealSelectPromise<T, I>) => _UseSurrealSelectPromise<T, I>
+
+export async function useSurrealSelect<
+  T extends Doc,
+  ErrorT,
+  M extends boolean,
+  TOptions extends SurrealDatabaseOptions = SurrealDatabaseOptions,
+  DefaultT = undefined,
+>(
+  tableOrRecord: RecordId,
+  select?: UseSurrealSelectPromise<RecordResult<T>, T>,
+  asyncDataOptions?: _AsyncDataOptions<Jsonify<RecordResult<T>>, DefaultT> & {
+    key?: string
+  },
+  clientOrOptions?: Surreal | UseSurrealOptions<M, TOptions>,
+): Promise<_AsyncData<Jsonify<RecordResult<T>>, ErrorT, DefaultT>>
+export async function useSurrealSelect<
+  T extends Doc,
+  ErrorT,
+  M extends boolean,
+  TOptions extends SurrealDatabaseOptions = SurrealDatabaseOptions,
+  DefaultT = undefined,
+>(
+  tableOrRecord: Table | RecordIdRange,
+  select?: UseSurrealSelectPromise<RecordResult<T>[], T>,
+  asyncDataOptions?: _AsyncDataOptions<Jsonify<RecordResult<T>[]>, DefaultT> & {
+    key?: string
+  },
+  clientOrOptions?: Surreal | UseSurrealOptions<M, TOptions>,
+): Promise<_AsyncData<Jsonify<RecordResult<T>[]>, ErrorT, DefaultT>>
+export async function useSurrealSelect<
+  T extends Doc,
+  ErrorT,
+  M extends boolean,
+  TOptions extends SurrealDatabaseOptions = SurrealDatabaseOptions,
+  DefaultT = undefined,
+>(
+  tableOrRecord: RecordId | Table | RecordIdRange,
+  select?: UseSurrealSelectPromise<RecordResult<T>, T> | UseSurrealSelectPromise<RecordResult<T>[], T>,
+  asyncDataOptions?: _AsyncDataOptions<Jsonify<RecordResult<T>>, DefaultT> & {
+    key?: string
+  } | _AsyncDataOptions<Jsonify<RecordResult<T>[]>, DefaultT> & {
+    key?: string
+  },
+  clientOrOptions?: Surreal | UseSurrealOptions<M, TOptions>,
+): Promise<_AsyncData<Jsonify<RecordResult<T>> | Jsonify<RecordResult<T>[]>, ErrorT, DefaultT>> {
+  const { key = `surreal:run:${tableOrRecord.toString()}`, ...restOptions } = asyncDataOptions || {}
+
+  return useAsyncData(
+    key,
+    async () => {
+      const client = await getClient(clientOrOptions)
+      const _select = client.select<T>(tableOrRecord as any)
+
+      return await (select ? (select(_select) as any) : _select).json()
+    },
+    {
+      ...restOptions,
+      watch: [...(restOptions?.watch || []), () => tableOrRecord],
+    } as any,
+  ) as any
+}
+
+// #endregion useSurrealSelect
 
 // #region useSurrealVersion
 
