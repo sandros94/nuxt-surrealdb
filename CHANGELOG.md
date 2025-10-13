@@ -1,6 +1,22 @@
 # Changelog
 
 
+## v0.5.0-alpha.3
+
+[compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.5.0-alpha.2...v0.5.0-alpha.3)
+
+### 🚀 Enhancements
+
+- SurrealDB SDK v2 Alpha ([#23](https://github.com/sandros94/nuxt-surrealdb/pull/23))
+
+### 🩹 Fixes
+
+- Missing `event` in Nitro-side hooks ([2c79490](https://github.com/sandros94/nuxt-surrealdb/commit/2c79490))
+
+### ❤️ Contributors
+
+- Sandro Circi ([@sandros94](https://github.com/sandros94))
+
 ## v0.5.0-alpha.2
 
 [compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.5.0-alpha.1...v0.5.0-alpha.2)
