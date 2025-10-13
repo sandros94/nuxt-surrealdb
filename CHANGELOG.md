@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v0.5.0-alpha.5
+
+[compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.5.0-alpha.4...v0.5.0-alpha.5)
+
+### 🚀 Enhancements
+
+- Add `surrealdb*:connected` hooks ([5114563](https://github.com/sandros94/nuxt-surrealdb/commit/5114563))
+
+### ❤️ Contributors
+
+- Sandro Circi ([@sandros94](https://github.com/sandros94))
+
 ## v0.5.0-alpha.4
 
 [compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.5.0-alpha.3...v0.5.0-alpha.4)
