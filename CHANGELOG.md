@@ -1,6 +1,27 @@
 # Changelog
 
 
+## v0.5.0-alpha.7
+
+[compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.5.0-alpha.6...v0.5.0-alpha.7)
+
+### 🚀 Enhancements
+
+- Hook into SDK event system ([2e94af0](https://github.com/sandros94/nuxt-surrealdb/commit/2e94af0))
+
+### 🩹 Fixes
+
+- Explicit use `createRemoteEngines` ([3b89c7d](https://github.com/sandros94/nuxt-surrealdb/commit/3b89c7d))
+
+### 🏡 Chore
+
+- Update deps and pin surrealdb alpha ([839d169](https://github.com/sandros94/nuxt-surrealdb/commit/839d169))
+- Update playground deps ([5e8d428](https://github.com/sandros94/nuxt-surrealdb/commit/5e8d428))
+
+### ❤️ Contributors
+
+- Sandro Circi ([@sandros94](https://github.com/sandros94))
+
 ## v0.5.0-alpha.6
 
 [compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.5.0-alpha.5...v0.5.0-alpha.6)
