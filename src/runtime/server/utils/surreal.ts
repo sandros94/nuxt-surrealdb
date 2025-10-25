@@ -7,7 +7,7 @@ import type {
   SurrealServerRuntimeConfig,
   SurrealServerOptions,
 } from '#surrealdb/types'
-import { useRuntimeConfig } from '#imports'
+import { useNitroApp, useRuntimeConfig } from '#imports'
 
 import { surrealHooks } from './surreal-hooks'
 
@@ -45,6 +45,63 @@ export async function useSurreal<M extends boolean, T extends SurrealDatabaseOpt
     engines: createRemoteEngines(),
   })
 
+  // Event Hooks
+  const unsubConnecting = client.subscribe('connecting', async () => {
+    await surrealHooks.callHookParallel('surrealdb:connecting', { client, config, event })
+  })
+  // Not used in favor 'surrealdb:connected' manual hook (which makes queries wait for hook to finish)
+  // const unsubConnected = client.subscribe('connected', async () => {
+  //   await surrealHooks.callHookParallel('surrealdb:connected', { client, config, event })
+  // })
+  const unsubReconnecting = client.subscribe('reconnecting', async () => {
+    await surrealHooks.callHookParallel('surrealdb:reconnecting', { client, config, event })
+  })
+  const unsubAuthenticated = client.subscribe('authenticated', async (token) => {
+    await surrealHooks.callHookParallel('surrealdb:authenticated', { client, config, event, token })
+  })
+  const unsubDisconnected = client.subscribe('disconnected', async () => {
+    await surrealHooks.callHookParallel('surrealdb:disconnected', { client, config, event })
+  })
+  const unsubError = client.subscribe('error', async (error) => {
+    await surrealHooks.callHookParallel('surrealdb:error', { client, config, event, error })
+  })
+  const unsubInvalidated = client.subscribe('invalidated', async () => {
+    await surrealHooks.callHookParallel('surrealdb:invalidated', { client, config, event })
+  })
+  const unsubUsing = client.subscribe('using', async ({ namespace, database }) => {
+    await surrealHooks.callHookParallel('surrealdb:using', { client, config, event, namespace, database })
+  })
+
+  const { hooks } = useNitroApp()
+  hooks.hook('afterResponse', async (event) => {
+    if (event.context.surrealdb) {
+      const client = event.context.surrealdb.client
+      unsubConnecting()
+      // unsubConnected()
+      unsubReconnecting()
+      unsubAuthenticated()
+      unsubDisconnected()
+      unsubError()
+      unsubInvalidated()
+      unsubUsing()
+      await client.close()
+      event.context.surrealdb = undefined
+    }
+  })
+  hooks.hook('close', async () => {
+    if (client !== null) {
+      unsubConnecting()
+      // unsubConnected()
+      unsubReconnecting()
+      unsubAuthenticated()
+      unsubDisconnected()
+      unsubError()
+      unsubInvalidated()
+      unsubUsing()
+      await client.close()
+    }
+  })
+
   await surrealHooks.callHookParallel('surrealdb:init', { client, config, event })
 
   if (config.endpoint && config.autoConnect !== false) {
@@ -58,7 +115,7 @@ export async function useSurreal<M extends boolean, T extends SurrealDatabaseOpt
     const authentication: AuthProvider = options?.connectOptions?.authentication
       ? config.connectOptions!.authentication
       // @ts-expect-error `callHook` is not able to infer the types properly
-      : (await surrealHooks.callHook('surrealdb:authentication', { client, config }) || config.connectOptions?.authentication)
+      : (await surrealHooks.callHook('surrealdb:init:authentication', { client, config }) || config.connectOptions?.authentication)
 
     const isConnected = await client.connect(endpoint, {
       ...config.connectOptions,

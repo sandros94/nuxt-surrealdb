@@ -21,21 +21,57 @@ export async function useSurrealMemory(event?: H3Event, options?: UseSurrealMemO
   if (client !== null) {
     return client
   }
+
   const { memory } = useRuntimeConfig(event).surrealdb!
-  client = new Surreal({
-    engines: createNodeEngines(memory?.nodeEngine),
-  })
-
-  useNitroApp().hooks.hook('close', async () => {
-    if (client !== null) {
-      await client.close()
-    }
-  })
-
   const { mergeConfig, ...opts } = options || {}
   const config = (mergeConfig !== false
     ? defu(opts, memory)
     : opts) as SurrealServerOptions
+
+  client = new Surreal({
+    engines: createNodeEngines(memory?.nodeEngine),
+  })
+
+  // Event Hooks
+  const unsubConnecting = client.subscribe('connecting', async () => {
+    await surrealHooks.callHookParallel('surrealdb:memory:connecting', { client: client!, config, event })
+  })
+  // Not used in favor 'surrealdb:connected' manual hook (which makes queries wait for hook to finish)
+  // const unsubConnected = client.subscribe('connected', async () => {
+  //   await surrealHooks.callHookParallel('surrealdb:memory:connected', { client: client!, config, event })
+  // })
+  const unsubReconnecting = client.subscribe('reconnecting', async () => {
+    await surrealHooks.callHookParallel('surrealdb:memory:reconnecting', { client: client!, config, event })
+  })
+  const unsubAuthenticated = client.subscribe('authenticated', async (token) => {
+    await surrealHooks.callHookParallel('surrealdb:memory:authenticated', { client: client!, config, event, token })
+  })
+  const unsubDisconnected = client.subscribe('disconnected', async () => {
+    await surrealHooks.callHookParallel('surrealdb:memory:disconnected', { client: client!, config, event })
+  })
+  const unsubError = client.subscribe('error', async (error) => {
+    await surrealHooks.callHookParallel('surrealdb:memory:error', { client: client!, config, event, error })
+  })
+  const unsubInvalidated = client.subscribe('invalidated', async () => {
+    await surrealHooks.callHookParallel('surrealdb:memory:invalidated', { client: client!, config, event })
+  })
+  const unsubUsing = client.subscribe('using', async ({ namespace, database }) => {
+    await surrealHooks.callHookParallel('surrealdb:memory:using', { client: client!, config, event, namespace, database })
+  })
+
+  useNitroApp().hooks.hook('close', async () => {
+    if (client !== null) {
+      unsubConnecting()
+      // unsubConnected()
+      unsubReconnecting()
+      unsubAuthenticated()
+      unsubDisconnected()
+      unsubError()
+      unsubInvalidated()
+      unsubUsing()
+      await client.close()
+    }
+  })
 
   try {
     await surrealHooks.callHookParallel('surrealdb:memory:init', { client, config, event })
