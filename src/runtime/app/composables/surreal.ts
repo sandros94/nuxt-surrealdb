@@ -1,4 +1,4 @@
-import { type AuthProvider, Surreal } from 'surrealdb'
+import { type AuthProvider, Surreal, createRemoteEngines } from 'surrealdb'
 import { defu } from 'defu'
 
 import type {
@@ -28,7 +28,9 @@ export async function useSurreal<M extends boolean, T extends SurrealDatabaseOpt
     ? defu(_options, surrealdb)
     : _options) as T & SurrealClientOptions
 
-  const client = new Surreal()
+  const client = new Surreal({
+    engines: createRemoteEngines(),
+  })
 
   onBeforeUnmount(() => {
     client.close().catch(() => {})

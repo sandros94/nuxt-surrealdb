@@ -1,4 +1,4 @@
-import { type AuthProvider, Surreal } from 'surrealdb'
+import { type AuthProvider, Surreal, createRemoteEngines } from 'surrealdb'
 import type { H3Event } from 'h3'
 import { defu } from 'defu'
 
@@ -41,7 +41,9 @@ export async function useSurreal<M extends boolean, T extends SurrealDatabaseOpt
     ? defu(_options, srvSurrealdb, pubSurrealdb)
     : _options) as T & SurrealServerOptions
 
-  const client = new Surreal()
+  const client = new Surreal({
+    engines: createRemoteEngines(),
+  })
 
   await surrealHooks.callHookParallel('surrealdb:init', { client, config, event })
 
