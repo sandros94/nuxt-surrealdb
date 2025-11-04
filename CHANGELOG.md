@@ -1,6 +1,22 @@
 # Changelog
 
 
+## v0.5.0-alpha.9
+
+[compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.5.0-alpha.8...v0.5.0-alpha.9)
+
+### 🩹 Fixes
+
+- Connection logic in ssr-safe composables ([069335a](https://github.com/sandros94/nuxt-surrealdb/commit/069335a))
+
+### 💅 Refactors
+
+- Rename init hook and improve performance ([00d3bcc](https://github.com/sandros94/nuxt-surrealdb/commit/00d3bcc))
+
+### ❤️ Contributors
+
+- Sandro Circi ([@sandros94](https://github.com/sandros94))
+
 ## v0.5.0-alpha.8
 
 [compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.5.0-alpha.7...v0.5.0-alpha.8)
