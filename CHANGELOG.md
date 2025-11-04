@@ -1,6 +1,22 @@
 # Changelog
 
 
+## v0.5.0-alpha.8
+
+[compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.5.0-alpha.7...v0.5.0-alpha.8)
+
+### 🩹 Fixes
+
+- Improve init hook customization and execution; parallelize plugins ([ac2c62b](https://github.com/sandros94/nuxt-surrealdb/commit/ac2c62b))
+
+### 🏡 Chore
+
+- Update sdk `2.0.0-alpha.11` ([#25](https://github.com/sandros94/nuxt-surrealdb/pull/25))
+
+### ❤️ Contributors
+
+- Sandro Circi ([@sandros94](https://github.com/sandros94))
+
 ## v0.5.0-alpha.7
 
 [compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.5.0-alpha.6...v0.5.0-alpha.7)
