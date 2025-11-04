@@ -5,6 +5,7 @@ import { defineNuxtPlugin } from '#imports'
 export default defineNuxtPlugin({
   name: 'surrealdb:local',
   enforce: 'pre',
+  parallel: true,
   setup() {
     return {
       provide: {

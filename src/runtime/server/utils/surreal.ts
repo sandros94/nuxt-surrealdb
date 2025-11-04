@@ -6,6 +6,9 @@ import { useNitroApp, useRuntimeConfig } from '#imports'
 
 import { surrealHooks } from './surreal-hooks'
 
+import type {
+  SurrealServerOptions,
+} from '#surrealdb/types'
 import {
   H3_CONTEXT_SURREAL_CLIENT,
 } from '#surrealdb/internal'
@@ -34,21 +37,18 @@ export async function useSurreal(event?: H3Event | undefined): Promise<Surreal |
     } = {},
   } = useRuntimeConfig(event)
 
-  async function getClient() {
-    if (!client) {
-      client = new Surreal({
-        engines: createRemoteEngines(),
-      })
-    }
-    return client
+  let config: (SurrealServerOptions & { preferHttp?: boolean }) | undefined = undefined
+  if (!client) {
+    client = new Surreal({
+      engines: createRemoteEngines(),
+    })
+
+    config = defu(srvSurrealdb, pubSurrealdb)
+    await surrealHooks.callHookParallel('surrealdb:init', { client, config })
   }
 
-  const _client = await getClient()
-
-  if (!_client.isConnected) {
-    const config = defu(srvSurrealdb, pubSurrealdb)
-
-    await surrealHooks.callHookParallel('surrealdb:init', { client: _client })
+  if (!client.isConnected) {
+    config ||= defu(srvSurrealdb, pubSurrealdb)
 
     if (config.endpoint && config.autoConnect !== false) {
       let endpoint = config.endpoint
@@ -58,27 +58,27 @@ export async function useSurreal(event?: H3Event | undefined): Promise<Surreal |
         endpoint = endpoint.replace(/^ws/, 'http')
       }
 
-      const isConnected = await _client.connect(endpoint, config.connectOptions)
+      const isConnected = await client.connect(endpoint, config.connectOptions)
       if (isConnected) {
-        await surrealHooks.callHookParallel('surrealdb:connected', { client: _client })
+        await surrealHooks.callHookParallel('surrealdb:connected', { client })
       }
     }
   }
 
   if (!event) {
-    return _client
+    return client
   }
 
-  if (!_client.isFeatureSupported(Features.Sessions)) {
+  if (!client.isFeatureSupported(Features.Sessions)) {
     // TODO: throw error once a stable v2 is released
     console.warn('[nuxt-surrealdb] Sessions are not supported by the connected SurrealDB instance.')
-    return _client
+    return client
   }
 
-  const session = await _client[srvSurrealdb.session === 'fork' ? 'forkSession' : 'newSession']()
+  const session = await client[srvSurrealdb.session === 'fork' ? 'forkSession' : 'newSession']()
   event.context.surrealdb = session
 
-  await surrealHooks.callHookParallel('surrealdb:session:init', { client: session, event })
+  await surrealHooks.callHookParallel('surrealdb:session:init', { session, event })
 
   hooks.hook('afterResponse', async (event) => {
     if (event.context[H3_CONTEXT_SURREAL_CLIENT]) {

@@ -18,21 +18,17 @@ export async function useSurreal(): Promise<Surreal> {
     },
   } = useNuxtApp()
 
-  if (!$surreal.isConnected) {
-    await surrealHooks.callHookParallel('surrealdb:init', { client: $surreal })
+  if (!$surreal.isConnected && config.endpoint && config.autoConnect !== false) {
+    let endpoint = config.endpoint
 
-    if (config.endpoint && config.autoConnect !== false) {
-      let endpoint = config.endpoint
+    // prefer http during server-side rendering
+    if (import.meta.server && config.preferHttp !== false) {
+      endpoint = endpoint.replace(/^ws/, 'http')
+    }
 
-      // prefer http during server-side rendering
-      if (import.meta.server && config.preferHttp !== false) {
-        endpoint = endpoint.replace(/^ws/, 'http')
-      }
-
-      const isConnected = await $surreal.connect(endpoint, config.connectOptions)
-      if (isConnected) {
-        await surrealHooks.callHookParallel('surrealdb:connected', { client: $surreal })
-      }
+    const isConnected = await $surreal.connect(endpoint, config.connectOptions)
+    if (isConnected) {
+      await surrealHooks.callHookParallel('surrealdb:connected', { client: $surreal })
     }
   }
 

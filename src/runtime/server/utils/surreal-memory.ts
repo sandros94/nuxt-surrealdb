@@ -21,46 +21,42 @@ export async function useSurrealMemory(event?: H3Event | undefined): Promise<Sur
   }
 
   const { hooks } = useNitroApp()
-  const { surrealdb } = useRuntimeConfig(event)
-  const { memory } = surrealdb || {}
-  const { nodeEngine, ...config } = memory || {}
+  const { surrealdb: {
+    memory: {
+      nodeEngine,
+      ...config
+    } = {},
+  } = {} } = useRuntimeConfig(event)
 
-  async function getClient() {
-    if (!client) {
-      client = new Surreal({
-        engines: createNodeEngines(nodeEngine),
-      })
-    }
-    return client
+  if (!client) {
+    client = new Surreal({
+      engines: createNodeEngines(nodeEngine),
+    })
+
+    await surrealHooks.callHookParallel('surrealdb:memory:init', { client, config })
   }
 
-  const _client = await getClient()
-
-  if (!_client.isConnected) {
-    await surrealHooks.callHookParallel('surrealdb:memory:init', { client: _client })
-
-    if (config.autoConnect !== false) {
-      const isConnected = await _client.connect('mem://', config.connectOptions)
-      if (isConnected) {
-        await surrealHooks.callHookParallel('surrealdb:memory:connected', { client: _client })
-      }
+  if (!client.isConnected && config.autoConnect !== false) {
+    const isConnected = await client.connect('mem://', config.connectOptions)
+    if (isConnected) {
+      await surrealHooks.callHookParallel('surrealdb:memory:connected', { client })
     }
   }
 
   if (!event) {
-    return _client
+    return client
   }
 
-  if (!_client.isFeatureSupported(Features.Sessions)) {
+  if (!client.isFeatureSupported(Features.Sessions)) {
     // TODO: throw error once a stable v2 is released
     console.warn('[nuxt-surrealdb] Sessions are not supported by this SurrealDB Node engine.')
-    return _client
+    return client
   }
 
-  const session = await _client[config.session === 'fork' ? 'forkSession' : 'newSession']()
+  const session = await client[config.session === 'fork' ? 'forkSession' : 'newSession']()
   event.context.surrealdb = session
 
-  await surrealHooks.callHookParallel('surrealdb:memory:session:init', { client: session, event })
+  await surrealHooks.callHookParallel('surrealdb:memory:session:init', { session, event })
 
   hooks.hook('afterResponse', async (event) => {
     if (event.context[H3_CONTEXT_SURREAL_MEMORY]) {

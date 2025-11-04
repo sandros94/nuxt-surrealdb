@@ -5,7 +5,7 @@ import { surrealHooks, useNuxtApp } from '#imports'
 export async function useSurrealMemory(): Promise<Surreal | null> {
   const {
     $surrealMemory,
-    $config: { public: { surrealdb: { memory: config } = {} } = {} },
+    $config: { public: { surrealdb: { memory: { wasmEngine, ...config } = {} } = {} } = {} },
   } = useNuxtApp()
 
   if ($surrealMemory === null) {
@@ -13,8 +13,6 @@ export async function useSurrealMemory(): Promise<Surreal | null> {
   }
 
   if (!$surrealMemory.isConnected) {
-    await surrealHooks.callHookParallel('surrealdb:memory:init', { client: $surrealMemory })
-
     if (config?.autoConnect !== false) {
       const isConnected = await $surrealMemory.connect('mem://', config?.connectOptions)
       if (isConnected) {

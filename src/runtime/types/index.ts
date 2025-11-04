@@ -104,14 +104,14 @@ declare module '@nuxt/schema' {
   }
 }
 
-export interface SurrealHooks {
-  'surrealdb:init': (args: { client: Surreal }) => MaybePromise<void>
+export interface SurrealHooks<T extends SurrealClientOptions | SurrealServerOptions> {
+  'surrealdb:init': (args: { client: Surreal, config: T }) => MaybePromise<void>
   'surrealdb:connected': (args: { client: Surreal }) => MaybePromise<void>
 
-  'surrealdb:memory:init': (args: { client: Surreal }) => MaybePromise<void>
+  'surrealdb:memory:init': (args: { client: Surreal, config: T }) => MaybePromise<void>
   'surrealdb:memory:connected': (args: { client: Surreal }) => MaybePromise<void>
 
-  'surrealdb:local:init': (args: { client: Surreal }) => MaybePromise<void>
+  'surrealdb:local:init': (args: { client: Surreal, config: T }) => MaybePromise<void>
   'surrealdb:local:connected': (args: { client: Surreal }) => MaybePromise<void>
 }
 
