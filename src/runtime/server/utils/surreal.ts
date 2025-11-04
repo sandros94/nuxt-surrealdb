@@ -6,9 +6,6 @@ import { useNitroApp, useRuntimeConfig } from '#imports'
 
 import { surrealHooks } from './surreal-hooks'
 
-import type {
-  SurrealServerOptions,
-} from '#surrealdb/types'
 import {
   H3_CONTEXT_SURREAL_CLIENT,
 } from '#surrealdb/internal'
@@ -37,18 +34,15 @@ export async function useSurreal(event?: H3Event | undefined): Promise<Surreal |
     } = {},
   } = useRuntimeConfig(event)
 
-  let config: (SurrealServerOptions & { preferHttp?: boolean }) | undefined = undefined
   if (!client) {
     client = new Surreal({
       engines: createRemoteEngines(),
     })
-
-    config = defu(srvSurrealdb, pubSurrealdb)
-    await surrealHooks.callHookParallel('surrealdb:init', { client, config })
   }
 
   if (!client.isConnected) {
-    config ||= defu(srvSurrealdb, pubSurrealdb)
+    const config = defu(srvSurrealdb, pubSurrealdb)
+    await surrealHooks.callHookParallel('surrealdb:connecting', { client, config })
 
     if (config.endpoint && config.autoConnect !== false) {
       let endpoint = config.endpoint

@@ -32,14 +32,16 @@ export async function useSurrealMemory(event?: H3Event | undefined): Promise<Sur
     client = new Surreal({
       engines: createNodeEngines(nodeEngine),
     })
-
-    await surrealHooks.callHookParallel('surrealdb:memory:init', { client, config })
   }
 
-  if (!client.isConnected && config.autoConnect !== false) {
-    const isConnected = await client.connect('mem://', config.connectOptions)
-    if (isConnected) {
-      await surrealHooks.callHookParallel('surrealdb:memory:connected', { client })
+  if (!client.isConnected) {
+    await surrealHooks.callHookParallel('surrealdb:memory:connecting', { client, config })
+
+    if (config.autoConnect !== false) {
+      const isConnected = await client.connect('mem://', config.connectOptions)
+      if (isConnected) {
+        await surrealHooks.callHookParallel('surrealdb:memory:connected', { client })
+      }
     }
   }
 

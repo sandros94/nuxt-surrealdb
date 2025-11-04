@@ -4,22 +4,24 @@ import { surrealHooks, useNuxtApp } from '#imports'
 
 export async function useSurrealLocal(): Promise<Surreal | null> {
   const {
-    $surrealLocal,
+    $surrealLocal: client,
     $config: { public: { surrealdb: { local: { wasmEngine, ...config } = {} } = {} } = {} },
   } = useNuxtApp()
 
-  if ($surrealLocal === null) {
+  if (client === null) {
     return null
   }
 
-  if (!$surrealLocal.isConnected) {
+  if (!client.isConnected) {
+    await surrealHooks.callHookParallel('surrealdb:local:connecting', { client, config })
+
     if (config?.endpoint && config.autoConnect !== false) {
-      const isConnected = await $surrealLocal.connect(config.endpoint, config.connectOptions)
+      const isConnected = await client.connect(config.endpoint, config.connectOptions)
       if (isConnected) {
-        await surrealHooks.callHookParallel('surrealdb:local:connected', { client: $surrealLocal })
+        await surrealHooks.callHookParallel('surrealdb:local:connected', { client })
       }
     }
   }
 
-  return $surrealLocal
+  return client
 }

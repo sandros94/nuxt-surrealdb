@@ -6,7 +6,7 @@ import { surrealHooks, useNuxtApp } from '#imports'
 
 export async function useSurreal(): Promise<Surreal> {
   const {
-    $surreal,
+    $surreal: client,
     $config: {
       public: {
         surrealdb: {
@@ -18,21 +18,25 @@ export async function useSurreal(): Promise<Surreal> {
     },
   } = useNuxtApp()
 
-  if (!$surreal.isConnected && config.endpoint && config.autoConnect !== false) {
-    let endpoint = config.endpoint
+  if (!client.isConnected) {
+    await surrealHooks.callHookParallel('surrealdb:connecting', { client, config })
 
-    // prefer http during server-side rendering
-    if (import.meta.server && config.preferHttp !== false) {
-      endpoint = endpoint.replace(/^ws/, 'http')
-    }
+    if (config.endpoint && config.autoConnect !== false) {
+      let endpoint = config.endpoint
 
-    const isConnected = await $surreal.connect(endpoint, config.connectOptions)
-    if (isConnected) {
-      await surrealHooks.callHookParallel('surrealdb:connected', { client: $surreal })
+      // prefer http during server-side rendering
+      if (import.meta.server && config.preferHttp !== false) {
+        endpoint = endpoint.replace(/^ws/, 'http')
+      }
+
+      const isConnected = await client.connect(endpoint, config.connectOptions)
+      if (isConnected) {
+        await surrealHooks.callHookParallel('surrealdb:connected', { client })
+      }
     }
   }
 
-  return $surreal
+  return client
 }
 
 // #endregion public composable

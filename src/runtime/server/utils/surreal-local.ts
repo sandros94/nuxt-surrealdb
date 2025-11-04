@@ -32,14 +32,16 @@ export async function useSurrealLocal(event?: H3Event | undefined): Promise<Surr
     client = new Surreal({
       engines: createNodeEngines(nodeEngine),
     })
-
-    await surrealHooks.callHookParallel('surrealdb:init', { client, config })
   }
 
-  if (!client.isConnected && config.endpoint && config.autoConnect !== false) {
-    const isConnected = await client.connect(config.endpoint, config.connectOptions)
-    if (isConnected) {
-      await surrealHooks.callHookParallel('surrealdb:local:connected', { client })
+  if (!client.isConnected) {
+    await surrealHooks.callHookParallel('surrealdb:local:connecting', { client, config })
+
+    if (config.endpoint && config.autoConnect !== false) {
+      const isConnected = await client.connect(config.endpoint, config.connectOptions)
+      if (isConnected) {
+        await surrealHooks.callHookParallel('surrealdb:local:connected', { client })
+      }
     }
   }
 

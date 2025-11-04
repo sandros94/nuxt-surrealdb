@@ -97,17 +97,21 @@ export async function useSurrealAsyncData<
         },
       } = nuxtApp
 
-      if (!client.isConnected && config.endpoint && config.autoConnect !== false) {
-        let endpoint = config.endpoint
+      if (!client.isConnected) {
+        await surrealHooks.callHookParallel('surrealdb:connecting', { client, config })
 
-        // prefer http during server-side rendering
-        if (import.meta.server && config.preferHttp !== false) {
-          endpoint = endpoint.replace(/^ws/, 'http')
-        }
+        if (config.endpoint && config.autoConnect !== false) {
+          let endpoint = config.endpoint
 
-        const isConnected = await client.connect(endpoint, config.connectOptions)
-        if (isConnected) {
-          await surrealHooks.callHookParallel('surrealdb:connected', { client })
+          // prefer http during server-side rendering
+          if (import.meta.server && config.preferHttp !== false) {
+            endpoint = endpoint.replace(/^ws/, 'http')
+          }
+
+          const isConnected = await client.connect(endpoint, config.connectOptions)
+          if (isConnected) {
+            await surrealHooks.callHookParallel('surrealdb:connected', { client })
+          }
         }
       }
 
