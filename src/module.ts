@@ -34,6 +34,8 @@ export default defineNuxtModule<ModuleOptions>({
       {
         endpoint: '',
         connectOptions: defConnOpts,
+        preferHttp: true,
+        autoConnect: true,
         memory: wasmModule
           ? {
               connectOptions: defConnOpts,
@@ -45,24 +47,29 @@ export default defineNuxtModule<ModuleOptions>({
               connectOptions: defConnOpts,
             }
           : undefined,
-      },
+      } satisfies ModuleOptions['client'],
     ) as ModuleOptions['client']
     runtimeConfig.surrealdb = defu(
       runtimeConfig.surrealdb,
       options.server,
       {
+        session: 'new',
+        preferHttp: true,
+        autoConnect: true,
         memory: nodeModule
           ? {
+              session: 'new',
               connectOptions: defConnOpts,
             }
           : undefined,
         local: nodeModule
           ? {
+              session: 'new',
               endpoint: '',
               connectOptions: defConnOpts,
             }
           : undefined,
-      },
+      } satisfies ModuleOptions['server'],
     ) as ModuleOptions['server']
 
     // Adapt Vite config to support top-level-await and avoid esbuild errors with wasm
@@ -96,6 +103,7 @@ export default defineNuxtModule<ModuleOptions>({
       addPlugin(resolve(runtimeDir, 'app', 'plugins', 'memory.client'))
       addPlugin(resolve(runtimeDir, 'app', 'plugins', 'local.server'))
       addPlugin(resolve(runtimeDir, 'app', 'plugins', 'local.client'))
+      addPlugin(resolve(runtimeDir, 'app', 'plugins', 'surreal'))
     }
     if (options.disableNodeEngine !== true && nodeModule === true) {
       serverImports.push(

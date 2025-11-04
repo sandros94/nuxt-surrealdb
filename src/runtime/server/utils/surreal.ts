@@ -1,151 +1,100 @@
-import { type AuthProvider, Surreal, createRemoteEngines } from 'surrealdb'
+import { type SurrealSession, Surreal, Features, createRemoteEngines } from 'surrealdb'
 import type { H3Event } from 'h3'
 import { defu } from 'defu'
 
-import type {
-  SurrealDatabaseOptions,
-  SurrealServerRuntimeConfig,
-  SurrealServerOptions,
-} from '#surrealdb/types'
 import { useNitroApp, useRuntimeConfig } from '#imports'
 
 import { surrealHooks } from './surreal-hooks'
 
+import {
+  H3_CONTEXT_SURREAL_CLIENT,
+} from '#surrealdb/internal'
+
 // #region public composable
 
-export type UseSurrealOptions<M extends boolean, T extends SurrealDatabaseOptions = SurrealDatabaseOptions> = {
-  mergeConfig?: M
-  preferHttp?: boolean
-  autoConnect?: boolean
-} & T
-export interface UseSurrealReturn<M extends boolean, T extends SurrealDatabaseOptions = SurrealDatabaseOptions> {
-  client: Surreal
-  config: M extends false ? T : SurrealServerRuntimeConfig<T>
-}
-
-export async function useSurreal<M extends boolean, T extends SurrealDatabaseOptions>(event?: H3Event, options?: UseSurrealOptions<M, T>): Promise<UseSurrealReturn<M, T>> {
-  if (event?.context.surrealdb && event.context.surrealdb.client && event.context.surrealdb.config) {
-    return {
-      client: event.context.surrealdb.client,
-      config: event.context.surrealdb.config as any,
-    }
+let client: Surreal | null = null
+export async function useSurreal(event?: undefined): Promise<Surreal>
+export async function useSurreal(event: H3Event): Promise<SurrealSession>
+export async function useSurreal(event?: H3Event | undefined): Promise<Surreal | SurrealSession> {
+  if (event && event.context[H3_CONTEXT_SURREAL_CLIENT] && event.context[H3_CONTEXT_SURREAL_CLIENT].isValid) {
+    return event.context[H3_CONTEXT_SURREAL_CLIENT]
   }
-
-  const { mergeConfig, preferHttp, ..._options } = options || {}
-  const {
-    public: { surrealdb: pubSurrealdb },
-    surrealdb: srvSurrealdb,
-  } = useRuntimeConfig(event)
-
-  const config = (mergeConfig !== false
-    ? defu(_options, srvSurrealdb, pubSurrealdb)
-    : _options) as T & SurrealServerOptions
-
-  const client = new Surreal({
-    engines: createRemoteEngines(),
-  })
-
-  // Event Hooks
-  const unsubConnecting = client.subscribe('connecting', async () => {
-    await surrealHooks.callHookParallel('surrealdb:connecting', { client, config, event })
-  })
-  // Not used in favor 'surrealdb:connected' manual hook (which makes queries wait for hook to finish)
-  // const unsubConnected = client.subscribe('connected', async () => {
-  //   await surrealHooks.callHookParallel('surrealdb:connected', { client, config, event })
-  // })
-  const unsubReconnecting = client.subscribe('reconnecting', async () => {
-    await surrealHooks.callHookParallel('surrealdb:reconnecting', { client, config, event })
-  })
-  const unsubAuthenticated = client.subscribe('authenticated', async (token) => {
-    await surrealHooks.callHookParallel('surrealdb:authenticated', { client, config, event, token })
-  })
-  const unsubDisconnected = client.subscribe('disconnected', async () => {
-    await surrealHooks.callHookParallel('surrealdb:disconnected', { client, config, event })
-  })
-  const unsubError = client.subscribe('error', async (error) => {
-    await surrealHooks.callHookParallel('surrealdb:error', { client, config, event, error })
-  })
-  const unsubInvalidated = client.subscribe('invalidated', async () => {
-    await surrealHooks.callHookParallel('surrealdb:invalidated', { client, config, event })
-  })
-  const unsubUsing = client.subscribe('using', async ({ namespace, database }) => {
-    await surrealHooks.callHookParallel('surrealdb:using', { client, config, event, namespace, database })
-  })
 
   const { hooks } = useNitroApp()
+  const {
+    public: { surrealdb: {
+      local: _pubLocal,
+      memory: _pubMemory,
+      ...pubSurrealdb
+    } = {} },
+    surrealdb: {
+      local: _srvLocal,
+      memory: _srvMemory,
+      ...srvSurrealdb
+    } = {},
+  } = useRuntimeConfig(event)
+
+  async function getClient() {
+    if (!client) {
+      client = new Surreal({
+        engines: createRemoteEngines(),
+      })
+    }
+    return client
+  }
+
+  const _client = await getClient()
+
+  if (!_client.isConnected) {
+    const config = defu(srvSurrealdb, pubSurrealdb)
+
+    await surrealHooks.callHookParallel('surrealdb:init', { client: _client })
+
+    if (config.endpoint && config.autoConnect !== false) {
+      let endpoint = config.endpoint
+
+      // prefer http
+      if (config.preferHttp !== false) {
+        endpoint = endpoint.replace(/^ws/, 'http')
+      }
+
+      const isConnected = await _client.connect(endpoint, config.connectOptions)
+      if (isConnected) {
+        await surrealHooks.callHookParallel('surrealdb:connected', { client: _client })
+      }
+    }
+  }
+
+  if (!event) {
+    return _client
+  }
+
+  if (!_client.isFeatureSupported(Features.Sessions)) {
+    // TODO: throw error once a stable v2 is released
+    console.warn('[nuxt-surrealdb] Sessions are not supported by the connected SurrealDB instance.')
+    return _client
+  }
+
+  const session = await _client[srvSurrealdb.session === 'fork' ? 'forkSession' : 'newSession']()
+  event.context.surrealdb = session
+
+  await surrealHooks.callHookParallel('surrealdb:session:init', { client: session, event })
+
   hooks.hook('afterResponse', async (event) => {
-    if (event.context.surrealdb) {
-      const client = event.context.surrealdb.client
-      unsubConnecting()
-      // unsubConnected()
-      unsubReconnecting()
-      unsubAuthenticated()
-      unsubDisconnected()
-      unsubError()
-      unsubInvalidated()
-      unsubUsing()
-      await client.close()
-      event.context.surrealdb = undefined
-    }
-  })
-  hooks.hook('close', async () => {
-    if (client !== null) {
-      unsubConnecting()
-      // unsubConnected()
-      unsubReconnecting()
-      unsubAuthenticated()
-      unsubDisconnected()
-      unsubError()
-      unsubInvalidated()
-      unsubUsing()
-      await client.close()
+    if (event.context[H3_CONTEXT_SURREAL_CLIENT]) {
+      await event.context[H3_CONTEXT_SURREAL_CLIENT].closeSession()
+      // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+      delete event.context[H3_CONTEXT_SURREAL_CLIENT]
     }
   })
 
-  await surrealHooks.callHookParallel('surrealdb:init', { client, config, event })
-
-  if (config.endpoint && config.autoConnect !== false) {
-    let endpoint = config.endpoint
-
-    // prefer http
-    if (preferHttp !== false) {
-      endpoint = endpoint.replace(/^ws/, 'http')
-    }
-
-    const authentication: AuthProvider = options?.connectOptions?.authentication
-      ? config.connectOptions!.authentication
-      // @ts-expect-error `callHook` is not able to infer the types properly
-      : (await surrealHooks.callHook('surrealdb:init:authentication', { client, config }) || config.connectOptions?.authentication)
-
-    const isConnected = await client.connect(endpoint, {
-      ...config.connectOptions,
-      authentication,
-    })
-    if (isConnected) {
-      await surrealHooks.callHookParallel('surrealdb:connected', { client, config, event })
-    }
-  }
-
-  if (event) {
-    event.context.surrealdb = {
-      client,
-      config,
-    }
-  }
-
-  return {
-    client,
-    config: config as any,
-  }
+  return session
 }
 
 // #endregion public composable
 
 declare module 'h3' {
   interface H3EventContext {
-    surrealdb?: {
-      client: Surreal
-      config: SurrealDatabaseOptions
-    }
+    [H3_CONTEXT_SURREAL_CLIENT]?: SurrealSession
   }
 }
