@@ -1,7 +1,5 @@
-export default defineEventHandler(async (event) => {
-  const client = await useSurrealLocal(event, {
-    endpoint: 'surrealkv://./.data/db',
-  })
+export default defineEventHandler(async () => {
+  const client = await useSurrealLocal()
 
   const [res] = await client.query('SELECT * FROM test;').json().collect(0)
   return res

@@ -1,92 +1,82 @@
+import { type SurrealSession, Surreal, Features } from 'surrealdb'
 import { createNodeEngines } from '@surrealdb/node'
-import { Surreal } from 'surrealdb'
 import type { H3Event } from 'h3'
-import { defu } from 'defu'
 
-import type {
-  SurrealDatabaseOptions,
-  SurrealServerOptions,
-} from '#surrealdb/types'
-import { useNitroApp } from 'nitropack/runtime'
-import { useRuntimeConfig } from '#imports'
+import { useNitroApp, useRuntimeConfig } from '#imports'
 
 import { surrealHooks } from './surreal-hooks'
 
-export interface UseSurrealMemOptions extends SurrealDatabaseOptions {
-  mergeConfig?: boolean
-}
+import {
+  H3_CONTEXT_SURREAL_MEMORY,
+} from '#surrealdb/internal'
+
+// #region public composable
 
 let client: Surreal | null = null
-export async function useSurrealMemory(event?: H3Event, options?: UseSurrealMemOptions): Promise<Surreal> {
-  if (client !== null) {
+export async function useSurrealMemory(event?: undefined): Promise<Surreal>
+export async function useSurrealMemory(event: H3Event): Promise<SurrealSession>
+export async function useSurrealMemory(event?: H3Event | undefined): Promise<Surreal | SurrealSession> {
+  if (event && event.context[H3_CONTEXT_SURREAL_MEMORY] && event.context[H3_CONTEXT_SURREAL_MEMORY].isValid) {
+    return event.context[H3_CONTEXT_SURREAL_MEMORY]
+  }
+
+  const { hooks } = useNitroApp()
+  const { surrealdb } = useRuntimeConfig(event)
+  const { memory } = surrealdb || {}
+  const { nodeEngine, ...config } = memory || {}
+
+  async function getClient() {
+    if (!client) {
+      client = new Surreal({
+        engines: createNodeEngines(nodeEngine),
+      })
+    }
     return client
   }
 
-  const { memory } = useRuntimeConfig(event).surrealdb!
-  const { mergeConfig, ...opts } = options || {}
-  const config = (mergeConfig !== false
-    ? defu(opts, memory)
-    : opts) as SurrealServerOptions
+  const _client = await getClient()
 
-  client = new Surreal({
-    engines: createNodeEngines(memory?.nodeEngine),
-  })
-
-  // Event Hooks
-  const unsubConnecting = client.subscribe('connecting', async () => {
-    await surrealHooks.callHookParallel('surrealdb:memory:connecting', { client: client!, config, event })
-  })
-  // Not used in favor 'surrealdb:connected' manual hook (which makes queries wait for hook to finish)
-  // const unsubConnected = client.subscribe('connected', async () => {
-  //   await surrealHooks.callHookParallel('surrealdb:memory:connected', { client: client!, config, event })
-  // })
-  const unsubReconnecting = client.subscribe('reconnecting', async () => {
-    await surrealHooks.callHookParallel('surrealdb:memory:reconnecting', { client: client!, config, event })
-  })
-  const unsubAuthenticated = client.subscribe('authenticated', async (token) => {
-    await surrealHooks.callHookParallel('surrealdb:memory:authenticated', { client: client!, config, event, token })
-  })
-  const unsubDisconnected = client.subscribe('disconnected', async () => {
-    await surrealHooks.callHookParallel('surrealdb:memory:disconnected', { client: client!, config, event })
-  })
-  const unsubError = client.subscribe('error', async (error) => {
-    await surrealHooks.callHookParallel('surrealdb:memory:error', { client: client!, config, event, error })
-  })
-  const unsubInvalidated = client.subscribe('invalidated', async () => {
-    await surrealHooks.callHookParallel('surrealdb:memory:invalidated', { client: client!, config, event })
-  })
-  const unsubUsing = client.subscribe('using', async ({ namespace, database }) => {
-    await surrealHooks.callHookParallel('surrealdb:memory:using', { client: client!, config, event, namespace, database })
-  })
-
-  useNitroApp().hooks.hook('close', async () => {
-    if (client !== null) {
-      unsubConnecting()
-      // unsubConnected()
-      unsubReconnecting()
-      unsubAuthenticated()
-      unsubDisconnected()
-      unsubError()
-      unsubInvalidated()
-      unsubUsing()
-      await client.close()
-    }
-  })
-
-  try {
-    await surrealHooks.callHookParallel('surrealdb:memory:init', { client, config, event })
+  if (!_client.isConnected) {
+    await surrealHooks.callHookParallel('surrealdb:memory:init', { client: _client })
 
     if (config.autoConnect !== false) {
-      const isConnected = await client.connect('mem://', config.connectOptions)
+      const isConnected = await _client.connect('mem://', config.connectOptions)
       if (isConnected) {
-        await surrealHooks.callHookParallel('surrealdb:memory:connected', { client, config, event })
+        await surrealHooks.callHookParallel('surrealdb:memory:connected', { client: _client })
       }
     }
   }
-  catch (error_) {
-    client = null
-    throw error_
+
+  if (!event) {
+    return _client
   }
 
-  return client
+  if (!_client.isFeatureSupported(Features.Sessions)) {
+    // TODO: throw error once a stable v2 is released
+    console.warn('[nuxt-surrealdb] Sessions are not supported by this SurrealDB Node engine.')
+    return _client
+  }
+
+  const session = await _client[config.session === 'fork' ? 'forkSession' : 'newSession']()
+  event.context.surrealdb = session
+
+  await surrealHooks.callHookParallel('surrealdb:memory:session:init', { client: session, event })
+
+  hooks.hook('afterResponse', async (event) => {
+    if (event.context[H3_CONTEXT_SURREAL_MEMORY]) {
+      await event.context[H3_CONTEXT_SURREAL_MEMORY].closeSession()
+      // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+      delete event.context[H3_CONTEXT_SURREAL_MEMORY]
+    }
+  })
+
+  return session
+}
+
+// #endregion public composable
+
+declare module 'h3' {
+  interface H3EventContext {
+    [H3_CONTEXT_SURREAL_MEMORY]?: SurrealSession
+  }
 }

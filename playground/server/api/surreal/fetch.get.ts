@@ -1,5 +1,5 @@
-export default defineEventHandler(async (event) => {
-  const { client } = await useSurreal(event)
+export default defineEventHandler(async () => {
+  const client = await useSurreal()
 
   return await client.select(new Table('test')).json()
 })

@@ -25,5 +25,10 @@ export default defineNuxtConfig({
         },
       },
     },
+    server: {
+      local: {
+        endpoint: 'surrealkv://./.data/db',
+      },
+    },
   },
 })
