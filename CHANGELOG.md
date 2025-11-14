@@ -1,6 +1,10 @@
 # Changelog
 
 
+## v0.5.0-alpha.11
+
+[compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.5.0-alpha.10...v0.5.0-alpha.11)
+
 ## v0.5.0-alpha.10
 
 [compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.5.0-alpha.9...v0.5.0-alpha.10)

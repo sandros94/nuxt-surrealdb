@@ -1,6 +1,6 @@
 {
   "name": "nuxt-surrealdb",
-  "version": "0.5.0-alpha.10",
+  "version": "0.5.0-alpha.11",
   "description": "A Nuxt module aimed to simplify the use of SurrealDB",
   "keywords": [
     "nuxt",
