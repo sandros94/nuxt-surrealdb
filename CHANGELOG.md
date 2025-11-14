@@ -1,6 +1,22 @@
 # Changelog
 
 
+## v0.5.0-alpha.10
+
+[compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.5.0-alpha.9...v0.5.0-alpha.10)
+
+### 🚀 Enhancements
+
+- Wasm switch to worker engine ([1da2b02](https://github.com/sandros94/nuxt-surrealdb/commit/1da2b02))
+
+### 🏡 Chore
+
+- Update surrealdb to `alpha.14` ([4f7663c](https://github.com/sandros94/nuxt-surrealdb/commit/4f7663c))
+
+### ❤️ Contributors
+
+- Sandro Circi ([@sandros94](https://github.com/sandros94))
+
 ## v0.5.0-alpha.9
 
 [compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.5.0-alpha.8...v0.5.0-alpha.9)
