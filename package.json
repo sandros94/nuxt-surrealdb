@@ -51,14 +51,14 @@
     "@nuxt/kit": "^4.2.0",
     "defu": "^6.1.4",
     "exsolve": "^1.0.7",
-    "surrealdb": "2.0.0-alpha.11"
+    "surrealdb": "2.0.0-alpha.14"
   },
   "devDependencies": {
     "@nuxt/devtools": "^2.6.5",
     "@nuxt/eslint-config": "^1.9.0",
     "@nuxt/module-builder": "^1.0.2",
-    "@surrealdb/node": "^2.3.4",
-    "@surrealdb/wasm": "^2.3.4",
+    "@surrealdb/node": "^2.3.5",
+    "@surrealdb/wasm": "^2.3.5",
     "changelogen": "^0.6.2",
     "eslint": "^9.37.0",
     "nuxt": "^4.2.0",
