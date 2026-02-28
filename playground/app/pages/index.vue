@@ -64,12 +64,14 @@ const { data: srvLocal } = await useFetch('/api/surreal/node/local')
 const mem = ref()
 const local = ref()
 const memClient = await useSurrealMemory()
-const localClient = await useSurrealLocal()
+// TODO: re-enable once SurrealDB 3.0 is available in indexdb wasm
+// const localClient = await useSurrealLocal()
 
 onNuxtReady(async () => {
   const [[memRes], [localRes]] = await Promise.all([
     memClient!.query('SELECT * FROM test;').json().collect(0),
-    localClient!.query('SELECT * FROM test;').json().collect(0),
+    // localClient!.query('SELECT * FROM test;').json().collect(0),
+    [[]],
   ])
   mem.value = memRes
   local.value = localRes
