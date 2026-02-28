@@ -1,8 +1,8 @@
 // https://nuxt.com/docs/guide/directory-structure/nuxt.config#nuxt-config-file
 export default defineNuxtConfig({
   modules: [
-    '@nuxt/ui',
     'comark/nuxt',
+    '@nuxt/ui',
     '../src/module',
   ],
   imports: { autoImport: true },
