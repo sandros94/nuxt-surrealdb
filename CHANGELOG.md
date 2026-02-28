@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v0.5.0-rc.1
+
+[compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.5.0-rc.0...v0.5.0-rc.1)
+
+### 🤖 CI
+
+- Fix publish script ([934a6c4](https://github.com/sandros94/nuxt-surrealdb/commit/934a6c4))
+
+### ❤️ Contributors
+
+- Sandro Circi ([@sandros94](https://github.com/sandros94))
+
 ## v0.5.0-rc.0
 
 [compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.5.0-alpha.11...v0.5.0-rc.0)
