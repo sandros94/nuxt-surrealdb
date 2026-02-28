@@ -8,8 +8,8 @@
     "generate": "nuxi generate"
   },
   "dependencies": {
-    "@nuxt/ui": "^4.2.1",
-    "@nuxtjs/mdc": "^0.19.1",
+    "@nuxt/ui": "catalog:",
+    "comark": "https://pkg.pr.new/comarkdown/comark@main",
     "nuxt-surrealdb": "workspace:*",
     "nuxt": "catalog:"
   }

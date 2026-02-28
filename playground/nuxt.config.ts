@@ -2,7 +2,7 @@
 export default defineNuxtConfig({
   modules: [
     '@nuxt/ui',
-    '@nuxtjs/mdc',
+    'comark/nuxt',
     '../src/module',
   ],
   imports: { autoImport: true },
