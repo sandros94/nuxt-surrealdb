@@ -19,7 +19,7 @@ export default defineNuxtConfig({
     autoImportExpressions: true,
     client: {
       local: {
-        endpoint: 'indxdb://myapp',
+        endpoint: 'indxdb://surrealdb',
       },
       connectOptions: {
         authentication: {
