@@ -1,4 +1,3 @@
-// https://nuxt.com/docs/guide/directory-structure/nuxt.config#nuxt-config-file
 export default defineNuxtConfig({
   modules: [
     'comark/nuxt',

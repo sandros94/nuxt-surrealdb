@@ -11,6 +11,7 @@
     "@nuxt/ui": "catalog:",
     "comark": "https://pkg.pr.new/comarkdown/comark@main",
     "nuxt-surrealdb": "workspace:*",
-    "nuxt": "catalog:"
+    "nuxt": "catalog:",
+    "surqlize": "^0.1.0"
   }
 }

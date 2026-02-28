@@ -90,6 +90,9 @@ importers:
       nuxt-surrealdb:
         specifier: workspace:*
         version: link:..
+      surqlize:
+        specifier: ^0.1.0
+        version: 0.1.0(surrealdb@2.0.0(tslib@2.8.1)(typescript@5.9.3))(typescript@5.9.3)
 
 packages:
 
@@ -5671,6 +5674,12 @@ packages:
   supports-preserve-symlinks-flag@1.0.0:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
     engines: {node: '>= 0.4'}
+
+  surqlize@0.1.0:
+    resolution: {integrity: sha512-Pq8dvfLPwZZC3zaNaxQvefjt6K9CkpDQxlQ4n6m7XoZumFRAAbEG4nTi21d0s+sjY/xnunG8eLzFfxoKtk/smQ==}
+    peerDependencies:
+      surrealdb: ^2.0.0-alpha.18
+      typescript: ^5.0.0
 
   surrealdb@2.0.0:
     resolution: {integrity: sha512-pntWVTrfoPUhoJ1ojBz6MA2eZqkR2G/zZDn5UFfUz0+/+XyaDZo+PfAFVm2SAEui7T8M/cYElWHwEy1DShotGw==}
@@ -12728,6 +12737,11 @@ snapshots:
       has-flag: 4.0.0
 
   supports-preserve-symlinks-flag@1.0.0: {}
+
+  surqlize@0.1.0(surrealdb@2.0.0(tslib@2.8.1)(typescript@5.9.3))(typescript@5.9.3):
+    dependencies:
+      surrealdb: 2.0.0(tslib@2.8.1)(typescript@5.9.3)
+      typescript: 5.9.3
 
   surrealdb@2.0.0(tslib@2.8.1)(typescript@5.9.3):
     dependencies:
