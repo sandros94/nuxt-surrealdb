@@ -28,4 +28,13 @@ jobs:
 
       - name: Update npm
         run: npm install -g npm@latest
-      - run: npm publish
+      - name: Publish
+        run: |
+          TAG="${{ github.ref_name }}"
+          VERSION="${TAG#v}"
+          DIST_TAG="latest"
+          if [[ "$VERSION" =~ (alpha|beta|rc) ]]; then
+            DIST_TAG="${BASH_REMATCH[1]}"
+          fi
+          npm version "$VERSION" --no-git-tag-version
+          npm publish --tag "$DIST_TAG" --provenance
