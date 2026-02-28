@@ -58,12 +58,22 @@
     "hookable": "^6.0.1",
     "surrealdb": "^2.0.0"
   },
+  "peerDependencies": {
+    "@surrealdb/node": "^3.0.1",
+    "@surrealdb/wasm": "^3.0.1"
+  },
+  "peerDependenciesMeta": {
+    "@surrealdb/node": {
+      "optional": true
+    },
+    "@surrealdb/wasm": {
+      "optional": true
+    }
+  },
   "devDependencies": {
     "@nuxt/devtools": "^3.2.2",
     "@nuxt/eslint-config": "^1.15.2",
     "@nuxt/module-builder": "^1.0.2",
-    "@surrealdb/node": "^3.0.1",
-    "@surrealdb/wasm": "^3.0.1",
     "changelogen": "^0.6.2",
     "eslint": "^9.39.1",
     "nuxt": "catalog:",
