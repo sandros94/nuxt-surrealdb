@@ -1,6 +1,19 @@
 # Changelog
 
 
+## v0.5.0-rc.5
+
+[compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.5.0-rc.4...v0.5.0-rc.5)
+
+### 🤖 CI
+
+- Fix prevent npm from changing the version twice ([2649251](https://github.com/sandros94/nuxt-surrealdb/commit/2649251))
+- Fix pkg.pr.new ignore docs and playground ([937b03c](https://github.com/sandros94/nuxt-surrealdb/commit/937b03c))
+
+### ❤️ Contributors
+
+- Sandro Circi ([@sandros94](https://github.com/sandros94))
+
 ## v0.5.0-rc.4
 
 [compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.5.0-rc.3...v0.5.0-rc.4)
