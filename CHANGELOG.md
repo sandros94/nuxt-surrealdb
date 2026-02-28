@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v0.5.0-rc.4
+
+[compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.5.0-rc.3...v0.5.0-rc.4)
+
+### 🏡 Chore
+
+- Remove unsupported npmrc ([309baa3](https://github.com/sandros94/nuxt-surrealdb/commit/309baa3))
+
+### ❤️ Contributors
+
+- Sandro Circi ([@sandros94](https://github.com/sandros94))
+
 ## v0.5.0-rc.3
 
 [compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.5.0-rc.2...v0.5.0-rc.3)
