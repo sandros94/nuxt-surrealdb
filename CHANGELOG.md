@@ -1,6 +1,35 @@
 # Changelog
 
 
+## v0.5.0-rc.0
+
+[compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.5.0-alpha.11...v0.5.0-rc.0)
+
+### 🚀 Enhancements
+
+- Use worker for wasm plugins ([ef18b2c](https://github.com/sandros94/nuxt-surrealdb/commit/ef18b2c))
+
+### 🔥 Performance
+
+- Prevent vue from reactively watch deep surrealdb values ([f4d541b](https://github.com/sandros94/nuxt-surrealdb/commit/f4d541b))
+
+### 🩹 Fixes
+
+- Do not preconfigure idb endpoint ([ad34a33](https://github.com/sandros94/nuxt-surrealdb/commit/ad34a33))
+
+### 🏡 Chore
+
+- Update deps ([f5ceb99](https://github.com/sandros94/nuxt-surrealdb/commit/f5ceb99))
+- Update deps ([f8fb1a8](https://github.com/sandros94/nuxt-surrealdb/commit/f8fb1a8))
+
+### 🤖 CI
+
+- Define npm publish ([9aa6e4b](https://github.com/sandros94/nuxt-surrealdb/commit/9aa6e4b))
+
+### ❤️ Contributors
+
+- Sandro Circi ([@sandros94](https://github.com/sandros94))
+
 ## v0.5.0-alpha.11
 
 [compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.5.0-alpha.10...v0.5.0-alpha.11)
