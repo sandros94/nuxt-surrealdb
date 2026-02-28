@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v0.5.0
+
+[compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.5.0-rc.5...v0.5.0)
+
+### 🏡 Chore
+
+- Do not set `@nuxt/kit` in catalog ([2725a23](https://github.com/sandros94/nuxt-surrealdb/commit/2725a23))
+
+### ❤️ Contributors
+
+- Sandro Circi ([@sandros94](https://github.com/sandros94))
+
 ## v0.5.0-rc.5
 
 [compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.5.0-rc.4...v0.5.0-rc.5)
