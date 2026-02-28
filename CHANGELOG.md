@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v0.5.0-rc.2
+
+[compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.5.0-rc.1...v0.5.0-rc.2)
+
+### 🩹 Fixes
+
+- Update repository field format in package.json ([c93d835](https://github.com/sandros94/nuxt-surrealdb/commit/c93d835))
+
+### ❤️ Contributors
+
+- Sandro Circi ([@sandros94](https://github.com/sandros94))
+
 ## v0.5.0-rc.1
 
 [compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.5.0-rc.0...v0.5.0-rc.1)
