@@ -1,6 +1,19 @@
 # Changelog
 
 
+## v0.5.0-rc.3
+
+[compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.5.0-rc.2...v0.5.0-rc.3)
+
+### 🤖 CI
+
+- Fix publish script ([f44a863](https://github.com/sandros94/nuxt-surrealdb/commit/f44a863))
+- Add pkg.pr.new ([d0edc3b](https://github.com/sandros94/nuxt-surrealdb/commit/d0edc3b))
+
+### ❤️ Contributors
+
+- Sandro Circi ([@sandros94](https://github.com/sandros94))
+
 ## v0.5.0-rc.2
 
 [compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.5.0-rc.1...v0.5.0-rc.2)
