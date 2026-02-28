@@ -18,6 +18,9 @@ export default defineNuxtConfig({
   surrealdb: {
     autoImportExpressions: true,
     client: {
+      local: {
+        endpoint: 'indxdb://myapp',
+      },
       connectOptions: {
         authentication: {
           username: '',

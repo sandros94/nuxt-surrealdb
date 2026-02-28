@@ -43,7 +43,6 @@ export default defineNuxtModule<ModuleOptions>({
           : undefined,
         local: wasmModule
           ? {
-              endpoint: 'indxdb://',
               connectOptions: defConnOpts,
             }
           : undefined,
@@ -72,7 +71,7 @@ export default defineNuxtModule<ModuleOptions>({
       } satisfies ModuleOptions['server'],
     ) as ModuleOptions['server']
 
-    // Adapt Vite config to support top-level-await and avoid esbuild errors with wasm
+    // Adapt Vite config to support surrealdb wasm
     nuxt.options.vite ||= {}
     nuxt.options.vite.optimizeDeps ||= {}
     nuxt.options.vite.optimizeDeps.exclude ||= []
