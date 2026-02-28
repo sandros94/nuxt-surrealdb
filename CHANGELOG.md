@@ -1,6 +1,26 @@
 # Changelog
 
 
+## v0.5.0-rc.6
+
+[compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.5.0-rc.5...v0.5.0-rc.6)
+
+### 🩹 Fixes
+
+- Types and throw on unsuported session runtime ([373f419](https://github.com/sandros94/nuxt-surrealdb/commit/373f419))
+
+### 🏡 Chore
+
+- Do not set `@nuxt/kit` in catalog ([2725a23](https://github.com/sandros94/nuxt-surrealdb/commit/2725a23))
+- **release:** V0.5.0 ([a2f04a6](https://github.com/sandros94/nuxt-surrealdb/commit/a2f04a6))
+- **release:** V0.5.0" ([a7191c7](https://github.com/sandros94/nuxt-surrealdb/commit/a7191c7))
+- Do not set `@nuxt/kit` in catalog ([777795e](https://github.com/sandros94/nuxt-surrealdb/commit/777795e))
+- Install `hookable` as dep ([872c351](https://github.com/sandros94/nuxt-surrealdb/commit/872c351))
+
+### ❤️ Contributors
+
+- Sandro Circi ([@sandros94](https://github.com/sandros94))
+
 ## v0.5.0-rc.5
 
 [compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.5.0-rc.4...v0.5.0-rc.5)
