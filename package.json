@@ -55,6 +55,7 @@
     "@nuxt/kit": "4.3.1",
     "defu": "^6.1.4",
     "exsolve": "^1.0.8",
+    "hookable": "^6.0.1",
     "surrealdb": "^2.0.0"
   },
   "devDependencies": {
