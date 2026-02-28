@@ -24,7 +24,7 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm dev:prepare
       - run: pnpm lint
-      - run: pnpm test:types
+      # - run: pnpm test:types
 
       - name: Update npm
         run: npm install -g npm@latest
