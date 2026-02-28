@@ -4,7 +4,8 @@ import {} from 'nuxt/app'
 import { createWasmWorkerEngines } from '@surrealdb/wasm'
 // @ts-expect-error - No types for the worker
 import WorkerAgent from '@surrealdb/wasm/worker?worker'
-import { Surreal } from 'surrealdb'
+import { Surreal, Value } from 'surrealdb'
+import { markRaw } from 'vue'
 
 import { defineNuxtPlugin } from '#imports'
 
@@ -20,6 +21,9 @@ export default defineNuxtPlugin({
         ...wasmEngine,
         createWorker: () => new WorkerAgent(),
       }),
+      codecOptions: {
+        valueDecodeVisitor: value => value instanceof Value ? markRaw(value) : value,
+      },
     })
 
     return {
