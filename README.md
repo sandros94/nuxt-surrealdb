@@ -7,11 +7,10 @@
 [![License][license-src]][license-href]
 [![Nuxt][nuxt-src]][nuxt-href]
 
-A Nuxt module aimed to simplify the use of [SurrealDB](https://surrealdb.com).
+A Nuxt module aimed to simplify the use of [SurrealDB](https://surrealdb.com), wrapping the official [surrealdb.js](https://github.com/surrealdb/surrealdb.js) SDK.
 
 - [✨ &nbsp;Release Notes](/CHANGELOG.md)
 - [📖 &nbsp;Documentation](https://nuxt-surrealdb.s94.dev)
-<!-- - [🏀 Online playground](https://stackblitz.com/github/sandros94/nuxt-surrealdb?file=playground%2Fapp.vue) -->
 
 ## Quick Setup
 
@@ -21,194 +20,84 @@ Install the module to your Nuxt application:
 npx nuxi module add nuxt-surrealdb
 ```
 
-Then edit your [default Database Preset](https://github.com/Sandros94/nuxt-surrealdb?tab=readme-ov-file#database-presets) and use Nuxt SurrealDB in your Nuxt app ✨
-
-## Features
-
-<!-- Highlight some of the features your module provide here -->
-- 📦&nbsp;Custom Database Presets, to be able to use multiple Databases on a composable/per-function basis.
-- 🚀&nbsp;Custom built-in `$surrealFetch` and `useSurrealFetch`, based on `$fetch` and `useFetch` respectively.
-- ⚡️&nbsp;Built-in support for [RPC endpoint](https://surrealdb.com/docs/surrealdb/integration/rpc) via `$surrealRPC` and `useSurrealRPC`.
-- 🏗️&nbsp;Built-in Nuxt server `useSurrealRPC` util with server-side private DB Presets for a private network communication with SurrealDB.
-- 💡&nbsp;Each RPC method is mapped to a `useSurrealDB` exported function.
-- 🌟&nbsp;Built-in support for Websockets communication with RPC methods using the `useSurrealWS` composable.
-
-### Database Presets
-
-It is possible to customize the `default` preset or define your own Database presets either via `nuxt.config.ts` or via `.env`.
-
-> [!NOTE]
-> When passing variables to a custom preset like `shop` below, it is important to initialize it as an empty object inside `nuxt.config.ts`
-
-```dotenv
-NUXT_PUBLIC_SURREALDB_DATABASES_SHOP_HOST="https://example.com"
-NUXT_PUBLIC_SURREALDB_DATABASES_SHOP_WS="wss://example.com"
-NUXT_PUBLIC_SURREALDB_DATABASES_SHOP_NS="surrealdb"
-NUXT_PUBLIC_SURREALDB_DATABASES_SHOP_DB="docs"
-NUXT_PUBLIC_SURREALDB_DATABASES_SHOP_SC="user"
-
-# To add authentication server side (this does not override the client's token)
-# As a Bearer
-NUXT_SURREALDB_DATABASES_SHOP_AUTH="mySuperLongBearerToken"
-# Or as an object
-NUXT_SURREALDB_DATABASES_SHOP_AUTH_USER="root"
-NUXT_SURREALDB_DATABASES_SHOP_AUTH_PASS="root"
-```
+Configure your SurrealDB endpoint in `nuxt.config.ts`:
 
 ```ts
 export default defineNuxtConfig({
   modules: ['nuxt-surrealdb'],
   surrealdb: {
-    databases: {
-      default: {
-        host: 'https://example.com',
-        ws: 'wss://example.com',
-        NS: 'production',
-        DB: 'website'
+    client: {
+      endpoint: 'http://localhost:8000',
+      connectOptions: {
+        namespace: 'my_ns',
+        database: 'my_db',
       },
-
-      crm: {
-        host: 'https://crm.example.com',
-        ws: 'wss://crm.example.com',
-        NS: 'demo',
-        DB: 'crm',
-        // The following auth example is exposed client side!
-        auth: 'mySuperLongBearerToken'
-      },
-
-      shop: {},
-    },
-    server: { // the following add auth only server side
-      databases: {
-        default: {
-          auth: '', // then edit it via NUXT_SURREALDB_DATABASES_DEFAULT_AUTH
-          // OR
-          auth: {
-            user: '', // then edit it via NUXT_SURREALDB_DATABASES_DEFAULT_AUTH_USER
-            pass: '' // then edit it via NUXT_SURREALDB_DATABASES_DEFAULT_AUTH_PASS
-          }
-        }
-      }
-    }
-  },
-  // To change a db preset during development it is best to do the following
-  $development: {
-    surrealdb: {
-      databases: {
-        default: {
-          host: 'http://localhost:8000',
-          ws: 'ws://localhost:8000'
-        }
-      }
-    }
-  },
-  // ...
-})
-```
-
-> [!NOTE]
-> If you want to use different db preset between development and production, please use Nuxt's native [`$development` and `$production` properties](https://nuxt.com/docs/getting-started/configuration#environment-overrides) within your `nuxt.config.ts` like in the example above.
-
-It is also possible to expand or change database properties server-side (like `surrealdb.server.databases.default.auth` above). This becomes particularly useful for a more traditional database auth approach without exposing credentials client-side or to use a different `host` address in a private network.
-
-Then, to use a database preset, you just have to set it within the last parameter of each main composable (functions destructured from `useSurrealDB` also support this override).
-
-```ts
-// all the functions destructured will be executed against the CRM database
-const { query, select } = useSurrealDB({
-  database: 'crm',
-})
-
-// only the following select will be made against the default database
-const { data } = await select('products', {
-  database: 'default',
-})
-
-// you could also define a one-time only preset
-const { data } = await sql(
-  'SELECT * FROM products WHERE price < $maxPrice;',
-  { maxPrice: 500 },
-  {
-    database: {
-      host: 'https://surrealdb.example.com',
-      NS: 'demo',
-      DB: 'shop',
     },
   },
-)
+})
 ```
 
-### RPC Methods
+## Features
 
-The main `useSurrealDB` exports a number of functions that directly communicate with the RPC endpoint. Each function has two variants, one starts with `$` and one without. The first is based on `$surrealRPC`, that provides the plain function, while the latter uses `useSurrealRPC`, taking advantage of `useSurrealFetch` (and thus, [`useFetch`](https://nuxt.com/docs/api/composables/use-fetch)).
+- 🔌&nbsp;Wraps the official **surrealdb.js** SDK with auto-imported composables and server utils
+- 🧩&nbsp;SSR-safe composables: `useSurrealQuery`, `useSurrealSelect`, `useSurrealAuth`, and more — all built on top of Nuxt's `useAsyncData`
+- 🖥️&nbsp;Server utils with per-request session support via `useSurreal(event)` in Nitro event handlers
+- ⚡️&nbsp;Embedded engines: run SurrealDB in-process with `@surrealdb/wasm` (client) or `@surrealdb/node` (server) for in-memory and local persistent storage
+- 🪝&nbsp;Lifecycle hooks via `surrealHooks` for connection setup, authentication, and schema initialization
+- 📦&nbsp;Auto-import of SurrealDB SDK classes (`RecordId`, `Table`, `Uuid`, etc.) and expression helpers (`eq`, `gt`, `contains`, etc.)
+- 🔧&nbsp;Full configuration via `nuxt.config.ts` or environment variables
 
-Here the full list:
+## Composables
 
-```ts
-const {
-  authenticate, // $authenticate
-  create,       // $create
-  delete,       // $delete
-  info,         // $info
-  insert,       // $insert
-  invalidate,   // $invalidate
-  merge,        // $merge
-  patch,        // $patch
-  query,        // $query
-  remove,       // $remove
-  select,       // $select
-  signin,       // $signin
-  signup,       // $signup
-  sql,          // $sql
-  update,       // $update
-  version,      // $version
-} = useSurrealDB()
+### Client-side
+
+| Composable | Description |
+|------------|-------------|
+| `useSurreal()` | Get the connected `Surreal` client |
+| `useSurrealAsyncData(key, cb)` | Low-level SSR-safe wrapper around `useAsyncData` |
+| `useSurrealQuery(query, bindings?)` | Execute a SurrealQL query with SSR support |
+| `useSurrealSelect(table, builder?)` | Select records with a builder-pattern API |
+| `useSurrealAuth()` | Get the currently authenticated user info |
+| `useSurrealRun(name, args?)` | Execute a SurrealDB function |
+| `useSurrealVersion()` | Get the SurrealDB server version |
+| `useSurrealExport(options)` | Export the database |
+| `useSurrealImport(input)` | Import a SurrealQL dump |
+| `useSurrealMemory()` | Access the in-memory WASM client |
+| `useSurrealLocal()` | Access the local WASM client |
+
+### Server-side
+
+| Util | Description |
+|------|-------------|
+| `useSurreal()` / `useSurreal(event)` | Get the remote client or a per-request session |
+| `useSurrealMemory()` / `useSurrealMemory(event)` | In-memory Node engine (requires `@surrealdb/node`) |
+| `useSurrealLocal()` / `useSurrealLocal(event)` | Local persistent Node engine (requires `@surrealdb/node`) |
+
+## Environment Variables
+
+Configuration maps to Nuxt runtime config. Override values using env vars:
+
+```dotenv
+# Client (public)
+NUXT_PUBLIC_SURREALDB_ENDPOINT="http://localhost:8000"
+NUXT_PUBLIC_SURREALDB_CONNECT_OPTIONS_NAMESPACE="my_ns"
+NUXT_PUBLIC_SURREALDB_CONNECT_OPTIONS_DATABASE="my_db"
+
+# Server-only
+NUXT_SURREALDB_ENDPOINT="http://internal-surrealdb:8000"
+NUXT_SURREALDB_SESSION="new"
+NUXT_SURREALDB_LOCAL_ENDPOINT="surrealkv://./.data/db"
 ```
 
-> [!NOTE]
-> `sql` method is an alias for `query` while `version` uses its [HTTP endpoint](https://surrealdb.com/docs/surrealdb/integration/http#version).
+## Optional Dependencies
 
-### RPC Websocket
-
-The `useSurrealWS` composable exposes a Websocket connection to handle live communication with SurrealDB. It uses `useWebsocket` from `@vueuse/core` under the hood, this means that SSR, auto-connect and auto-disconnect are handled automatically by default. Data is Automatically parsed from `JSON` to `string` both in input as well in `data` return.
-If available, upon Websocket connection, it will any Auth token from a prior user login. Database Presets and Websocket options are available as main arguments of the composable.
-
-Below a list of the main methods available from the Websocket composable:
-
-```ts
-const {
-  authenticate,
-  close,
-  create,
-  data,
-  set,      // alias for `let`
-  info,
-  insert,
-  invalidate,
-  kill,
-  let,
-  live,
-  merge,
-  open,
-  patch,
-  query,
-  remove,
-  rpc,
-  select,
-  send,
-  signin,
-  signup,
-  sql,      // alias for `query`
-  status,
-  unset,
-  update,
-  use,
-  ws,
-} = useSurrealWS()
-```
+| Package | Purpose |
+|---------|---------|
+| `@surrealdb/wasm` | Client-side embedded engines (in-memory, IndexedDB) |
+| `@surrealdb/node` | Server-side embedded engines (in-memory, SurrealKV) |
 
 > [!WARNING]
-> Currently while the `signin` and `signup` methods are avaible, they are limited to the current Websocket connection. Therefore if auth is required outside of that websocket connection it is advised to use the main `useSurrealAuth` composable for `SCOPE` user authentication.
+> The IndexedDB (`indxdb://`) WASM engine is currently bugged upstream. In-memory mode works as expected.
 
 ---
 
@@ -216,29 +105,29 @@ const {
 
 <details>
   <summary>Local development</summary>
-  
+
   ```bash
   # Install dependencies
-  npm install
-  
+  pnpm install
+
   # Generate type stubs
-  npm run dev:prepare
-  
+  pnpm run dev:prepare
+
   # Develop with the playground
-  npm run dev
-  
+  pnpm run dev
+
   # Build the playground
-  npm run dev:build
-  
+  pnpm run dev:build
+
   # Run ESLint
-  npm run lint
-  
+  pnpm run lint
+
   # Run Vitest
-  npm run test
-  npm run test:watch
-  
+  pnpm run test
+  pnpm run test:watch
+
   # Release new version
-  npm run release
+  pnpm run release
   ```
 
 </details>
