@@ -36,5 +36,5 @@ jobs:
           if [[ "$VERSION" =~ (alpha|beta|rc) ]]; then
             DIST_TAG="${BASH_REMATCH[1]}"
           fi
-          npm version "$VERSION" --no-git-tag-version
+          npm version "$VERSION" --no-git-tag-version --allow-same-version
           npm publish --tag "$DIST_TAG" --provenance
