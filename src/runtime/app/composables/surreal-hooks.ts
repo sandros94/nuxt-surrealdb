@@ -1,5 +1,5 @@
 import { createHooks } from 'hookable'
 
-import type { SurrealHooks, SurrealClientOptions } from '#surrealdb/types'
+import type { SurrealHooks, SurrealClientOptions } from '../../types'
 
 export const surrealHooks = createHooks<SurrealHooks<SurrealClientOptions>>()

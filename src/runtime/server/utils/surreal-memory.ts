@@ -2,13 +2,13 @@ import { type SurrealSession, Surreal, Features } from 'surrealdb'
 import { createNodeEngines } from '@surrealdb/node'
 import type { H3Event } from 'h3'
 
-import { useNitroApp, useRuntimeConfig } from '#imports'
+import { useRuntimeConfig } from '#imports'
 
 import { surrealHooks } from './surreal-hooks'
 
 import {
   H3_CONTEXT_SURREAL_MEMORY,
-} from '#surrealdb/internal'
+} from '../internal'
 
 // #region public composable
 
@@ -20,7 +20,6 @@ export async function useSurrealMemory(event?: H3Event | undefined): Promise<Sur
     return event.context[H3_CONTEXT_SURREAL_MEMORY]
   }
 
-  const { hooks } = useNitroApp()
   const { surrealdb: {
     memory: {
       nodeEngine,
@@ -32,15 +31,15 @@ export async function useSurrealMemory(event?: H3Event | undefined): Promise<Sur
     client = new Surreal({
       engines: createNodeEngines(nodeEngine),
     })
-  }
 
-  if (!client.isConnected) {
-    await surrealHooks.callHookParallel('surrealdb:memory:connecting', { client, config })
+    if (!client.isConnected) {
+      await surrealHooks.callHookParallel('surrealdb:memory:connecting', { client, config })
 
-    if (config.autoConnect !== false) {
-      const isConnected = await client.connect('mem://', config.connectOptions)
-      if (isConnected) {
-        await surrealHooks.callHookParallel('surrealdb:memory:connected', { client })
+      if (config.autoConnect !== false) {
+        const isConnected = await client.connect('mem://', config.connectOptions)
+        if (isConnected) {
+          await surrealHooks.callHookParallel('surrealdb:memory:connected', { client })
+        }
       }
     }
   }
@@ -50,8 +49,7 @@ export async function useSurrealMemory(event?: H3Event | undefined): Promise<Sur
   }
 
   if (!client.isFeatureSupported(Features.Sessions)) {
-    // TODO: throw error once a stable v2 is released
-    console.warn('[nuxt-surrealdb] Sessions are not supported by this SurrealDB Node engine.')
+    new Error('[nuxt-surrealdb] Sessions are not supported by this SurrealDB Node engine.')
     return client
   }
 
@@ -59,14 +57,6 @@ export async function useSurrealMemory(event?: H3Event | undefined): Promise<Sur
   event.context.surrealdb = session
 
   await surrealHooks.callHookParallel('surrealdb:memory:session:init', { session, event })
-
-  hooks.hook('afterResponse', async (event) => {
-    if (event.context[H3_CONTEXT_SURREAL_MEMORY]) {
-      await event.context[H3_CONTEXT_SURREAL_MEMORY].closeSession()
-      // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-      delete event.context[H3_CONTEXT_SURREAL_MEMORY]
-    }
-  })
 
   return session
 }

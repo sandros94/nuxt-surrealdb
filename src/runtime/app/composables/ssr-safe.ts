@@ -19,7 +19,7 @@ import type {
 import type {
   MaybePromise,
   ParseType,
-} from '#surrealdb/types'
+} from '../../types'
 import { type MaybeRef, type Ref, toRef, useAsyncData, surrealHooks } from '#imports'
 
 // Surreal types

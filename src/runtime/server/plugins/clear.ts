@@ -5,7 +5,7 @@ import {
   H3_CONTEXT_SURREAL_CLIENT,
   H3_CONTEXT_SURREAL_MEMORY,
   H3_CONTEXT_SURREAL_LOCAL,
-} from '#surrealdb/internal'
+} from '../internal'
 
 export default defineNitroPlugin(async (nitroApp) => {
   nitroApp.hooks.hook('afterResponse', async (event) => {

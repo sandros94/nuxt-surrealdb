@@ -2,13 +2,13 @@ import { type SurrealSession, Surreal, Features, createRemoteEngines } from 'sur
 import type { H3Event } from 'h3'
 import { defu } from 'defu'
 
-import { useNitroApp, useRuntimeConfig } from '#imports'
+import { useRuntimeConfig } from '#imports'
 
 import { surrealHooks } from './surreal-hooks'
 
 import {
   H3_CONTEXT_SURREAL_CLIENT,
-} from '#surrealdb/internal'
+} from '../internal'
 
 // #region public composable
 
@@ -20,7 +20,6 @@ export async function useSurreal(event?: H3Event | undefined): Promise<Surreal |
     return event.context[H3_CONTEXT_SURREAL_CLIENT]
   }
 
-  const { hooks } = useNitroApp()
   const {
     public: { surrealdb: {
       local: _pubLocal,
@@ -38,23 +37,23 @@ export async function useSurreal(event?: H3Event | undefined): Promise<Surreal |
     client = new Surreal({
       engines: createRemoteEngines(),
     })
-  }
 
-  if (!client.isConnected) {
-    const config = defu(srvSurrealdb, pubSurrealdb)
-    await surrealHooks.callHookParallel('surrealdb:connecting', { client, config })
+    if (!client.isConnected) {
+      const config = defu(srvSurrealdb, pubSurrealdb)
+      await surrealHooks.callHookParallel('surrealdb:connecting', { client, config })
 
-    if (config.endpoint && config.autoConnect !== false) {
-      let endpoint = config.endpoint
+      if (config.endpoint && config.autoConnect !== false) {
+        let endpoint = config.endpoint
 
-      // prefer http
-      if (config.preferHttp !== false) {
-        endpoint = endpoint.replace(/^ws/, 'http')
-      }
+        // prefer http
+        if (config.preferHttp !== false) {
+          endpoint = endpoint.replace(/^ws/, 'http')
+        }
 
-      const isConnected = await client.connect(endpoint, config.connectOptions)
-      if (isConnected) {
-        await surrealHooks.callHookParallel('surrealdb:connected', { client })
+        const isConnected = await client.connect(endpoint, config.connectOptions)
+        if (isConnected) {
+          await surrealHooks.callHookParallel('surrealdb:connected', { client })
+        }
       }
     }
   }
@@ -64,8 +63,7 @@ export async function useSurreal(event?: H3Event | undefined): Promise<Surreal |
   }
 
   if (!client.isFeatureSupported(Features.Sessions)) {
-    // TODO: throw error once a stable v2 is released
-    console.warn('[nuxt-surrealdb] Sessions are not supported by the connected SurrealDB instance.')
+    new Error('[nuxt-surrealdb] Sessions are not supported by the connected SurrealDB instance.')
     return client
   }
 
@@ -73,14 +71,6 @@ export async function useSurreal(event?: H3Event | undefined): Promise<Surreal |
   event.context.surrealdb = session
 
   await surrealHooks.callHookParallel('surrealdb:session:init', { session, event })
-
-  hooks.hook('afterResponse', async (event) => {
-    if (event.context[H3_CONTEXT_SURREAL_CLIENT]) {
-      await event.context[H3_CONTEXT_SURREAL_CLIENT].closeSession()
-      // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-      delete event.context[H3_CONTEXT_SURREAL_CLIENT]
-    }
-  })
 
   return session
 }
