@@ -54,13 +54,13 @@ export default defineNuxtConfig({
 | Composable | Description |
 |------------|-------------|
 | `useSurreal()` | Get the connected `Surreal` client |
-| `useSurrealAsyncData(key, cb)` | Low-level SSR-safe wrapper around `useAsyncData` |
+| `useSurrealAsyncData(cb)` | Low-level SSR-safe wrapper around `useAsyncData` |
 | `useSurrealQuery(query, bindings?)` | Execute a SurrealQL query with SSR support |
 | `useSurrealSelect(table, builder?)` | Select records with a builder-pattern API |
 | `useSurrealAuth()` | Get the currently authenticated user info |
 | `useSurrealRun(name, args?)` | Execute a SurrealDB function |
 | `useSurrealVersion()` | Get the SurrealDB server version |
-| `useSurrealExport(options)` | Export the database |
+| `useSurrealExport(options?)` | Export the database |
 | `useSurrealImport(input)` | Import a SurrealQL dump |
 | `useSurrealMemory()` | Access the in-memory WASM client |
 | `useSurrealLocal()` | Access the local WASM client |

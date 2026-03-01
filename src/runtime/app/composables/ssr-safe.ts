@@ -49,7 +49,7 @@ export type UseSurrealAsyncData<T, ErrorT, DefaultT> = SurrealAsyncData<PickFrom
  * @example
  * ```ts
  * const { data } = await useSurrealAsyncData((client) => {
- *   return client.select(new Table('user')).json()
+ *   return client.select(new Table('users')).json()
  * })
  * ```
  */
@@ -196,7 +196,7 @@ export async function useSurrealExport<
  *
  * @example
  * ```ts
- * const { data: ok } = await useSurrealImport('DEFINE TABLE user;')
+ * const { data: ok } = await useSurrealImport('DEFINE TABLE users;')
  * ```
  */
 export async function useSurrealImport<
@@ -243,7 +243,7 @@ export async function useSurrealImport<
  * @example
  * ```ts
  * const { data } = await useSurrealQuery<[User[]]>(
- *   'SELECT * FROM user WHERE age > $min',
+ *   'SELECT * FROM users WHERE age > $min',
  *   { min: 18 },
  * )
  * ```
@@ -296,7 +296,7 @@ export async function useSurrealQuery<
  *
  * @example
  * ```ts
- * const { data } = await useSurrealRun<number>('fn::get_count', ['user'])
+ * const { data } = await useSurrealRun<number>('fn::get_count', ['users'])
  * ```
  */
 export async function useSurrealRun<
@@ -405,17 +405,17 @@ export type UseSurrealSelectPromise<T, I> = (builder: SurrealSelectBuilder<T, I>
  * @example
  * ```ts
  * // Select all records from a table
- * const { data } = await useSurrealSelect(new Table('user'))
+ * const { data } = await useSurrealSelect(new Table('users'))
  *
  * // With filtering and pagination
  * const { data } = await useSurrealSelect(
- *   new Table('user'),
+ *   new Table('users'),
  *   q => q.where(eq('active', true)).limit(10).start(0),
  * )
  *
  * // Select a single record
  * const id = ref<string>('tobie')
- * const { data } = await useSurrealSelect(() => new RecordId('user', id.value))
+ * const { data } = await useSurrealSelect(() => new RecordId('users', id.value))
  * ```
  */
 export async function useSurrealSelect<
