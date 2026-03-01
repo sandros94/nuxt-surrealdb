@@ -19,12 +19,12 @@ concurrency:
 
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
-
     strategy:
       matrix:
         os: [ubuntu-latest]
         node: [22]
+
+    runs-on: ${{ matrix.os }}
 
     steps:
       - name: Checkout
