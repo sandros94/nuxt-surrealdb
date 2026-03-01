@@ -2,77 +2,72 @@ import type {
   Surreal,
   RecordResult,
   Jsonify,
-  Table,
-  RecordId,
+  AnyRecordId,
   RecordIdRange,
+  Table,
   Duration,
   DateTime,
   ExprLike,
   VersionInfo,
   SqlExportOptions,
 } from 'surrealdb'
-import type {
-  AsyncDataOptions,
-  NuxtError,
-} from '#app'
 
 import type {
-  MaybePromise,
-  ParseType,
-} from '../../types'
-import { type MaybeRef, type Ref, toRef, useAsyncData, surrealHooks } from '#imports'
+  AsyncData,
+  AsyncDataOptions,
+  KeysOf,
+  PickFrom,
+} from '#app/composables/asyncData'
+import type { NuxtError } from '#app'
+import { type MaybeRefOrGetter, toRef, toValue, useAsyncData, useSurreal } from '#imports'
+
+import type { MaybePromise } from '../../types'
 
 // Surreal types
 
 type Field<I> = keyof I | (string & {})
-type Doc = ParseType<Record<string, unknown>>
-type MaybeJsonify<T, J extends boolean> = J extends true ? Jsonify<T> : T
-type Collect<T extends unknown[], J extends boolean> = T extends []
+type Collect<T extends unknown[]> = T extends []
   ? unknown[]
   : {
-      [K in keyof T]: MaybeJsonify<T[K], J>;
+      [K in keyof T]: Jsonify<T[K]>;
     }
 
 // AsyncData types
 
-type PickFrom<T, K extends Array<string>> = T extends Array<any> ? T : T extends Record<string, any> ? keyof T extends K[number] ? T : K[number] extends never ? T : Pick<T, K[number]> : T
-type KeysOf<T> = Array<T extends T ? keyof T extends string ? keyof T : never : never>
-type _AsyncDataOptions<T, DefaultT> = AsyncDataOptions<T, T, KeysOf<T>, DefaultT>
-type AsyncDataRequestStatus = 'idle' | 'pending' | 'success' | 'error'
-type AsyncDataRefreshCause = 'initial' | 'refresh:hook' | 'refresh:manual' | 'watch'
-interface AsyncDataExecuteOptions {
-  /**
-   * Force a refresh, even if there is already a pending request. Previous requests will
-   * not be cancelled, but their result will not affect the data/pending state - and any
-   * previously awaited promises will not resolve until this new request resolves.
-   */
-  dedupe?: 'cancel' | 'defer'
-  cause?: AsyncDataRefreshCause
-  /** @internal */
-  cachedData?: any
-}
-export interface AsyncData<DataT, ErrorT> {
-  data: Ref<DataT>
-  pending: Ref<boolean>
-  refresh: (opts?: AsyncDataExecuteOptions) => Promise<void>
-  execute: (opts?: AsyncDataExecuteOptions) => Promise<void>
-  clear: () => void
-  error: Ref<ErrorT | undefined>
-  status: Ref<AsyncDataRequestStatus>
-}
-type UseSurrealAsyncData<T, ErrorT, DefaultT> = AsyncData<PickFrom<T, KeysOf<T>> | DefaultT, (ErrorT extends Error | NuxtError ? ErrorT : NuxtError<ErrorT>) | undefined>
+export type SurrealAsyncData<DataT, ErrorT> = AsyncData<DataT, ErrorT>
+export type SurrealAsyncDataOptions<T, DefaultT> = AsyncDataOptions<T, T, KeysOf<T>, DefaultT>
+export type UseSurrealAsyncData<T, ErrorT, DefaultT> = SurrealAsyncData<PickFrom<T, KeysOf<T>> | DefaultT, (ErrorT extends Error | NuxtError ? ErrorT : NuxtError<ErrorT>) | undefined>
 
 // #region useSurrealAsyncData
 
+/**
+ * SSR-safe composable for executing arbitrary SurrealDB operations.
+ *
+ * @param cb - Callback receiving the connected {@link Surreal} client
+ * @param asyncDataOptions - Options passed to `useAsyncData`
+ *
+ * @example
+ * ```ts
+ * const { data } = await useSurrealAsyncData((client) => {
+ *   return client.select(new Table('user')).json()
+ * })
+ * ```
+ */
 export async function useSurrealAsyncData<
   T,
   ErrorT,
   DefaultT = undefined,
 >(
-  key: string,
   cb: (client: Surreal) => MaybePromise<T>,
-  asyncDataOptions?: _AsyncDataOptions<T, DefaultT>,
+  asyncDataOptions?: SurrealAsyncDataOptions<T, DefaultT>,
+  _key?: string,
 ): Promise<UseSurrealAsyncData<T, ErrorT, DefaultT>> {
+  // Handle auto-injected key from keyed composables
+  if (typeof asyncDataOptions === 'string') {
+    _key = asyncDataOptions
+    asyncDataOptions = undefined
+  }
+
   const {
     data,
     error,
@@ -82,39 +77,9 @@ export async function useSurrealAsyncData<
     refresh,
     clear,
   } = await useAsyncData<T, ErrorT, T, KeysOf<T>, DefaultT>(
-    key,
-    async (nuxtApp) => {
-      const {
-        $surreal: client,
-        $config: {
-          public: {
-            surrealdb: {
-              local,
-              memory,
-              ...config
-            } = {},
-          },
-        },
-      } = nuxtApp
-
-      if (!client.isConnected) {
-        await surrealHooks.callHookParallel('surrealdb:connecting', { client, config })
-
-        if (config.endpoint && config.autoConnect !== false) {
-          let endpoint = config.endpoint
-
-          // prefer http during server-side rendering
-          if (import.meta.server && config.preferHttp !== false) {
-            endpoint = endpoint.replace(/^ws/, 'http')
-          }
-
-          const isConnected = await client.connect(endpoint, config.connectOptions)
-          if (isConnected) {
-            await surrealHooks.callHookParallel('surrealdb:connected', { client })
-          }
-        }
-      }
-
+    _key!,
+    async () => {
+      const client = await useSurreal()
       return cb(client)
     },
     asyncDataOptions,
@@ -135,25 +100,40 @@ export async function useSurrealAsyncData<
 
 // #region useSurrealAuth
 
+/**
+ * Returns the record of the currently authenticated user.
+ * Selects the `$auth` parameter from SurrealDB.
+ *
+ * Make sure the user has permission to select their own record,
+ * otherwise an empty result is returned.
+ *
+ * @param asyncDataOptions - Options passed to `useAsyncData`
+ *
+ * @example
+ * ```ts
+ * const { data: user } = await useSurrealAuth<{ name: string }>()
+ * ```
+ */
 export async function useSurrealAuth<
-  T extends Doc,
+  T,
   ErrorT,
   DefaultT = undefined,
 >(
-  asyncDataOptions?: _AsyncDataOptions<Jsonify<RecordResult<T> | undefined>, DefaultT> & {
-    key?: string
-  },
+  asyncDataOptions?: SurrealAsyncDataOptions<Jsonify<RecordResult<T> | undefined>, DefaultT>,
+  _key?: string,
 ): Promise<UseSurrealAsyncData<Jsonify<RecordResult<T> | undefined>, ErrorT, DefaultT>> {
-  const { key = 'surreal:info', ...restOptions } = asyncDataOptions || {}
+  // Handle auto-injected key from keyed composables
+  if (typeof asyncDataOptions === 'string') {
+    _key = asyncDataOptions
+    asyncDataOptions = undefined
+  }
 
   return useSurrealAsyncData<Jsonify<RecordResult<T> | undefined>, ErrorT, DefaultT>(
-    key,
     async (client) => {
-      const res = await client.auth<T>().json()
-
-      return res
+      return await client.auth<T>().json()
     },
-    restOptions,
+    asyncDataOptions,
+    _key,
   )
 }
 
@@ -161,29 +141,46 @@ export async function useSurrealAuth<
 
 // #region useSurrealExport
 
+/**
+ * Export the database as a SurrealQL string.
+ *
+ * @param expOptions - Export options (reactive)
+ * @param asyncDataOptions - Options passed to `useAsyncData`
+ *
+ * @example
+ * ```ts
+ * const { data: dump } = await useSurrealExport()
+ * ```
+ */
 export async function useSurrealExport<
   ErrorT,
   DefaultT = undefined,
 >(
-  expOptions: MaybeRef<SqlExportOptions>,
-  asyncDataOptions?: _AsyncDataOptions<string, DefaultT> & {
-    key?: string
-  },
+  expOptions?: MaybeRefOrGetter<Partial<SqlExportOptions>>,
+  asyncDataOptions?: SurrealAsyncDataOptions<string, DefaultT>,
+  _key?: string,
 ): Promise<UseSurrealAsyncData<string, ErrorT, DefaultT>> {
+  // Handle auto-injected key from keyed composables
+  if (typeof expOptions === 'string') {
+    _key = expOptions
+    expOptions = undefined
+  }
+  else if (typeof asyncDataOptions === 'string') {
+    _key = asyncDataOptions
+    asyncDataOptions = undefined
+  }
+
   const expOptionsRef = toRef(expOptions)
-  const { key = `surreal:run:${expOptionsRef.value.toString()}`, ...restOptions } = asyncDataOptions || {}
 
   return useSurrealAsyncData(
-    key,
     async (client) => {
-      const res = await client.export(expOptionsRef.value)
-
-      return res
+      return await client.export(expOptionsRef.value)
     },
     {
-      ...restOptions,
-      watch: [...(restOptions?.watch || []), expOptionsRef],
+      ...asyncDataOptions,
+      watch: [...(asyncDataOptions?.watch || []), expOptionsRef],
     },
+    _key,
   )
 }
 
@@ -191,29 +188,43 @@ export async function useSurrealExport<
 
 // #region useSurrealImport
 
+/**
+ * Import SurrealQL data into the database.
+ *
+ * @param input - The SurrealQL string to import (reactive)
+ * @param asyncDataOptions - Options passed to `useAsyncData`
+ *
+ * @example
+ * ```ts
+ * const { data: ok } = await useSurrealImport('DEFINE TABLE user;')
+ * ```
+ */
 export async function useSurrealImport<
   ErrorT,
   DefaultT = undefined,
 >(
-  input: MaybeRef<string>,
-  asyncDataOptions?: _AsyncDataOptions<true, DefaultT> & {
-    key?: string
-  },
+  input: MaybeRefOrGetter<string>,
+  asyncDataOptions?: SurrealAsyncDataOptions<true, DefaultT>,
+  _key?: string,
 ): Promise<UseSurrealAsyncData<true, ErrorT, DefaultT>> {
+  // Handle auto-injected key from keyed composables
+  if (typeof asyncDataOptions === 'string') {
+    _key = asyncDataOptions
+    asyncDataOptions = undefined
+  }
+
   const inputRef = toRef(input)
-  const { key = `surreal:run:${inputRef.value.toString()}`, ...restOptions } = asyncDataOptions || {}
 
   return useSurrealAsyncData(
-    key,
     async (client) => {
       await client.import(inputRef.value)
-
       return true as const
     },
     {
-      ...restOptions,
-      watch: [...(restOptions?.watch || []), inputRef],
+      ...asyncDataOptions,
+      watch: [...(asyncDataOptions?.watch || []), inputRef],
     },
+    _key,
   )
 }
 
@@ -221,32 +232,54 @@ export async function useSurrealImport<
 
 // #region useSurrealQuery
 
+/**
+ * Run a set of SurrealQL statements against the database.
+ * Results are automatically JSON-serialized for SSR payload transfer.
+ *
+ * @param query - The SurrealQL query string (reactive)
+ * @param bindings - Optional query variable bindings (reactive)
+ * @param asyncDataOptions - Options passed to `useAsyncData`
+ *
+ * @example
+ * ```ts
+ * const { data } = await useSurrealQuery<[User[]]>(
+ *   'SELECT * FROM user WHERE age > $min',
+ *   { min: 18 },
+ * )
+ * ```
+ */
 export async function useSurrealQuery<
   T extends unknown[],
   ErrorT,
   DefaultT = undefined,
 >(
-  query: MaybeRef<string>,
-  bindings?: MaybeRef<Record<string, MaybeRef<unknown>>>,
-  asyncDataOptions?: _AsyncDataOptions<Collect<T, true>, DefaultT> & {
-    key?: string
-  },
-): Promise<UseSurrealAsyncData<Collect<T, true>, ErrorT, DefaultT>> {
+  query: MaybeRefOrGetter<string>,
+  bindings?: MaybeRefOrGetter<Record<string, MaybeRefOrGetter<unknown>>>,
+  asyncDataOptions?: SurrealAsyncDataOptions<Collect<T>, DefaultT>,
+  _key?: string,
+): Promise<UseSurrealAsyncData<Collect<T>, ErrorT, DefaultT>> {
+  // Handle auto-injected key from keyed composables
+  if (typeof asyncDataOptions === 'string') {
+    _key = asyncDataOptions
+    asyncDataOptions = undefined
+  }
+  else if (typeof bindings === 'string') {
+    _key = bindings
+    bindings = undefined
+  }
+
   const queryRef = toRef(query)
   const bindingsRef = toRef(bindings)
-  const { key = `surreal:query:${queryRef.value.toString()}:${JSON.stringify(bindingsRef.value)}`, ...restOptions } = asyncDataOptions || {}
 
   return useSurrealAsyncData(
-    key,
     async (client) => {
-      const res = await client.query(queryRef.value, bindingsRef.value).json().collect<T>()
-
-      return res
+      return await client.query<T>(queryRef.value, bindingsRef.value).json().collect<T>()
     },
     {
-      ...restOptions,
-      watch: [...(restOptions?.watch || []), queryRef],
+      ...asyncDataOptions,
+      watch: [...(asyncDataOptions?.watch || []), queryRef],
     },
+    _key,
   )
 }
 
@@ -254,32 +287,50 @@ export async function useSurrealQuery<
 
 // #region useSurrealRun
 
+/**
+ * Run a SurrealQL function and return the result.
+ *
+ * @param name - The full name of the function to run (reactive)
+ * @param args - Arguments supplied to the function (reactive)
+ * @param asyncDataOptions - Options passed to `useAsyncData`
+ *
+ * @example
+ * ```ts
+ * const { data } = await useSurrealRun<number>('fn::get_count', ['user'])
+ * ```
+ */
 export async function useSurrealRun<
   T,
   ErrorT,
   DefaultT = undefined,
 >(
-  name: MaybeRef<string>,
-  args?: MaybeRef<unknown[]>,
-  asyncDataOptions?: _AsyncDataOptions<Jsonify<T>, DefaultT> & {
-    key?: string
-  },
+  name: MaybeRefOrGetter<string>,
+  args?: MaybeRefOrGetter<unknown[]>,
+  asyncDataOptions?: SurrealAsyncDataOptions<Jsonify<T>, DefaultT>,
+  _key?: string,
 ): Promise<UseSurrealAsyncData<Jsonify<T>, ErrorT, DefaultT>> {
+  // Handle auto-injected key from keyed composables
+  if (typeof asyncDataOptions === 'string') {
+    _key = asyncDataOptions
+    asyncDataOptions = undefined
+  }
+  else if (typeof args === 'string') {
+    _key = args
+    args = undefined
+  }
+
   const nameRef = toRef(name)
   const argsRef = toRef(args)
-  const { key = `surreal:run:${nameRef.value.toString()}:${argsRef.value?.toString()}`, ...restOptions } = asyncDataOptions || {}
 
   return useSurrealAsyncData(
-    key,
     async (client) => {
-      const res = await client.run<T>(nameRef.value, argsRef.value).json()
-
-      return res
+      return await client.run<T>(nameRef.value, argsRef.value).json()
     },
     {
-      ...restOptions,
-      watch: [...(restOptions?.watch || []), nameRef, argsRef],
+      ...asyncDataOptions,
+      watch: [...(asyncDataOptions?.watch || []), nameRef, argsRef],
     },
+    _key,
   )
 }
 
@@ -287,23 +338,35 @@ export async function useSurrealRun<
 
 // #region useSurrealSelect
 
-interface _UseSurrealSelectPromise<T, I> {
+/**
+ * Structural interface matching the upstream `SelectPromise`'s chainable API.
+ * Since `SelectPromise` is not exported from `surrealdb`, this provides
+ * equivalent type support through structural compatibility.
+ */
+export interface SurrealSelectBuilder<T, I> {
+  /**
+   * Configure the query to return the result as a
+   * JSON-compatible structure.
+   *
+   * @remarks Called internally by the composable — you do not need to call this yourself.
+   */
+  json(): PromiseLike<Jsonify<T>>
   /**
    * Configure the query to only select the specified field(s)
    */
-  fields(...fields: Field<I>[]): _UseSurrealSelectPromise<T, I>
+  fields(...fields: Field<I>[]): SurrealSelectBuilder<T, I>
   /**
    * Configure the query to retrieve the value of the specified field
    */
-  value(field: Field<I>): _UseSurrealSelectPromise<T, I>
+  value(field: Field<I>): SurrealSelectBuilder<T, I>
   /**
    * Configure the query to start at the specified index
    */
-  start(start: number): _UseSurrealSelectPromise<T, I>
+  start(start: number): SurrealSelectBuilder<T, I>
   /**
    * Configure the query to limit the number of results
    */
-  limit(limit: number): _UseSurrealSelectPromise<T, I>
+  limit(limit: number): SurrealSelectBuilder<T, I>
   /**
    * Configure the query to fetch only records that match the condition.
    *
@@ -312,72 +375,106 @@ interface _UseSurrealSelectPromise<T, I> {
    *
    * @see {@link https://github.com/surrealdb/surrealdb.js/blob/main/packages/sdk/src/utils/expr.ts}
    */
-  where(expr: ExprLike): _UseSurrealSelectPromise<T, I>
+  where(expr: ExprLike): SurrealSelectBuilder<T, I>
   /**
    * Configure the query to fetch record link contents for the specified field(s)
    */
-  fetch(...fields: Field<I>[]): _UseSurrealSelectPromise<T, I>
+  fetch(...fields: Field<I>[]): SurrealSelectBuilder<T, I>
   /**
    * Configure the timeout of the query
    */
-  timeout(timeout: Duration): _UseSurrealSelectPromise<T, I>
+  timeout(timeout: Duration): SurrealSelectBuilder<T, I>
   /**
    * Configure a custom version of the data being created. This is used
    * alongside version enabled storage engines such as SurrealKV.
    */
-  version(version: DateTime): _UseSurrealSelectPromise<T, I>
+  version(version: DateTime): SurrealSelectBuilder<T, I>
 }
 
-export type UseSurrealSelectPromise<T, I> = (select: _UseSurrealSelectPromise<T, I>) => _UseSurrealSelectPromise<T, I>
+export type UseSurrealSelectPromise<T, I> = (builder: SurrealSelectBuilder<T, I>) => SurrealSelectBuilder<T, I>
 
+/**
+ * Select records from a table, record ID, or record ID range.
+ * Accepts a chainable builder callback for filtering, pagination, and field selection.
+ * Results are automatically JSON-serialized. The first argument supports reactive inputs.
+ *
+ * @param tableOrRecord - The table, record ID, or range to select from (reactive)
+ * @param select - Optional callback to configure the select query via the builder API
+ * @param asyncDataOptions - Options passed to `useAsyncData`
+ *
+ * @example
+ * ```ts
+ * // Select all records from a table
+ * const { data } = await useSurrealSelect(new Table('user'))
+ *
+ * // With filtering and pagination
+ * const { data } = await useSurrealSelect(
+ *   new Table('user'),
+ *   q => q.where(eq('active', true)).limit(10).start(0),
+ * )
+ *
+ * // Select a single record
+ * const id = ref<string>('tobie')
+ * const { data } = await useSurrealSelect(() => new RecordId('user', id.value))
+ * ```
+ */
 export async function useSurrealSelect<
-  T extends Doc,
+  T,
   ErrorT,
   DefaultT = undefined,
 >(
-  tableOrRecord: RecordId,
-  select?: UseSurrealSelectPromise<RecordResult<T>, T>,
-  asyncDataOptions?: _AsyncDataOptions<Jsonify<RecordResult<T>>, DefaultT> & {
-    key?: string
-  },
-): Promise<UseSurrealAsyncData<Jsonify<RecordResult<T>>, ErrorT, DefaultT>>
+  tableOrRecord: MaybeRefOrGetter<AnyRecordId>,
+  select?: UseSurrealSelectPromise<RecordResult<T> | undefined, T>,
+  asyncDataOptions?: SurrealAsyncDataOptions<Jsonify<RecordResult<T> | undefined>, DefaultT>,
+  _key?: string,
+): Promise<UseSurrealAsyncData<Jsonify<RecordResult<T> | undefined>, ErrorT, DefaultT>>
 export async function useSurrealSelect<
-  T extends Doc,
+  T,
   ErrorT,
   DefaultT = undefined,
 >(
-  tableOrRecord: Table | RecordIdRange,
+  tableOrRecord: MaybeRefOrGetter<Table | RecordIdRange>,
   select?: UseSurrealSelectPromise<RecordResult<T>[], T>,
-  asyncDataOptions?: _AsyncDataOptions<Jsonify<RecordResult<T>[]>, DefaultT> & {
-    key?: string
-  },
+  asyncDataOptions?: SurrealAsyncDataOptions<Jsonify<RecordResult<T>[]>, DefaultT>,
+  _key?: string,
 ): Promise<UseSurrealAsyncData<Jsonify<RecordResult<T>[]>, ErrorT, DefaultT>>
 export async function useSurrealSelect<
-  T extends Doc,
+  T,
   ErrorT,
   DefaultT = undefined,
 >(
-  tableOrRecord: RecordId | Table | RecordIdRange,
-  select?: UseSurrealSelectPromise<RecordResult<T>, T> | UseSurrealSelectPromise<RecordResult<T>[], T>,
-  asyncDataOptions?: _AsyncDataOptions<Jsonify<RecordResult<T>>, DefaultT> & {
-    key?: string
-  } | _AsyncDataOptions<Jsonify<RecordResult<T>[]>, DefaultT> & {
-    key?: string
-  },
-): Promise<UseSurrealAsyncData<Jsonify<RecordResult<T>> | Jsonify<RecordResult<T>[]>, ErrorT, DefaultT>> {
-  const { key = `surreal:run:${tableOrRecord.toString()}`, ...restOptions } = asyncDataOptions || {}
+  tableOrRecord: MaybeRefOrGetter<AnyRecordId | Table | RecordIdRange>,
+  select?: UseSurrealSelectPromise<RecordResult<T> | undefined, T> | UseSurrealSelectPromise<RecordResult<T>[], T>,
+  asyncDataOptions?: SurrealAsyncDataOptions<Jsonify<RecordResult<T> | undefined>, DefaultT>
+    | SurrealAsyncDataOptions<Jsonify<RecordResult<T>[]>, DefaultT>,
+  _key?: string,
+): Promise<UseSurrealAsyncData<Jsonify<RecordResult<T> | undefined> | Jsonify<RecordResult<T>[]>, ErrorT, DefaultT>> {
+  // Handle auto-injected key from keyed composables
+  if (typeof asyncDataOptions === 'string') {
+    _key = asyncDataOptions
+    asyncDataOptions = undefined
+  }
+  else if (typeof select === 'string') {
+    _key = select
+    select = undefined
+  }
+
+  type Data = RecordResult<T> | RecordResult<T>[] | undefined
+  type Options = SurrealAsyncDataOptions<Jsonify<Data>, DefaultT>
 
   return useSurrealAsyncData(
-    key,
     async (client) => {
-      const _select = client.select<T>(tableOrRecord as any)
-
-      return await (select ? (select(_select) as any) : _select).json()
+      const builder = client.select<T>(toValue(tableOrRecord) as Table) as SurrealSelectBuilder<Data, T>
+      const configured = select
+        ? (select as UseSurrealSelectPromise<Data, T>)(builder)
+        : builder
+      return await configured.json()
     },
     {
-      ...restOptions,
-      watch: [...(restOptions?.watch || []), () => tableOrRecord],
-    } as any,
+      ...(asyncDataOptions as Options),
+      watch: [...((asyncDataOptions as Options)?.watch || []), toRef(tableOrRecord)],
+    } as Options,
+    _key,
   )
 }
 
@@ -385,24 +482,35 @@ export async function useSurrealSelect<
 
 // #region useSurrealVersion
 
+/**
+ * Returns the version information of the connected SurrealDB server.
+ *
+ * @param asyncDataOptions - Options passed to `useAsyncData`
+ *
+ * @example
+ * ```ts
+ * const { data: version } = await useSurrealVersion()
+ * ```
+ */
 export async function useSurrealVersion<
   ErrorT,
   DefaultT = undefined,
 >(
-  asyncDataOptions?: _AsyncDataOptions<VersionInfo, DefaultT> & {
-    key?: string
-  },
+  asyncDataOptions?: SurrealAsyncDataOptions<VersionInfo, DefaultT>,
+  _key?: string,
 ): Promise<UseSurrealAsyncData<VersionInfo, ErrorT, DefaultT>> {
-  const { key = 'surreal:version', ...restOptions } = asyncDataOptions || {}
+  // Handle auto-injected key from keyed composables
+  if (typeof asyncDataOptions === 'string') {
+    _key = asyncDataOptions
+    asyncDataOptions = undefined
+  }
 
   return useSurrealAsyncData(
-    key,
     async (client) => {
-      const res = await client.version()
-
-      return res
+      return await client.version()
     },
-    restOptions,
+    asyncDataOptions,
+    _key,
   )
 }
 

@@ -9,6 +9,9 @@ export default defineNuxtModule<ModuleOptions>({
   meta: {
     name: 'surrealdb',
     configKey: 'surrealdb',
+    compatibility: {
+      nuxt: '^3.21.0 || ^4.3.0',
+    },
   },
   setup(options, nuxt) {
     const { resolve } = createResolver(import.meta.url)
@@ -146,6 +149,22 @@ export default defineNuxtModule<ModuleOptions>({
         name: c,
       })),
     )
+
+    // Register keyed composables for automatic key injection
+    const ssrSafeSource = resolve(runtimeDir, 'app', 'composables', 'ssr-safe')
+    nuxt.options.optimization ||= {} as any
+    nuxt.options.optimization.keyedComposables ||= []
+    nuxt.options.optimization.keyedComposables.push(
+      { name: 'useSurrealAsyncData', source: ssrSafeSource, argumentLength: 3 },
+      { name: 'useSurrealAuth', source: ssrSafeSource, argumentLength: 2 },
+      { name: 'useSurrealExport', source: ssrSafeSource, argumentLength: 3 },
+      { name: 'useSurrealImport', source: ssrSafeSource, argumentLength: 3 },
+      { name: 'useSurrealQuery', source: ssrSafeSource, argumentLength: 4 },
+      { name: 'useSurrealRun', source: ssrSafeSource, argumentLength: 4 },
+      { name: 'useSurrealSelect', source: ssrSafeSource, argumentLength: 4 },
+      { name: 'useSurrealVersion', source: ssrSafeSource, argumentLength: 2 },
+    )
+
     serverImports.push(
       {
         from: resolve(runtimeDir, 'server', 'utils', 'surreal'),
