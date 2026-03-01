@@ -1,36 +1,6 @@
 # Changelog
 
 
-## v0.5.0
-
-[compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.5.0-rc.6...v0.5.0)
-
-### 🩹 Fixes
-
-- Set node and wasm builds as optional peer deps ([618a49e](https://github.com/sandros94/nuxt-surrealdb/commit/618a49e))
-
-### 💅 Refactors
-
-- Ssr-safe utils as `keyedComposables` ([32b783a](https://github.com/sandros94/nuxt-surrealdb/commit/32b783a))
-
-### 📖 Documentation
-
-- Rewrite documentation ([#26](https://github.com/sandros94/nuxt-surrealdb/pull/26))
-- Do not move `.output` dir ([9bee211](https://github.com/sandros94/nuxt-surrealdb/commit/9bee211))
-- Enable buildCache ([db4118a](https://github.com/sandros94/nuxt-surrealdb/commit/db4118a))
-
-### 🏡 Chore
-
-- Add `unimport` as dev dep ([3e857d1](https://github.com/sandros94/nuxt-surrealdb/commit/3e857d1))
-
-### 🤖 CI
-
-- Fix docs artifact ([7f9b841](https://github.com/sandros94/nuxt-surrealdb/commit/7f9b841))
-
-### ❤️ Contributors
-
-- Sandro Circi ([@sandros94](https://github.com/sandros94))
-
 ## v0.5.0-rc.6
 
 [compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.5.0-rc.5...v0.5.0-rc.6)
