@@ -49,14 +49,10 @@
 
 <script setup lang="ts">
 const tableNameRef = ref('test')
-const { data } = await useSurrealAsyncData('select:test', (client) => {
-  return client
-    .select(new Table(tableNameRef.value))
-    .where(eq('payload', 'ciao'))
-    .json()
-}, {
-  watch: [tableNameRef],
-})
+const { data } = await useSurrealSelect(
+  () => new Table(tableNameRef.value),
+  client => client.where(eq('payload', 'ciao')),
+)
 const { data: srv } = await useFetch('/api/surreal/fetch')
 const { data: srvMem } = await useFetch('/api/surreal/node/mem')
 const { data: srvLocal } = await useFetch('/api/surreal/node/local')
