@@ -79,9 +79,6 @@ export default defineNuxtConfig({
 
   nitro: {
     preset: 'github-pages',
-    output: {
-      dir: '../.output',
-    },
   },
 
   componentMeta: {
