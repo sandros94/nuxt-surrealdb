@@ -11,7 +11,7 @@
     "type": "git",
     "url": "git+https://github.com/sandros94/nuxt-surrealdb.git"
   },
-  "homepage": "https://nuxt-surrealdb.s94.dev",
+  "homepage": "https://surrealdb.s94.dev",
   "license": "MIT",
   "type": "module",
   "author": {
