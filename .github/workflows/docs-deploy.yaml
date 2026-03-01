@@ -54,6 +54,11 @@ jobs:
       - name: Build Docs
         run: pnpm run docs:build
 
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs/dist
+
   # Deployment job
   deploy:
     environment:
