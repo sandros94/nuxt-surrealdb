@@ -78,6 +78,7 @@
     "eslint": "^9.39.1",
     "nuxt": "catalog:",
     "typescript": "^5.9.3",
+    "unimport": "^6.0.0",
     "vitest": "^4.0.18",
     "vue-tsc": "^3.2.5"
   },
