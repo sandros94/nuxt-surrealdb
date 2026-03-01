@@ -14,6 +14,6 @@
     "nuxt-component-meta": "^0.17.2",
     "nuxt-llms": "0.2.0",
     "nuxt-surrealdb": "workspace:^",
-    "valibot": "^1.2.0"
+    "tailwindcss": "^4.2.1"
   }
 }
