@@ -37,8 +37,6 @@ jobs:
       - name: Typecheck
         run: pnpm run typecheck
 
-      - name: Update npm
-        run: npm install -g npm@latest
       - name: Publish
         run: |
           TAG="${{ github.ref_name }}"
