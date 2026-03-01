@@ -75,10 +75,10 @@ export default defineNuxtConfig({
     },
   },
 
-  compatibilityDate: '2025-09-30',
+  compatibilityDate: '2026-02-28',
 
   nitro: {
-    preset: 'deno-server',
+    preset: 'github-pages',
     output: {
       dir: '../.output',
     },
