@@ -12,6 +12,7 @@
     "comark": "https://pkg.pr.new/comarkdown/comark@main",
     "nuxt-surrealdb": "workspace:*",
     "nuxt": "catalog:",
-    "surqlize": "^0.1.0"
+    "surqlize": "^0.1.0",
+    "tailwindcss": "catalog:"
   }
 }
