@@ -1,4 +1,6 @@
 import type { PublicRuntimeConfig, RuntimeConfig } from '@nuxt/schema'
+import type { createWasmWorkerEngines } from '@surrealdb/wasm'
+import type { createNodeEngines } from '@surrealdb/node'
 import type { ConnectOptions, Surreal } from 'surrealdb'
 
 export type { Surreal, SurrealSession } from 'surrealdb'
@@ -27,23 +29,11 @@ export type SurrealServerRuntimeConfig<
 
 /* Wasm */
 
-interface CapabilitiesAllowDenyList {
-  allow?: boolean | string[]
-  deny?: boolean | string[]
-}
-export interface SurrealEngineOptions {
-  strict?: boolean
-  query_timeout?: number
-  transaction_timeout?: number
-  capabilities?: boolean | {
-    scripting?: boolean
-    guest_access?: boolean
-    live_query_notifications?: boolean
-    functions?: boolean | string[] | CapabilitiesAllowDenyList
-    network_targets?: boolean | string[] | CapabilitiesAllowDenyList
-    experimental?: boolean | string[] | CapabilitiesAllowDenyList
-  }
-}
+export type SurrealWasmEngineOptions = NonNullable<Parameters<typeof createWasmWorkerEngines>[0]>
+
+/* Node */
+
+export type SurrealNodeEngineOptions = NonNullable<Parameters<typeof createNodeEngines>[0]>
 
 /* Module */
 
@@ -73,10 +63,10 @@ export interface ModuleOptions {
      */
     preferHttp?: boolean
     memory?: Omit<SurrealClientOptions, 'endpoint'> & {
-      wasmEngine?: SurrealEngineOptions
+      wasmEngine?: SurrealWasmEngineOptions
     }
     local?: SurrealClientOptions & {
-      wasmEngine?: SurrealEngineOptions
+      wasmEngine?: SurrealWasmEngineOptions
     }
   }
   server?: SurrealServerOptions & {
@@ -87,10 +77,10 @@ export interface ModuleOptions {
      */
     preferHttp?: boolean
     memory?: Omit<SurrealServerOptions, 'endpoint'> & {
-      nodeEngine?: SurrealEngineOptions
+      nodeEngine?: SurrealNodeEngineOptions
     }
     local?: SurrealServerOptions & {
-      nodeEngine?: SurrealEngineOptions
+      nodeEngine?: SurrealNodeEngineOptions
     }
   }
 }
