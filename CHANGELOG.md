@@ -1,6 +1,22 @@
 # Changelog
 
 
+## v0.5.1
+
+[compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.5.0...v0.5.1)
+
+### 🩹 Fixes
+
+- Always import base app plugin ([4c47aa7](https://github.com/sandros94/nuxt-surrealdb/commit/4c47aa7))
+
+### 🏡 Chore
+
+- Update domain name ([5c54db2](https://github.com/sandros94/nuxt-surrealdb/commit/5c54db2))
+
+### ❤️ Contributors
+
+- Sandro Circi ([@sandros94](https://github.com/sandros94))
+
 ## v0.5.0
 
 [compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.5.0-rc.6...v0.5.0)
