@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@nuxt/ui": "catalog:",
-    "comark": "https://pkg.pr.new/comarkdown/comark@main",
+    "comark": "https://pkg.pr.new/comarkdown/comark@00b3370",
     "nuxt-surrealdb": "workspace:*",
     "nuxt": "catalog:",
     "surqlize": "^0.1.0",

@@ -121,8 +121,8 @@ importers:
         specifier: 'catalog:'
         version: 4.5.0(@nuxt/content@3.12.0(magicast@0.5.2)(valibot@1.2.0(typescript@5.9.3)))(@tiptap/extensions@3.20.0(@tiptap/core@3.20.0(@tiptap/pm@3.20.0))(@tiptap/pm@3.20.0))(@tiptap/y-tiptap@3.0.2(prosemirror-model@1.25.4)(prosemirror-state@1.4.4)(prosemirror-view@1.41.6)(y-protocols@1.0.7(yjs@13.6.29))(yjs@13.6.29))(change-case@5.4.4)(db0@0.3.4)(embla-carousel@8.6.0)(focus-trap@7.6.6)(ioredis@5.10.0)(magicast@0.5.2)(tailwindcss@4.2.1)(typescript@5.9.3)(valibot@1.2.0(typescript@5.9.3))(vite@7.3.1(@types/node@25.3.2)(jiti@2.6.1)(lightningcss@1.31.1)(terser@5.44.1)(yaml@2.8.2))(vue-router@4.6.4(vue@3.5.29(typescript@5.9.3)))(vue@3.5.29(typescript@5.9.3))(yjs@13.6.29)(zod@4.3.6)
       comark:
-        specifier: https://pkg.pr.new/comarkdown/comark@main
-        version: https://pkg.pr.new/comarkdown/comark@main(shiki@3.23.0)(vue@3.5.29(typescript@5.9.3))
+        specifier: https://pkg.pr.new/comarkdown/comark@00b3370
+        version: https://pkg.pr.new/comarkdown/comark@00b3370(shiki@3.23.0)(vue@3.5.29(typescript@5.9.3))
       nuxt:
         specifier: 'catalog:'
         version: 4.3.1(@parcel/watcher@2.5.1)(@types/node@25.3.2)(@vue/compiler-sfc@3.5.29)(cac@6.7.14)(db0@0.3.4)(eslint@9.39.1(jiti@2.6.1))(ioredis@5.10.0)(lightningcss@1.31.1)(magicast@0.5.2)(optionator@0.9.4)(rollup@4.59.0)(terser@5.44.1)(typescript@5.9.3)(vite@7.3.1(@types/node@25.3.2)(jiti@2.6.1)(lightningcss@1.31.1)(terser@5.44.1)(yaml@2.8.2))(vue-tsc@3.2.5(typescript@5.9.3))(yaml@2.8.2)
@@ -3260,8 +3260,8 @@ packages:
   colortranslator@5.0.0:
     resolution: {integrity: sha512-Z3UPUKasUVDFCDYAjP2fmlVRf1jFHJv1izAmPjiOa0OCIw1W7iC8PZ2GsoDa8uZv+mKyWopxxStT9q05+27h7w==}
 
-  comark@https://pkg.pr.new/comarkdown/comark@main:
-    resolution: {integrity: sha512-liSUqSEkzTzRQft9uRMA2BG5SsS9alpWnMlB/ZvBqiJaCW9rMs9Xf6p/uHSkAILX29zS0RBlYZs+IV+bfmuELw==, tarball: https://pkg.pr.new/comarkdown/comark@main}
+  comark@https://pkg.pr.new/comarkdown/comark@00b3370:
+    resolution: {integrity: sha512-v4nZkZkfylLexDSE2RzSTFuG25HbURcdFMgig2PwHA1IkiG9b3uw7TphnUZatDDUM9578g80zkWbL4gfdf5LpQ==, tarball: https://pkg.pr.new/comarkdown/comark@00b3370}
     version: 1.0.0
     peerDependencies:
       react: ^19.2.4
@@ -10546,7 +10546,7 @@ snapshots:
 
   colortranslator@5.0.0: {}
 
-  comark@https://pkg.pr.new/comarkdown/comark@main(shiki@3.23.0)(vue@3.5.29(typescript@5.9.3)):
+  comark@https://pkg.pr.new/comarkdown/comark@00b3370(shiki@3.23.0)(vue@3.5.29(typescript@5.9.3)):
     optionalDependencies:
       shiki: 3.23.0
       vue: 3.5.29(typescript@5.9.3)
