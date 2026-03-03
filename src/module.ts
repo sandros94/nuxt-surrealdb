@@ -105,7 +105,6 @@ export default defineNuxtModule<ModuleOptions>({
       addPlugin(resolve(runtimeDir, 'app', 'plugins', 'memory.client'))
       addPlugin(resolve(runtimeDir, 'app', 'plugins', 'local.server'))
       addPlugin(resolve(runtimeDir, 'app', 'plugins', 'local.client'))
-      addPlugin(resolve(runtimeDir, 'app', 'plugins', 'surreal'))
     }
     if (options.disableNodeEngine !== true && nodeModule === true) {
       serverImports.push(
@@ -177,6 +176,7 @@ export default defineNuxtModule<ModuleOptions>({
     )
 
     addImports(imports)
+    addPlugin(resolve(runtimeDir, 'app', 'plugins', 'surreal'))
     addServerImports(serverImports)
     addServerPlugin(resolve(runtimeDir, 'server', 'plugins', 'clear'))
 
