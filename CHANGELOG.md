@@ -1,6 +1,23 @@
 # Changelog
 
 
+## v0.5.2
+
+[compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.5.1...v0.5.2)
+
+### 🩹 Fixes
+
+- Properly type engine options ([2ffbb72](https://github.com/sandros94/nuxt-surrealdb/commit/2ffbb72))
+
+### 🏡 Chore
+
+- Fix playground deps ([07374b3](https://github.com/sandros94/nuxt-surrealdb/commit/07374b3))
+- Pin comark version ([bda6d91](https://github.com/sandros94/nuxt-surrealdb/commit/bda6d91))
+
+### ❤️ Contributors
+
+- Sandro Circi ([@sandros94](https://github.com/sandros94))
+
 ## v0.5.1
 
 [compare changes](https://github.com/sandros94/nuxt-surrealdb/compare/v0.5.0...v0.5.1)
